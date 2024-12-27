@@ -201,29 +201,41 @@
         const seatsPerRow = 14;
 
         let busySeat = "{{ movie_info['busy_seats'] }}";
-        let unavailableSeats = busySeat
-            .slice(1, -1)
-            .match(/\d+: \[[^\]]*\]/g);
-
         unavailableSeatsSession = {};
-        unavailableSessionKey = [];
 
-        unavailableSeats.forEach(seats => {
-            const [key, value] = seats.split(": ");
-            const parsedKey = parseInt(key);
-            unavailableSessionKey.push(parsedKey);
-            const parsedValue = value.replace(/\[|\]/g, "").split(", ").map(Number);
-            unavailableSeatsSession[parsedKey] = parsedValue;
-        });
+            let unavailableSeats = busySeat
+                .slice(1, -1)
+                .match(/\d+: \[[^\]]*\]/g);
+
+            unavailableSessionKey = [];
+
+            unavailableSeats.forEach(seats => {
+                const [key, value] = seats.split(": ");
+                const parsedKey = parseInt(key);
+                unavailableSessionKey.push(parsedKey);
+                const parsedValue = value.replace(/\[|\]/g, "").split(", ").map(Number);
+                unavailableSeatsSession[parsedKey] = parsedValue;
+            });
+
 
         function bookSeat(chosenDay) {
-            unavailableSeats = unavailableSeatsSession[chosenDay];
+            if (chosenDay == null) {
+                chosenDay == today.getDate();
+            }
 
             for (let i = 1; i <= seatPlaces; i++) {
                 const seatItem = document.createElement("div");
                 seatItem.classList.add("place");
 
+
                 const row = Math.ceil(i / seatsPerRow);
+
+                if(unavailableSeatsSession[chosenDay] != null){
+                    unavailableSeats = unavailableSeatsSession[chosenDay];
+                } else{
+                    unavailableSeats = [];
+                }
+                
 
                 if (unavailableSeats.includes(i)) {
                     seatItem.classList.add("unavailable");
