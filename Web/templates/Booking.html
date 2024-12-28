@@ -97,6 +97,7 @@
             .replace(/&#39;/g, " ")
             .split(" , ");
 
+
         let hoursForDays = [];
         let specificHour = [];
 
@@ -203,19 +204,19 @@
         let busySeat = "{{ movie_info['busy_seats'] }}";
         unavailableSeatsSession = {};
 
-            let unavailableSeats = busySeat
-                .slice(1, -1)
-                .match(/\d+: \[[^\]]*\]/g);
+        let unavailableSeats = busySeat
+            .slice(1, -1)
+            .match(/\d+: \[[^\]]*\]/g);
 
-            unavailableSessionKey = [];
+        unavailableSessionKey = [];
 
-            unavailableSeats.forEach(seats => {
-                const [key, value] = seats.split(": ");
-                const parsedKey = parseInt(key);
-                unavailableSessionKey.push(parsedKey);
-                const parsedValue = value.replace(/\[|\]/g, "").split(", ").map(Number);
-                unavailableSeatsSession[parsedKey] = parsedValue;
-            });
+        unavailableSeats.forEach(seats => {
+            const [key, value] = seats.split(": ");
+            const parsedKey = parseInt(key);
+            unavailableSessionKey.push(parsedKey);
+            const parsedValue = value.replace(/\[|\]/g, "").split(", ").map(Number);
+            unavailableSeatsSession[parsedKey] = parsedValue;
+        });
 
 
         function bookSeat(chosenDay) {
@@ -223,53 +224,58 @@
                 chosenDay == today.getDate();
             }
 
+            buildHoll = hoursForDays.includes(chosenDay);
             for (let i = 1; i <= seatPlaces; i++) {
-                const seatItem = document.createElement("div");
-                seatItem.classList.add("place");
+                if (buildHoll) {
+                    const seatItem = document.createElement("div");
+                    seatItem.classList.add("place");
+
+                    const row = Math.ceil(i / seatsPerRow);
+
+                    if (unavailableSeatsSession[chosenDay] != null) {
+                        unavailableSeats = unavailableSeatsSession[chosenDay];
+                    } else {
+                        unavailableSeats = [];
+                    }
 
 
-                const row = Math.ceil(i / seatsPerRow);
+                    if (unavailableSeats.includes(i)) {
+                        seatItem.classList.add("unavailable");
+                        seatItem.style.backgroundColor = "gray";
+                    } else {
+                        seatItem.addEventListener("click", () => {
+                            const seatDetails = { seatNumber: i, row: row, cost: 100 };
+                            if (!selectedSeats.find(seat => seat.seatNumber === i)) {
+                                seatItem.style.backgroundColor = "green";
+                                selectedSeats.push(seatDetails);
 
-                if(unavailableSeatsSession[chosenDay] != null){
-                    unavailableSeats = unavailableSeatsSession[chosenDay];
-                } else{
-                    unavailableSeats = [];
+                            } else {
+                                seatItem.style.backgroundColor = "";
+                                const index = selectedSeats.findIndex(seat => seat.seatNumber === i);
+                                selectedSeats.splice(index, 1);
+                            }
+                            console.log(selectedSeats);
+
+                            selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
+                            selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber);
+
+                            selectedRow.textContent = selectedSeats
+                                .map(seat => seat.row)
+                                .filter((value, index, self) => self.indexOf(value) === index);
+
+                            selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
+
+                            updateHiddenInput();
+
+
+                        });
+                    }
+
+                    seatContainer.appendChild(seatItem);
                 }
-                
-
-                if (unavailableSeats.includes(i)) {
-                    seatItem.classList.add("unavailable");
-                    seatItem.style.backgroundColor = "gray";
-                } else {
-                    seatItem.addEventListener("click", () => {
-                        const seatDetails = { seatNumber: i, row: row, cost: 100 };
-                        if (!selectedSeats.find(seat => seat.seatNumber === i)) {
-                            seatItem.style.backgroundColor = "green";
-                            selectedSeats.push(seatDetails);
-
-                        } else {
-                            seatItem.style.backgroundColor = "";
-                            const index = selectedSeats.findIndex(seat => seat.seatNumber === i);
-                            selectedSeats.splice(index, 1);
-                        }
-                        console.log(selectedSeats);
-
-                        selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
-                        selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber);
-
-                        selectedRow.textContent = selectedSeats
-                            .map(seat => seat.row)
-                            .filter((value, index, self) => self.indexOf(value) === index);
-
-                        selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
-
-                        updateHiddenInput();
 
 
-                    });
-                }
 
-                seatContainer.appendChild(seatItem);
             }
         }
 
