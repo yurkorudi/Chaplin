@@ -1111,6 +1111,12 @@ li:active {
     width: 90vw;
   }
 
+  .row {
+    display: grid;
+    height: 55vh;
+    width: 100vw;
+  }
+
   .row .button-wrapper button:hover {
     background-color: initial;
     color: white;
