@@ -51,7 +51,7 @@
 
                 </div>
 
-                <form action="" method="post">
+                <form action="{{url_for('ticket')}}" method="post">
                     <div class="book_button"><button type="submit" , onclick="submitSeats()">Придбати квиток</button>
                     </div>
                 </form>
@@ -298,7 +298,36 @@
             seatInput.value = JSON.stringify(selectedSeats);
             console.log("Form data updated:", seatInput.value);
         }
+        document.querySelector('.submit').addEventListener('click', () => {
+            const selectedDateData = selectedDate.textContent.trim();
+            const selectedTimeData = selectedTime.textContent.trim();
+            const selectedSeatData = selectedSeat.textContent.trim();
+            const selectedRowData = selectedRow.textContent.trim();
+            const selectedCostData = selectedCost.textContent.trim();
 
+            const data = {
+                date: selectedDateData,
+                time: selectedTimeData,
+                seat: selectedSeatData,
+                row: selectedRowData,
+                cost: selectedCostData
+            };
+
+            fetch('/ticket', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) 
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
         window.location.href = url;
 
 

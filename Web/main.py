@@ -229,7 +229,6 @@ def book():
                 seat_number = seat.get("seatNumber")
                 row = seat.get("row")
                 cost = seat.get("cost")
-                print(f"Seat ____!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {seat_number} in row {row} costs {cost}.")
         except:
             pass
         with app.app_context():
@@ -246,7 +245,6 @@ def book():
             film_name = request.args.get('film')
         except:
             pass
-        print('___________________________________________________________________________________', film_name)
         with app.app_context():
             film = Film_obj(film_name)
         print (selected_date, selected_hour)
@@ -254,6 +252,28 @@ def book():
 
 
     return render_template('Booking.html', city = "", cities = cities, movie_info = film.data)
+
+
+@app.route('/ticket', methods=['POST'])
+def ticket():
+    # Print headers and data for debugging
+    print("Headers:", request.headers)
+    print("Data:", request.data)
+
+    # Parse JSON data
+    print ("_______________________________________________________________________")
+    data = request.get_json(force=True)
+    print ("_______________________________________________________________________")
+    print (data)
+    return redirect(url_for('homepage'))
+
+
+
+
+
+
+
+
 
 @app.route('/user')
 def user():
