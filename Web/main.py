@@ -255,6 +255,17 @@ def book():
 
     return render_template('Booking.html', city = "", cities = cities, movie_info = film.data)
 
+
+@app.route('/ticket', methods=['POST'])
+def ticket():
+    content_type = request.headers.get('Content-Type')
+    print("______________________________________________________", content_type)
+    data = request.get_json()
+    print(data)
+
+
+
+
 @app.route('/user')
 def user():
     global user_location
@@ -272,4 +283,7 @@ def button_click():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, host='192.168.221.143')
+
+
+

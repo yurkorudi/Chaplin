@@ -1026,7 +1026,7 @@ li:active {
 }
 /* end user page */
 
-@media (max-width: 360px) {
+@media (max-width: 560px) {
   .home .header {
     margin-top: 20px;
     padding: 15px;
