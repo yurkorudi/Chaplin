@@ -85,6 +85,12 @@
     </div>
 
     <script>
+        const mediaQuery = window.matchMedia("(min-width: 460px)");
+        if (!mediaQuery.matches) {
+            const base = document.querySelector('.base_info');
+            const right = document.querySelector('.right_menu');
+            base.prepend(right);
+        }
         const scheduleContainer = document.getElementById("schedule");
         const today = new Date();
         const currentYear = today.getFullYear();
@@ -257,8 +263,8 @@
                                     date : selectedDate.textContent(),
                                     mounth : currentMonth,
                                     year : currentYear,
-                                    location : "Львів, пр. Червоної Калини, 81",
-                                }
+                                    location : "Львів, пр. Червоної Калини, 81"
+                                };
 
                                 
                                 fetch ('/ticket', {
@@ -274,6 +280,7 @@
                                 .catch(error => {
                                     console.error('Error:', error);
                                 });
+
                                 selectedSeats.push(seatDetails);
 
 

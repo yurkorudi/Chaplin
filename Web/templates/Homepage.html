@@ -39,7 +39,7 @@
           <div class="button-wrapper user">
             <form action="{{ url_for('user')}}">
               <div class="button"><button class="button" type="submit">Увійти</button></div>
-          </form>
+            </form>
             <div class="ico"></div>
           </div>
         </div>
@@ -60,7 +60,7 @@
           <a href="{{ url_for('movie', movie_name='Веном 3')}}">
 
             <input type="image" , src="./static/img/venomposter.jpg" name="selected_image" value="image5" id="slide5"
-            width="250" height="350">
+              width="250" height="350">
           </a>
         </div>
         <div class="slider-item" style="--j--:3">
@@ -100,7 +100,7 @@
         <div class="slider-item" style="--j--:8">
           <a href="{{ url_for('movie', movie_name='Чародійка')}}">
             <input type="image" , src="./static/img/wickedposter.jpg" name="selected_image" value="image8" id="slide8"
-            width="250" height="350">
+              width="250" height="350">
           </a>
         </div>
       </div>
@@ -131,41 +131,45 @@
   </div>
 
   <script>
-    var carousel = $(".slider-body"),
-      currdeg = 0,
-      autoplayInterval;
+    const mediaQuery = window.matchMedia("(min-width: 460px)");
+    if (mediaQuery.matches) {
+      var carousel = $(".slider-body"),
+        currdeg = 0,
+        autoplayInterval;
 
-    $(".next").on("click", { d: "n" }, rotate);
-    $(".prev").on("click", { d: "p" }, rotate);
+      $(".next").on("click", { d: "n" }, rotate);
+      $(".prev").on("click", { d: "p" }, rotate);
 
-    function rotate(e) {
-      if (e.data.d == "n") {
-        currdeg = currdeg - 45;
+      function rotate(e) {
+        if (e.data.d == "n") {
+          currdeg = currdeg - 45;
+        }
+        if (e.data.d == "p") {
+          currdeg = currdeg + 45;
+        }
+        carousel.css({
+          "-webkit-transform": "rotateY(" + currdeg + "deg)",
+          "-moz-transform": "rotateY(" + currdeg + "deg)",
+          "-o-transform": "rotateY(" + currdeg + "deg)",
+          "transform": "rotateY(" + currdeg + "deg)"
+        });
       }
-      if (e.data.d == "p") {
-        currdeg = currdeg + 45;
+
+      // Autoplay function
+      function startAutoplay() {
+        autoplayInterval = setInterval(function () {
+          $(".next").trigger("click");
+        }, 3000);  // Change 2000 to the desired interval in milliseconds
       }
-      carousel.css({
-        "-webkit-transform": "rotateY(" + currdeg + "deg)",
-        "-moz-transform": "rotateY(" + currdeg + "deg)",
-        "-o-transform": "rotateY(" + currdeg + "deg)",
-        "transform": "rotateY(" + currdeg + "deg)"
-      });
+
+      startAutoplay();  // Start autoplay initially
+
+      // Stop autoplay on hover and resume on mouse leave
+      carousel.on("mouseenter", function () {
+        clearInterval(autoplayInterval);
+      }).on("mouseleave", startAutoplay);
+
     }
-
-    // Autoplay function
-    function startAutoplay() {
-      autoplayInterval = setInterval(function () {
-        $(".next").trigger("click");
-      }, 3000);  // Change 2000 to the desired interval in milliseconds
-    }
-
-    startAutoplay();  // Start autoplay initially
-
-    // Stop autoplay on hover and resume on mouse leave
-    carousel.on("mouseenter", function () {
-      clearInterval(autoplayInterval);
-    }).on("mouseleave", startAutoplay);
 
   </script>
 
