@@ -21,13 +21,6 @@ class Film_obj:
                 if id not in self.busy_seats:
                     self.busy_seats[id] = []
                 self.busy_seats[id].append(s['seat_id'])
-                
-            print ("___________________________________________________________________")
-            print(id)
-            print ("___________________________________________________________________")
-            print ("___________________________________________________________________")
-            print(g['session_datetime'])
-            print ("___________________________________________________________________")
         src = get_images(id=self.data['image_id'])
 
         path = src['path']

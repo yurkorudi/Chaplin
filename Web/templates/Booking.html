@@ -52,7 +52,7 @@
                 </div>
 
                 <form action="" method="post">
-                    <div class="book_button"><button type="submit" , onclick="submitSeats()">Придбати квиток</button>
+                    <div class="book_button"><button type="submit" , onclick="addBookeSeat()">Придбати квиток</button>
                     </div>
                 </form>
 
@@ -265,18 +265,11 @@
                                 .filter((value, index, self) => self.indexOf(value) === index);
 
                             selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
-
                             updateHiddenInput();
-
-
                         });
                     }
-
                     seatContainer.appendChild(seatItem);
                 }
-
-
-
             }
         }
 
@@ -297,6 +290,14 @@
         function updateHiddenInput() {
             seatInput.value = JSON.stringify(selectedSeats);
             console.log("Form data updated:", seatInput.value);
+        }
+
+        function addBookeSeat() {
+            if (selectedSeat.textContent != null) {
+                selectedSeats.forEach(place => {
+                    selectedDate.textContent += place.row;
+                })
+            }
         }
 
         window.location.href = url;
