@@ -51,7 +51,7 @@
 
                 </div>
 
-                <form action="" method="post">
+                <form action="{{url_for('ticket')}}" method="post">
                     <div class="book_button"><button type="submit" , onclick="addBookeSeat()">Придбати квиток</button>
                     </div>
                 </form>
@@ -201,6 +201,7 @@
         const selectedSeats = [];
         const seatPlaces = 120;
         const seatsPerRow = 14;
+        const DataFotTicket = {}
 
         let busySeat = "{{ movie_info['busy_seats'] }}";
         unavailableSeatsSession = {};
@@ -248,7 +249,34 @@
                             const seatDetails = { seatNumber: i, row: row, cost: 100 };
                             if (!selectedSeats.find(seat => seat.seatNumber === i)) {
                                 seatItem.style.backgroundColor = "green";
+                                DataFotTicket[i] = {
+                                    movie_name : "{{movie_info['name']}}",
+                                    seat : i,
+                                    row  : row,
+                                    cost : cost,
+                                    time : selectedTime.textContent(),
+                                    date : selectedDate.textContent(),
+                                    mounth : currentMonth,
+                                    year : currentYear,
+                                    location : "Львів, пр. Червоної Калини, 81",
+                                }
+
+                                
+                                fetch ('/ticket', {
+                                    method: 'POST',
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify(DataFotTicket) 
+                                }).then(response => response.json())
+                                .then(result => {
+                                    console.log('Success:', result);
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                });
                                 selectedSeats.push(seatDetails);
+
 
                             } else {
                                 seatItem.style.backgroundColor = "";
@@ -299,6 +327,8 @@
                 })
             }
         }
+
+
 
         window.location.href = url;
 
