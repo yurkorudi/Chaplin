@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<head>
+
+
+
+</head>
+<body>
+    <h1>HelloWorld</h1>
+    <button type="submit", onclick="senddata()">Send Data</button>
+
+    <script>
+        function senddata() {
+            const params = new URLSearchParams();
+            params.append('seat', 'A1');
+            params.append('movie', 'Transformers');
+            params.append('time', '2025-02-11T19:00:00');
+
+
+            const jsonData = JSON.stringify({
+                seat: "A1",
+                movie: "Some Movie Title",
+                time: "2025-02-11T19:00:00"
+            });
+
+            fetch('/ticket', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'  // Встановлюємо Content-Type для JSON
+                },
+                body: jsonData  // Тіло запиту — це JSON
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });}
+
+
+    </script>
+
+</body>

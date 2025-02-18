@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
-<body class="fade-in user">
+<body class="fade-in user"> 
   <div class="home">
 
     <header class="header">
@@ -47,13 +47,14 @@
       <div class="form">
         <h1>Login</h1>
         <label for="">Login:</label>
-        <input type="text">
+        <input type="text" id="login_name" style="color: white;">
         <p></p>
         <label for="">Password:</label>
-        <input type="password">
-        <form action="{{ url_for('button_click')}}">
-          <button type="submit">Login</button>
-        </form>
+        <input type="password" id="myInput" style="color: white;">
+        <label for="">
+        <input type="checkbox" onclick="seePassword()">Show Password
+        </label>
+        <button type="submit", onclick="Login()">Login</button>
         <div class="chenge_form">
           <p>if you have don't have acaunt <a onclick="toggleBlocks()">register</a></p>
         </div>
@@ -64,21 +65,19 @@
       <div class="form">
         <h1>Singup</h1>
         <label for="">Email:</label>
-        <input type="email">
+        <input type="email" name='email' style="color: white;">
         <p></p>
         <label for="">First name:</label>
-        <input type="text" name="first_name" id="">
+        <input type="text" name="first_name" style="color: white;">
         <label for="">Last name:</label>
-        <input type="text" name="last_name" id="">
+        <input type="text" name="last_name" style="color: white;">
         <label for="">Create login:</label>
-        <input type="text" name="log" id="">
+        <input type="text" name="log" style="color: white;">
         <label for="">Create password:</label>
-        <input type="password">
-        <form action="{{ url_for('button_click')}}">
-          <button type="submit">Singup</button>
-        </form>
+        <input type="password" name='password' style="color: white;">
+        <button type="submit", onclick="Singup()">Singup</button>
         <div class="chenge_form">
-          <p>Do you hav acount <a onclick="toggleBlocks()">login</a></p>
+          <p>Do you have acount <a onclick="toggleBlocks()">login</a></p>
         </div>
       </div>
     </div>
@@ -148,6 +147,87 @@
   </div>
 
   <script>
+
+    function seePassword() {  var x = document.getElementById("myInput");
+    if (x.type === "password") {
+      x.type = "text";
+    } else {
+      x.type = "password";
+    }}
+
+    function isValidEmail(email) {
+    let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+    function Singup() {
+      let email = document.querySelector("#registration input[name='email']").value;
+      let firstName = document.querySelector("#registration input[name='first_name']").value;
+      let lastName = document.querySelector("#registration input[name='last_name']").value;
+      let login = document.querySelector("#registration input[name='log']").value;
+      let password = document.querySelector("#registration input[name='password']").value;
+
+      if (!isValidEmail(email)) {
+        alert(' Некоректний email \n Зразок коректного: example@gmail.com');
+        return;
+      }
+
+      fetch('/singup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          first_name: firstName,
+          last_name: lastName,
+          login: login,
+          password: password
+        })})
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          if (data.success) {
+              alert("Реєстрація успішна! Тепер можете увійти.");
+              toggleBlocks(); 
+          } else {
+              alert("Помилка реєстрації: " + data.error);
+          }
+      })
+      .catch(error => console.error('Error:', error))}
+
+
+    function Login() {
+      let login = document.querySelector("#login input[type='text']").value;
+      let password = document.querySelector("#login input[type='password']").value;
+
+      
+
+
+      fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          login: login,
+          password: password
+        })})
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          if (data.success) {
+              alert("Ви успішно увійшли!");
+              window.location.href = "/user";
+          } else {
+              alert("Помилка входу: " + data.error);
+          }
+      })
+      .catch(error => console.error('Error:', error))}
+    
+
+
+
     function toggleBlocks() {
       const block1 = document.getElementById("login");
       const block2 = document.getElementById("registration");
