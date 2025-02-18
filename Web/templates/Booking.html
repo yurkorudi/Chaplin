@@ -206,7 +206,7 @@
         const selectedSeats = [];
         const seatPlaces = 120;
         const seatsPerRow = 14;
-        const DataFotTicket = {}
+        const DataFotTicket = {};
 
         let busySeat = "{{ movie_info['busy_seats'] }}";
         unavailableSeatsSession = {};
@@ -225,10 +225,9 @@
             unavailableSeatsSession[parsedKey] = parsedValue;
         });
 
-
         function bookSeat(chosenDay) {
             if (chosenDay == null) {
-                chosenDay == today;
+                chosenDay = today;
             }
 
             buildHoll = hoursForDays.includes(chosenDay);
@@ -245,59 +244,59 @@
                         unavailableSeats = [];
                     }
 
-
                     if (unavailableSeats.includes(i)) {
                         seatItem.classList.add("unavailable");
                         seatItem.style.backgroundColor = "gray";
                     } else {
                         seatItem.addEventListener("click", () => {
-                            const seatDetails = { seatNumber: i, row: row, cost: 100 };
-                            if (!selectedSeats.find(seat => seat.seatNumber === i)) {
+                            const seatIndex = selectedSeats.findIndex(seat => seat.seatNumber === i);
+                            
+                            if (seatIndex === -1) { // Seat is not selected yet
                                 seatItem.style.backgroundColor = "green";
+                                const seatDetails = { seatNumber: i, row: row, cost: 100 };
+                                selectedSeats.push(seatDetails);
                                 DataFotTicket[i] = {
                                     movie_name : "{{movie_info['name']}}",
                                     seat : i,
                                     row  : row,
-                                    cost : cost,
+                                    cost : 100,
                                     time : selectedTime.textContent(),
                                     date : selectedDate.textContent(),
                                     mounth : currentMonth,
                                     year : currentYear,
                                     location : "Львів, пр. Червоної Калини, 81"
                                 };
-
                                 
-                                fetch ('/ticket', {
-                                    method: 'POST',
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify(DataFotTicket) 
-                                }).then(response => response.json())
-                                .then(result => {
-                                    console.log('Success:', result);
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
+                                const jsonData = JSON.stringify({
+                                    seat: "A1",
+                                    movie: "Some Movie Title",
+                                    time: "2025-02-11T19:00:00"
                                 });
 
-                                selectedSeats.push(seatDetails);
+
+                                fetch('/ticket', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: jsonData
+                                });
 
 
-                            } else {
+
+                            } else { // Seat is already selected, so unselect it
                                 seatItem.style.backgroundColor = "";
-                                const index = selectedSeats.findIndex(seat => seat.seatNumber === i);
-                                selectedSeats.splice(index, 1);
+                                selectedSeats.splice(seatIndex, 1);
+                                delete DataFotTicket[i];
                             }
+                            
                             console.log(selectedSeats);
 
                             selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
                             selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber);
-
                             selectedRow.textContent = selectedSeats
                                 .map(seat => seat.row)
                                 .filter((value, index, self) => self.indexOf(value) === index);
-
                             selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
                             updateHiddenInput();
                         });

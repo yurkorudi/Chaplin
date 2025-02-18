@@ -870,6 +870,7 @@ li:active {
   width: 50%;
   padding: 5px;
   margin: 0 25%;
+  align-content: center;
 }
 
 .main.user .login {
@@ -877,13 +878,20 @@ li:active {
 }
 
 .main.user .login {
+  width: 50%;
+  padding: 5px;
+  margin: 0 auto;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  align-items: center; 
 }
 
 .main.user .registration {
   display: none;
+  align-content: center;
+  margin: 0 auto;
+  flex-direction: column;
+  align-items: center; 
 }
 
 .main.user .profile {
@@ -893,7 +901,8 @@ li:active {
 .main.user .login,
 .main.user .registration {
   position: relative;
-  justify-content: space-between;
+
+  /* justify-content: space-between; */
 }
 
 .main.user .login img,
@@ -982,6 +991,7 @@ li:active {
 
 .main.user .registration {
   height: 65vh;
+  
 }
 
 .main.user .profile {

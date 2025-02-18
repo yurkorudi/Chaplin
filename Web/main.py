@@ -1,13 +1,16 @@
 from flask import *
 from user_agents import *
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
 from time import *
+import hashlib
 
 
 from extensions import db
 from models import Image, User, Cinema, Session, Film, Seat, Ticket
 from funcs import *
 from modls import *
+
 
 
 app = Flask(__name__)
@@ -238,7 +241,6 @@ def book():
         if user_location == []:
             a = location()
 
-
     if request.method == 'GET':
         try:
             selected_date = request.args.get('date')
@@ -256,22 +258,84 @@ def book():
     return render_template('Booking.html', city = "", cities = cities, movie_info = film.data)
 
 
+
 @app.route('/ticket', methods=['POST'])
 def ticket():
-    content_type = request.headers.get('Content-Type')
-    print("______________________________________________________", content_type)
-    data = request.get_json()
-    print(data)
+    print("🔹 Request headers:", request.headers)
+    print("🔹 Request content-type:", request.content_type)
+    print("🔹 Request raw body:", request.data.decode('utf-8')) 
+    print("🔹 Request JSON (parsed):", request.get_json(force=True, silent=True))
+
+    if request.is_json:
+        data = request.get_json()
+        return jsonify({"message": "Received JSON!", "data": data}), 200
+    else:
+        return jsonify({"error": "Invalid JSON"}), 400
 
 
 
 
-@app.route('/user')
+@app.route('/user', methods=['GET', 'POST'])
 def user():
     global user_location
     global cities
     global user_device
+    try:
+        user_info = request.json
+        print("User:", user_info)
+    except:
+        pass
     return render_template('User.html', city = "", cities = cities)
+
+
+@app.route('/singup', methods=['GET', 'POST'])
+def singup():
+    global user_location
+    global cities
+    global user_device
+    try:
+        user_info = request.json
+        print("User singed up:", user_info)
+    except:
+        print("No user info")
+    for i in user_info:
+        if user_info[i] == "":
+            return jsonify({"success": False, "error": "Всі поля повинні бути заповнені!"}), 400
+    existing_users = get_users()
+    for i in existing_users:
+        if i['email'] == user_info['email']:
+            return jsonify({"success": False, "error": "Цей email вже зареєстрований!"}), 400
+        if i['login'] == user_info['login']:
+            return jsonify({"success": False, "error": "Цей логін вже зайнятий!"}), 400 
+    add_user(phone_number=1, first_name=user_info['first_name'], last_name=user_info['last_name'], email=user_info['email'], login=user_info['login'], password=hashlib.sha256(user_info['password'].encode()).hexdigest(), bought_tickets_summary=0)
+    print("User added")       
+    return render_template('User.html', city = "", cities = cities)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    global user_location
+    global cities
+    global user_device
+    try:
+        user_info = request.json
+        print("User logged in:", user_info)
+    except:
+        print("No user info")
+    for i in user_info:
+        if user_info[i] == "":
+            return jsonify({"success": False, "error": "Всі поля повинні бути заповнені!"}), 400
+    existing_users = get_users()
+    for i in existing_users:
+        if i["login"] == user_info['login']:
+            print (i["password"])
+            print (hashlib.sha256(user_info['password'].encode()).hexdigest())
+            if i['password'] == hashlib.sha256(user_info['password'].encode()).hexdigest():
+                return jsonify({"success": True, "message": "Ви успішно увійшли!"}), 200
+            
+        
+    return jsonify({"success": False, "error": "Невірний логін або пароль!"}), 400
+
 
 @app.route('/user')
 def button_click():
@@ -283,7 +347,7 @@ def button_click():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True, host='192.168.43.61')
+    app.run(debug=True)
 
 
 

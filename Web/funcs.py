@@ -72,7 +72,7 @@ def add_user(phone_number, first_name, last_name, email, login, password, bought
 
 def get_users():
     users = User.query.all()
-    return [{"phone_number": u.phone_number, "name": f"{u.first_name} {u.last_name}", "tickets": u.bought_tickets_summary} for u in users]
+    return [{"phone_number": u.phone_number, "email" : u.email, "login" : u.login, "password" : u.password, "name": f"{u.first_name} {u.last_name}", "tickets": u.bought_tickets_summary} for u in users]
 
 
 def add_cinema(name, location, contact_phone_number, work_schedule, instagram_link):

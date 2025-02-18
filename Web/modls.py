@@ -30,6 +30,15 @@ class Film_obj:
         self.data.update({'busy_seats': self.busy_seats})
 
 
+
+
+class User_obj:
+    def __init__(self, user_id):
+        self.user_id = user_id
+        self.data = get_user(user_id)
+        self.data.update({'img_src': get_images(id=self.data['image_id'])['path']})
+
+
         
 
 
