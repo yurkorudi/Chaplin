@@ -3,7 +3,16 @@ from user_agents import *
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from time import *
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+from flask_admin.form import FileUploadField
+from wtforms_sqlalchemy.fields import QuerySelectField
+from flask_admin.form import SecureForm
+from wtforms.validators import DataRequired
+from flask_admin.model import filters
+from werkzeug.utils import secure_filename
 import hashlib
+import os
 
 
 from extensions import db
@@ -14,14 +23,117 @@ from modls import *
 
 
 app = Flask(__name__)
-
+admin = Admin()
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://zulu:zuludf345@64.225.100.209:3306/chaplin"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['SECRET_KEY'] = 'AdminSecretKey(2025)s'
+app.config['UPLOAD_FOLDER'] = 'uploads/'
+
 
 db.init_app(app)
 
+#### ___________________________________admin______________________________________ ####
 
+admin.init_app(app)
+
+
+class FilmView(ModelView):
+    form_columns = ['name', 'genre', 'description', 'release_start_date', 'release_end_date', 'director', 'actors', 'duration', 'age', 'image_id']
+
+class ImageView(ModelView):
+    form_base_class = SecureForm
+    form_overrides = {
+        'path': FileUploadField
+    }
+    form_args = {
+        'path': {
+            'base_path': app.config['UPLOAD_FOLDER'] 
+        }
+    }
+
+    def on_model_change(self, form, model, is_created):
+        if form.path.data:
+            filename = secure_filename(form.path.data.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            form.path.data.save(filepath)
+            model.path = filepath
+        return super(ImageView, self).on_model_change(form, model, is_created)
+
+
+class SessionView(ModelView):
+    form_columns = ['film_id', 'cinema_id', 'session_datetime', 'session_duration']
+
+class CinemaView(ModelView):
+    form_columns = ['name', 'location', 'contact_phone_number', 'work_schedule', 'instagram_link']
+
+class SessionTable(ModelView):
+    form_base_class = SecureForm
+
+    form_columns = ['film', 'cinema', 'session_datetime', 'session_duration']
+    column_list = ['film', 'cinema', 'session_datetime', 'session_duration']
+
+
+    column_labels = {
+        'film': 'Фільм',
+        'cinema': 'Кінотеатр',
+        'session_datetime': 'Дата та час сеансу',
+        'session_duration': 'Тривалість (хв)'
+    }
+
+
+    column_searchable_list = ['film.name', 'cinema.name']
+
+
+    # class DateFilter(filters.BaseFilter):
+    #     def apply(self, query, value, alias=None):
+    #         selected_date = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')   
+    #         return query.filter(
+    #             Session.session_datetime >= selected_date,
+    #             Session.session_datetime < selected_date + timedelta(days=1)
+    #         )
+
+    #     def operation(self):
+    #         return 'День сеансу'
+
+    # column_filters = [
+    #     DateFilter(Session.session_datetime, 'Дата')
+    # ]
+
+
+    column_formatters = {
+        'film': lambda v, c, m, p: m.film.name if m.film else '',
+        'cinema': lambda v, c, m, p: m.cinema.name if m.cinema else ''
+    }
+
+
+    film = QuerySelectField(
+        'Фільм',
+        query_factory=lambda: Film.query.all(),
+        get_label='name',  # Переконайтесь, що це правильний атрибут
+        allow_blank=True,
+        default=None
+    )
+
+    cinema = QuerySelectField(
+        'Кінотеатр',
+        query_factory=lambda: Cinema.query.all(),
+        get_label='name',  # Так само перевірте, чи це правильний атрибут
+        allow_blank=True,
+        default=None
+    )
+
+
+
+
+
+admin.add_view(SessionTable(Session, db.session))
+admin.add_view(FilmView(Film, db.session)) 
+admin.add_view(ImageView(Image, db.session))
+# admin.add_view(SessionView(Session, db.session))
+admin.add_view(CinemaView(Cinema, db.session))
+
+#### ___________________________________admin______________________________________ ####
 
 with app.app_context():
     print(list_to_dict(get_users()))
@@ -343,6 +455,7 @@ def button_click():
     global cities
     global user_device
     return render_template('User.html', city = "", cities = cities)
+
 
 if __name__ == "__main__":
     with app.app_context():
