@@ -1,0 +1,30 @@
+<form method="GET" action="/admin/sessions/">
+    <input type="date" name="date" value="{{ selected_date.strftime('%Y-%m-%d') }}">
+    <button type="submit">Показати розклад</button>
+</form>
+
+{% if schedule %}
+    <h2>Розклад на {{ selected_date.strftime('%Y-%m-%d') }}</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Назва фільму</th>
+                <th>Час початку</th>
+                <th>Час кінця</th>
+                <th>Тривалість</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in schedule %}
+                <tr>
+                    <td>{{ session.film_name }}</td>
+                    <td>{{ session.start_time }}</td>
+                    <td>{{ session.end_time }}</td>
+                    <td>{{ session.duration }} хв.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Розклад на цю дату відсутній.</p>
+{% endif %}

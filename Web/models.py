@@ -13,6 +13,9 @@ class Image(db.Model):
     type = db.Column(db.String(50), nullable=False)
     path = db.Column(db.String(50), unique=True, nullable=False)
 
+    def __repr__(self):
+        return f'<Image {self.path}>'
+
 
 
 
