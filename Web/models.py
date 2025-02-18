@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy.sql import func 
 
 
+
 #>>> Here suppose to be all models of tables, so we can write to database new value to tables
 
 
@@ -10,8 +11,8 @@ class Image(db.Model):
     __tablename__ = 'images'
     image_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     type = db.Column(db.String(50), nullable=False)
-    img = db.Column(db.Text, unique=True, nullable=False)
-    mimetype = db.Column(db.String(50), nullable=False)
+    path = db.Column(db.String(50), unique=True, nullable=False)
+
 
 
 
@@ -22,7 +23,7 @@ class User(db.Model):
     last_name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     login = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String, nullable=False)
+    password = db.Column(db.String(500), nullable=False)
     date_of_creation = db.Column(db.Date, nullable=False, default=datetime.utcnow)
     visited_genres = db.Column(db.String(1000))
     bought_tickets_summary = db.Column(db.Integer, nullable=False)
@@ -104,4 +105,6 @@ class Ticket(db.Model):
     user = db.relationship('User')
     seat = db.relationship('Seat')
     session = db.relationship('Session', back_populates='tickets')
+
+
 
