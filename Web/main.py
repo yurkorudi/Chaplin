@@ -294,12 +294,24 @@ def movies():
     global user_device
     if user_location == []:
         a = location()
-    if user_device == 'desktop':
-        print ('desktop version')
-        return render_template('Movies.html', city = "", cities = cities)
-    else: 
-        print ('mobile version')
-        return render_template('Movies.html', city = "", cities = cities)
+    all_movies = get_films()
+    all_images = get_images()
+    for a in all_movies:
+        for i in all_images:
+            if a['image_id'] == i['id']:
+                print(a['image_id'])
+                print(i['id'])
+                print('___________________________________________________________________________________')
+                a.update({'img_src': i['path']})
+                print(a['img_src'])
+    
+        # try:
+        #     src = get_images(id=a['image_id'])
+        #     path = src['path']
+        #     a.update({'img_src': path})
+        # except: 
+        #     print("No image")
+    return render_template('Movies.html', city = "", cities = cities, movies = all_movies)
     
 
 
