@@ -204,7 +204,7 @@
 
         const seatContainer = document.getElementById("seats");
         const selectedSeats = [];
-        const seatPlaces = 120;
+        const seatPlaces = 122;
         const seatsPerRow = 14;
         const DataFotTicket = {};
 
@@ -236,7 +236,21 @@
                     const seatItem = document.createElement("div");
                     seatItem.classList.add("place");
 
-                    const row = Math.ceil(i / seatsPerRow);
+                    rowsBoard = [14, 30, 46, 60, 74, 88, 102, 116, 122];
+                    row = 1;
+
+                    rowsBoard.forEach((num) =>{
+                        if(i > num){
+                            row++;
+                        }
+                    });
+                    
+                    if(row == 9){
+                        seatItem.classList.add("sofa");
+                        if(i%2 != 0){                            
+                            setEmptyPlace(seatContainer)
+                        }
+                    }
 
                     if (unavailableSeatsSession[chosenDay] != null) {
                         unavailableSeats = unavailableSeatsSession[chosenDay];
@@ -302,11 +316,24 @@
                         });
                     }
                     seatContainer.appendChild(seatItem);
+
+                   empty = [14, 60, 74, 88, 102, 116, 122]
+                   empty.forEach((num)=>{
+                    if(i == num){
+                        setEmptyPlace(seatContainer);
+                    }
+                   } );
                 }
             }
         }
 
-
+        function setEmptyPlace(seatContainer){
+            for(e = 0; e < 2; e++){
+                const seatEmptyItem = document.createElement("div");
+                seatEmptyItem.classList.add("second");
+                seatContainer.appendChild(seatEmptyItem);
+            }
+        }
 
         function removeAllSeats() {
             const divsToRemove = document.querySelectorAll('div.place');

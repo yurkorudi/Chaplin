@@ -704,8 +704,6 @@ li:active {
 
 
 .place {
-  width: 30px;
-  height: 30px;
   background-color: transparent;
   cursor: pointer;
   border-radius: 5px;
@@ -799,7 +797,7 @@ li:active {
   width: 100%;
   height: auto;
   display: grid;
-  grid-template-columns: repeat(14, 1fr);
+  grid-template-columns: repeat(16, 1fr);
   row-gap: 10px;
   column-gap: 0;
 }
@@ -816,6 +814,14 @@ li:active {
 
 .seat .seats .place.sofa {
   border: 2px solid rgb(180, 8, 248);
+}
+
+.seat .seats .second {
+  content: "";
+  display: block;
+  width: 25px;
+  height: 35px;
+  margin: 0 25% !important;
 }
 
 .seat .seats .place::after {
