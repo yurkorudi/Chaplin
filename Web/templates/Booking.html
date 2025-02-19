@@ -250,7 +250,11 @@
                     } else {
                         seatItem.addEventListener("click", () => {
                             const seatIndex = selectedSeats.findIndex(seat => seat.seatNumber === i);
-                            
+
+                            seatItem.addEventListener("click", () => {
+                                updateSeatInfo(); 
+                            });
+                    
                             if (seatIndex === -1) { // Seat is not selected yet
                                 seatItem.style.backgroundColor = "green";
                                 const seatDetails = { seatNumber: i, row: row, cost: 100 };
@@ -267,38 +271,42 @@
                                     location : "Львів, пр. Червоної Калини, 81"
                                 };
                                 
-                                const jsonData = JSON.stringify({
-                                    seat: "A1",
-                                    movie: "Some Movie Title",
-                                    time: "2025-02-11T19:00:00"
-                                });
+                                
 
 
-                                fetch('/ticket', {
+                                fetch('/buy_ticket', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json'
                                     },
-                                    body: jsonData
-                                });
+                                    body: JSON.stringify(ticketData)
+                                }) 
+                                .then(response => response.json())
+                                .then(data => {
+                                    alert("Квитки успішно заброньовані!");
+                                    console.log("Response:", data);
+                                })
+                                .catch(error => console.error("Error:", error));
+                            }
+                        
 
 
 
-                            } else { // Seat is already selected, so unselect it
+                            else { 
                                 seatItem.style.backgroundColor = "";
                                 selectedSeats.splice(seatIndex, 1);
                                 delete DataFotTicket[i];
                             }
                             
-                            console.log(selectedSeats);
+                        console.log(selectedSeats);
 
-                            selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
-                            selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber);
-                            selectedRow.textContent = selectedSeats
-                                .map(seat => seat.row)
-                                .filter((value, index, self) => self.indexOf(value) === index);
-                            selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
-                            updateHiddenInput();
+                        selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
+                        selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber);
+                        selectedRow.textContent = selectedSeats
+                            .map(seat => seat.row)
+                            .filter((value, index, self) => self.indexOf(value) === index);
+                        selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
+                        updateHiddenInput();
                         });
                     }
                     seatContainer.appendChild(seatItem);
@@ -314,6 +322,14 @@
                 div.remove();
             });
         }
+
+        function updateSeatInfo() {
+            selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
+            selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber).join(", ");
+            selectedRow.textContent = [...new Set(selectedSeats.map(seat => seat.row))].join(", ");
+            selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
+            updateHiddenInput();
+    }
 
 
 
