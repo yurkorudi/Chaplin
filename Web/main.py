@@ -382,6 +382,21 @@ def book():
     return render_template('Booking.html', city = "", cities = cities, movie_info = film.data)
 
 
+@app.route('/buy_ticket', methods=['GET', 'POST'])
+def buy_ticket():
+    try:
+        print("Raw Request Data:", request.data)
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({"error": "Empty or invalid JSON received"}), 400
+        
+        print("Request JSON (parsed):", data)
+        return jsonify({"message": "Received JSON!", "data": data}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
 
 @app.route('/ticket', methods=['POST'])
 def ticket():
@@ -473,7 +488,7 @@ if __name__ == "__main__":
     with app.app_context():
         create_sample_data()
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, host='192.168.31.36')
 
 
 

@@ -255,7 +255,7 @@
                                 updateSeatInfo(); 
                             });
                     
-                            if (seatIndex === -1) { // Seat is not selected yet
+                            if (seatIndex === -1) { 
                                 seatItem.style.backgroundColor = "green";
                                 const seatDetails = { seatNumber: i, row: row, cost: 100 };
                                 selectedSeats.push(seatDetails);
@@ -269,29 +269,12 @@
                                     mounth : currentMonth,
                                     year : currentYear,
                                     location : "Львів, пр. Червоної Калини, 81"
-                                };
-                                
-                                
+                                }
 
-
-                                fetch('/buy_ticket', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify(ticketData)
-                                }) 
-                                .then(response => response.json())
-                                .then(data => {
-                                    alert("Квитки успішно заброньовані!");
-                                    console.log("Response:", data);
-                                })
-                                .catch(error => console.error("Error:", error));
+                                
                             }
-                        
 
-
-
+                                
                             else { 
                                 seatItem.style.backgroundColor = "";
                                 selectedSeats.splice(seatIndex, 1);
@@ -299,7 +282,6 @@
                             }
                             
                         console.log(selectedSeats);
-
                         selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
                         selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber);
                         selectedRow.textContent = selectedSeats
@@ -307,12 +289,30 @@
                             .filter((value, index, self) => self.indexOf(value) === index);
                         selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
                         updateHiddenInput();
+                        bookSeatChek(DataFotTicket);
                         });
                     }
                     seatContainer.appendChild(seatItem);
                 }
             }
         }
+
+
+
+        function bookSeatChek(dict) {
+            let url = '/buy_ticket';
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dict)
+            })
+            .then(response => response.json())
+            .then(data => console.log("Server response:", data))
+            .catch(error => console.error("Fetch error:", error));
+        };
+        
 
 
 
