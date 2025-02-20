@@ -294,12 +294,24 @@ def movies():
     global user_device
     if user_location == []:
         a = location()
-    if user_device == 'desktop':
-        print ('desktop version')
-        return render_template('Movies.html', city = "", cities = cities)
-    else: 
-        print ('mobile version')
-        return render_template('Movies.html', city = "", cities = cities)
+    all_movies = get_films()
+    all_images = get_images()
+    for a in all_movies:
+        for i in all_images:
+            if a['image_id'] == i['id']:
+                print(a['image_id'])
+                print(i['id'])
+                print('___________________________________________________________________________________')
+                a.update({'img_src': i['path']})
+                print(a['img_src'])
+    
+        # try:
+        #     src = get_images(id=a['image_id'])
+        #     path = src['path']
+        #     a.update({'img_src': path})
+        # except: 
+        #     print("No image")
+    return render_template('Movies.html', city = "", cities = cities, movies = all_movies)
     
 
 
@@ -368,6 +380,21 @@ def book():
 
 
     return render_template('Booking.html', city = "", cities = cities, movie_info = film.data)
+
+
+@app.route('/buy_ticket', methods=['GET', 'POST'])
+def buy_ticket():
+    try:
+        print("Raw Request Data:", request.data)
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({"error": "Empty or invalid JSON received"}), 400
+        
+        print("Request JSON (parsed):", data)
+        return jsonify({"message": "Received JSON!", "data": data}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 
@@ -461,7 +488,7 @@ if __name__ == "__main__":
     with app.app_context():
         create_sample_data()
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, host='192.168.31.36')
 
 
 

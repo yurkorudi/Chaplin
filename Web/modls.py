@@ -7,6 +7,8 @@ class Film_obj:
         self.busy_seats = {}
         self.film_dates = []
         self.data = get_films(self.name)
+        print("__________________________")
+        print(self.data)
         self.session = get_sessions(film_id=self.data['film_id'])
 
         for g in self.session:

@@ -41,7 +41,7 @@ def get_images(id=False):
                 "path":image.path
             }
         else:
-            return {"error": f"Film with name '{image.image_id}' not found."}
+            return {"error": f"Film with name '{id}' not found."}
 
 
 

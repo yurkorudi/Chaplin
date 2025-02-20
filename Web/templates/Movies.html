@@ -49,67 +49,30 @@
   </header>
 
   <main class="main movies_catalog">
-    <div class="movie 1">
-      <form action="{{ url_for('homepage')}}"></form>
-      <div class="image"></div>
-      <div class="movie_short_description">
-        <p>Від легендарного режисера Рідлі Скотта, «Гладіатор II» продовжує епічну сагу
-        про владу, помсту та інтриги, події якої відбуваються в Стародавньому Римі. Декілька років тому Луцій став
-        свідком вбивства Максимуса від рук свого дядька. Тепер він змушений увійти в Колізей після того як його дім було
-        зруйновано імператорами-тиранами, які тепер керують Римом. Оскільки на карту поставлено майбутнє імперії, Луцій
-        повинен знайти у собі сили забути минуле та повернути Риму і його народу колишню славу.</p>
-        <a href="{{ url_for('movie', movie_name='Трансформери: повернення')}}">
-          <button class="button" type="submit">Детальніше</button>
-        </a>
-      </div>
-    </form>
-    </div>
-    <div class="movie 2">
-      <div class="image"></div>
-      <div class="movie_short_description">
-        <p>test</p>
-        <a href="{{ url_for('movie', movie_name='Трансформери: повернення')}}">
-          <button class="button" type="submit">Детальніше</button>
-        </a>
+
+    {% for movie in movies %}
+    <div class="movie-card">
+      <div class="movie-inner">
+        <div class="movie-front">
+          <img src="{{ movie.img_src }}" alt="{{ movie.title }}">
+        </div>
+   
+        <div class="movie-back">
+          <h3>{{ movie.title }}</h3>
+          <p>{{ movie.description }}</p>
+          <a href="{{ url_for('movie', movie_name=movie.name) }}">
+            <button class="button">Детальніше</button>
+          </a>
+        </div>
       </div>
     </div>
-    <div class="movie 3">
-      <div class="image"></div>
-      <div class="movie_short_description">
-        <p>test</p>
-        <a href="{{ url_for('movie', movie_name='Трансформери: повернення')}}">
-          <button class="button" type="submit">Детальніше</button>
-        </a>
-      </div>
-    </div>
-    <div class="movie 4">
-      <div class="image"></div>
-      <div class="movie_short_description">
-        <p>test</p>
-        <a href="{{ url_for('movie', movie_name='Трансформери: повернення')}}">
-          <button class="button" type="submit">Детальніше</button>
-        </a>
-      </div>
-    </div>
-    <div class="movie 5">
-      <div class="image"></div>
-      <div class="movie_short_description">
-        <p>test</p>
-        <a href="{{ url_for('movie', movie_name='Трансформери: повернення')}}">
-          <button class="button" type="submit">Детальніше</button>
-        </a>
-    </div>
-    </div>
-    <div class="movie 6">
-      <div class="image"></div>
-      <div class="movie_short_description">
-        <p>test</p>
-        <a href="{{ url_for('movie', movie_name='Трансформери: повернення')}}">
-          <button class="button" type="submit">Детальніше</button>
-        </a>
-      </div>
-    </div>
+  </div>
+    {% endfor %}
   </main>
+
+
+
+
 
   <footer class="footer movies_catalog">
     <div class="social_media">
