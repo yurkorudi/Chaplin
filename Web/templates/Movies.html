@@ -49,13 +49,14 @@
   </header>
 
   <main class="main movies_catalog">
+
     {% for movie in movies %}
     <div class="movie-card">
       <div class="movie-inner">
         <div class="movie-front">
           <img src="{{ movie.img_src }}" alt="{{ movie.title }}">
         </div>
-    
+   
         <div class="movie-back">
           <h3>{{ movie.title }}</h3>
           <p>{{ movie.description }}</p>
