@@ -231,23 +231,23 @@
             }
 
             buildHoll = hoursForDays.includes(chosenDay);
+            rowsBoard = [14, 30, 46, 60, 74, 88, 102, 116, 122];
+            row = 1;
             for (let i = 1; i <= seatPlaces; i++) {
+               
                 if (buildHoll) {
                     const seatItem = document.createElement("div");
                     seatItem.classList.add("place");
 
-                    rowsBoard = [14, 30, 46, 60, 74, 88, 102, 116, 122];
-                    row = 1;
-
-                    rowsBoard.forEach((num) =>{
-                        if(i > num){
-                            row++;
-                        }
-                    });
                     
-                    if(row == 9){
+
+                    if (i > rowsBoard[row - 1]) {
+                        row++;
+                    }
+
+                    if (row == 9) {
                         seatItem.classList.add("sofa");
-                        if(i%2 != 0){                            
+                        if (i % 2 != 0) {
                             setEmptyPlace(seatContainer)
                         }
                     }
@@ -266,60 +266,60 @@
                             const seatIndex = selectedSeats.findIndex(seat => seat.seatNumber === i);
 
                             seatItem.addEventListener("click", () => {
-                                updateSeatInfo(); 
+                                updateSeatInfo();
                             });
-                    
-                            if (seatIndex === -1) { 
+                            const seatDetails = { seatNumber: i, row: row, cost: 100 };
+
+                            if (seatIndex === -1) {
                                 seatItem.style.backgroundColor = "green";
-                                const seatDetails = { seatNumber: i, row: row, cost: 100 };
                                 selectedSeats.push(seatDetails);
-                                DataFotTicket[i] = {
-                                    movie_name : "{{movie_info['name']}}",
-                                    seat : i,
-                                    row  : row,
-                                    cost : 100,
-                                    time : selectedTime.textContent(),
-                                    date : selectedDate.textContent(),
-                                    mounth : currentMonth,
-                                    year : currentYear,
-                                    location : "Львів, пр. Червоної Калини, 81"
+                                DataFotTicket[i] = { 
+                                    movie_name: "{{movie_info['name']}}",
+                                    seat: i,
+                                    row: row,
+                                    cost: 100,
+                                    // time: selectedTime.textContent(), //here is problem with visibility
+                                    // date: selectedDate.textContent(), //here is problem with visibility
+                                    mounth: currentMonth,
+                                    year: currentYear,
+                                    location: "Львів, пр. Червоної Калини, 81"
                                 }
 
-                                
+
                             }
 
-                                
-                            else { 
+
+                            else {
                                 seatItem.style.backgroundColor = "";
                                 selectedSeats.splice(seatIndex, 1);
                                 delete DataFotTicket[i];
                             }
-                            
-                        console.log(selectedSeats);
-                        selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
-                        selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber);
-                        selectedRow.textContent = selectedSeats
-                            .map(seat => seat.row)
-                            .filter((value, index, self) => self.indexOf(value) === index);
-                        selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
-                        updateHiddenInput();
-                        bookSeatChek(DataFotTicket);
+
+                            console.log(selectedSeats);
+                            selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
+                            selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber);
+                            selectedRow.textContent = selectedSeats
+                                .map(seat => seat.row)
+                                .filter((value, index, self) => self.indexOf(value) === index);
+                            selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
+                            updateHiddenInput();
+                            bookSeatChek(DataFotTicket);
                         });
                     }
                     seatContainer.appendChild(seatItem);
 
-                   empty = [14, 60, 74, 88, 102, 116, 122]
-                   empty.forEach((num)=>{
-                    if(i == num){
-                        setEmptyPlace(seatContainer);
-                    }
-                   } );
+                    empty = [14, 60, 74, 88, 102, 116, 122]
+                    empty.forEach((num) => {
+                        if (i == num) {
+                            setEmptyPlace(seatContainer);
+                        }
+                    });
                 }
             }
         }
 
-        function setEmptyPlace(seatContainer){
-            for(e = 0; e < 2; e++){
+        function setEmptyPlace(seatContainer) {
+            for (e = 0; e < 2; e++) {
                 const seatEmptyItem = document.createElement("div");
                 seatEmptyItem.classList.add("second");
                 seatContainer.appendChild(seatEmptyItem);
@@ -335,11 +335,11 @@
                 },
                 body: JSON.stringify(dict)
             })
-            .then(response => response.json())
-            .then(data => console.log("Server response:", data))
-            .catch(error => console.error("Fetch error:", error));
+                .then(response => response.json())
+                .then(data => console.log("Server response:", data))
+                .catch(error => console.error("Fetch error:", error));
         };
-        
+
 
 
 
@@ -356,7 +356,7 @@
             selectedRow.textContent = [...new Set(selectedSeats.map(seat => seat.row))].join(", ");
             selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
             updateHiddenInput();
-    }
+        }
 
 
 
