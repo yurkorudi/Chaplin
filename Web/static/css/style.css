@@ -896,12 +896,10 @@ li:active {
   border: 2px solid rgb(180, 8, 248);
 }
 
-.seat .seats .second {
+.seat .seats .place.second {
   content: "";
-  display: block;
-  width: 25px;
-  height: 35px;
-  margin: 0 25% !important;
+  border: none;
+  cursor: inherit;
 }
 
 .seat .seats .place::after {
@@ -920,6 +918,12 @@ li:active {
   visibility: hidden;
   opacity: 0;
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.seat .seats .place.second::after {
+  content: none;
+  position: absolute;
+  background-color: none;
 }
 
 .seat .seats .place.sofa::after {

@@ -154,6 +154,11 @@
             if (hoursForDays.includes(day)) {
                 index = hoursForDays.indexOf(day);
                 listItem.innerHTML += ` ${specificHour[index]}`;
+
+                if(day === today.getDate()){
+                    selectedDate.textContent = day;
+                    selectedTime.textContent = specificHour[index];
+                }
             }
 
             listItem.addEventListener("click", function () {
@@ -197,6 +202,8 @@
             scheduleContainer.appendChild(listItem);
 
         }
+
+        
 
 
         // ___________________________________________________________________________________________________________
@@ -278,8 +285,8 @@
                                     seat: i,
                                     row: row,
                                     cost: 100,
-                                    // time: selectedTime.textContent(), //here is problem with visibility
-                                    // date: selectedDate.textContent(), //here is problem with visibility
+                                    time: selectedTime.textContent, 
+                                    date: selectedDate.textContent, 
                                     mounth: currentMonth,
                                     year: currentYear,
                                     location: "Львів, пр. Червоної Калини, 81"
@@ -321,7 +328,7 @@
         function setEmptyPlace(seatContainer) {
             for (e = 0; e < 2; e++) {
                 const seatEmptyItem = document.createElement("div");
-                seatEmptyItem.classList.add("second");
+                seatEmptyItem.classList.add("place", "second");
                 seatContainer.appendChild(seatEmptyItem);
             }
         }
