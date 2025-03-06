@@ -1,5 +1,6 @@
-
 Web/__pycache__/extensions.cpython-312.pyc
 Web/__pycache__/funcs.cpython-312.pyc
 *.pyc
 Web/ignore test.txt
+Web/__pycache__/main.cpython-312.pyc
+Web/password.txt
