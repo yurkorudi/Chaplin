@@ -1,0 +1,187 @@
+BookTest<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Схема залу</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .screen {
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            background: gray;
+            color: white;
+            margin-bottom: 10px;
+        }
+        .seating {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+        .seat {
+            width: 30px;
+            height: 30px;
+            margin: 2px;
+            text-align: center;
+            line-height: 30px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .standard {
+            background: lightgray;
+        }
+        .vip {
+            background: gold;
+        }
+        .selected {
+            background: green !important;
+            color: white;
+        }
+        .gap {
+            width: 30px;
+            height: 30px;
+            margin: 2px;
+            visibility: hidden;
+        }
+        .info {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="screen">Екран</div>
+    <div class="seating" id="seating"></div>
+
+    <div class="info">
+        <p>Вибрані місця: <span id="selectedSeats">-</span></p>
+        <p>Ряди: <span id="selectedRows">-</span></p>
+        <p>Загальна вартість: <span id="totalCost">0</span> грн</p>
+        <button id="buyBtn">Придбати квитки</button>
+    </div>
+
+    <script>
+        let seatPrices = {};
+        let selectedSeats = [];
+
+        async function loadPrices() {
+    try {
+        let response = await fetch('/prices.txt');  
+        if (!response.ok) throw new Error('Файл не знайдено'); // Додано перевірку
+        let text = await response.text();
+        let lines = text.split('\n');
+
+        let prices = {};
+        lines.forEach(line => {
+            let parts = line.split('=');
+            if (parts.length === 2) {
+                let key = parts[0].trim();
+                let value = parseInt(parts[1].trim(), 10);
+                if (!isNaN(value)) prices[key] = value;
+            }
+        });
+
+        console.log("Ціни завантажені:", prices);
+        return prices;
+    } catch (error) {
+        console.error("Помилка завантаження цін:", error);
+        return {}; 
+    }
+}
+
+
+        async function loadSeating() {
+            const response = await fetch('seating.txt');
+            const text = await response.text();
+            const rows = text.trim().split('\n');
+            const seatingContainer = document.getElementById('/static/seating');
+
+            rows.forEach((row, rowIndex) => {
+                const rowDiv = document.createElement('div');
+                rowDiv.classList.add('row');
+
+                row.split(' ').forEach((seatType, seatIndex) => {
+                    if (seatType === '') {
+                        const gap = document.createElement('div');
+                        gap.classList.add('gap');
+                        rowDiv.appendChild(gap);
+                        return;
+                    }
+
+                    const seat = document.createElement('div');
+                    seat.classList.add('seat', seatType === '1' ? 'vip' : 'standard');
+                    seat.dataset.row = rowIndex + 1;
+                    seat.dataset.seat = seatIndex + 1;
+                    seat.dataset.type = seatType;
+                    seat.dataset.price = seatPrices[seatType] || 0;
+
+                    seat.addEventListener('click', () => toggleSeat(seat));
+
+                    rowDiv.appendChild(seat);
+                });
+
+                seatingContainer.appendChild(rowDiv);
+            });
+        }
+
+        function toggleSeat(seat) {
+            const row = seat.dataset.row;
+            const seatNumber = seat.dataset.seat;
+            const price = parseInt(seat.dataset.price);
+
+            const index = selectedSeats.findIndex(s => s.row === row && s.seat === seatNumber);
+
+            if (index === -1) {
+                seat.classList.add('selected');
+                selectedSeats.push({ row, seat: seatNumber, price });
+            } else {
+                seat.classList.remove('selected');
+                selectedSeats.splice(index, 1);
+            }
+
+            updateInfo();
+        }
+
+        function updateInfo() {
+            const seatList = selectedSeats.map(s => s.seat).join(', ') || '-';
+            const rowList = [...new Set(selectedSeats.map(s => s.row))].join(', ') || '-';
+            const total = selectedSeats.reduce((sum, s) => sum + s.price, 0);
+
+            document.getElementById('selectedSeats').textContent = seatList;
+            document.getElementById('selectedRows').textContent = rowList;
+            document.getElementById('totalCost').textContent = total;
+        }
+
+        document.getElementById('buyBtn').addEventListener('click', () => {
+            const ticketData = JSON.stringify(selectedSeats);
+            console.log("Відправлення квитків:", ticketData);
+
+            fetch('/buy', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: ticketData
+            })
+            .then(response => response.json())
+            .then(data => alert("Квитки успішно придбані!"))
+            .catch(error => console.error("Помилка при покупці:", error));
+        });
+
+        async function init() {
+            await loadPrices();
+            await loadSeating();
+        }
+
+        init();
+    </script>
+
+</body>
+</html>

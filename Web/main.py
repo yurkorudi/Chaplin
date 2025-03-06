@@ -25,13 +25,16 @@ from modls import *
 app = Flask(__name__)
 admin = Admin()
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://zulu:zuludf345@64.225.100.209:3306/chaplin"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://doadmin:AVNS_lvbAXpZUJsCIpmibnj5@db-mysql-lon1-07765-do-user-19553523-0.k.db.ondigitalocean.com:25060/defaultdb"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'AdminSecretKey(2025)s'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
 
 
 db.init_app(app)
+
+with app.app_context():
+    db.create_all()
 
 #### ___________________________________admin______________________________________ ####
 
