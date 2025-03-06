@@ -51,7 +51,7 @@
 
                 </div>
 
-                <form action="{{url_for('ticket')}}" method="post">
+                <form action="{{url_for('buy_ticket')}}" method="post">
                     <div class="book_button"><button type="submit" , onclick="addBookeSeat()">Придбати квиток</button>
                     </div>
                 </form>
@@ -280,6 +280,7 @@
                             if (seatIndex === -1) {
                                 seatItem.style.backgroundColor = "green";
                                 selectedSeats.push(seatDetails);
+<<<<<<< Updated upstream
                                 DataFotTicket[i] = { 
                                     movie_name: "{{movie_info['name']}}",
                                     seat: i,
@@ -294,6 +295,24 @@
 
 
                             }
+=======
+                                DataFotTicket[i] = {
+                                    movie_name : "{{movie_info['name']}}",
+                                    seat : i,
+                                    row  : row,
+                                    cost : 100,
+                                    time : selectedTime.textContent(),
+                                    date : selectedDate.textContent(),
+                                    mounth : currentMonth,
+                                    year : currentYear,
+                                    location : "Львів, пр. Червоної Калини, 81"
+                                };
+                                
+
+                                console.log("_________________________________________________________");
+                                console.log(DataFotTicket);
+                                bookSeatChek(DataFotTicket);
+>>>>>>> Stashed changes
 
 
                             else {
@@ -325,8 +344,28 @@
             }
         }
 
+<<<<<<< Updated upstream
         function setEmptyPlace(seatContainer) {
             for (e = 0; e < 2; e++) {
+=======
+        function bookSeatChek(dict) {
+            let url = '/buy_ticket';
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dict)
+            })
+            .then(response => response.json())
+            .then(data => console.log("Server response:", data))
+            .catch(error => console.error("Fetch error:", error));
+        };
+
+
+        function setEmptyPlace(seatContainer){
+            for(e = 0; e < 2; e++){
+>>>>>>> Stashed changes
                 const seatEmptyItem = document.createElement("div");
                 seatEmptyItem.classList.add("place", "second");
                 seatContainer.appendChild(seatEmptyItem);

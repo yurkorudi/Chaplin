@@ -398,19 +398,19 @@ def buy_ticket():
 
 
 
-@app.route('/ticket', methods=['POST'])
-def ticket():
-    print("🔹 Request headers:", request.headers)
-    print("🔹 Request content-type:", request.content_type)
-    print("🔹 Request raw body:", request.data.decode('utf-8')) 
-    print("🔹 Request JSON (parsed):", request.get_json(force=True, silent=True))
-
-    if request.is_json:
+@app.route('/buy_ticket', methods=['GET', 'POST'])
+def buy_ticket():
+    try:
+        print("Raw Request Data:", request.data)
         data = request.get_json()
+        
+        if not data:
+            return jsonify({"error": "Empty or invalid JSON received"}), 400
+        
+        print("Request JSON (parsed):", data)
         return jsonify({"message": "Received JSON!", "data": data}), 200
-    else:
-        return jsonify({"error": "Invalid JSON"}), 400
-
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 
