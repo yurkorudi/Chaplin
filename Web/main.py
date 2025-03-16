@@ -488,7 +488,11 @@ if __name__ == "__main__":
     with app.app_context():
         create_sample_data()
         db.create_all()
+<<<<<<< Updated upstream
     app.run(debug=True)
+=======
+    app.run(debug=True, host='192.168.0.152')
+>>>>>>> Stashed changes
 
 
 
