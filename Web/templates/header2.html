@@ -1,0 +1,19 @@
+<header class="header">
+  <div class="logo">Chaplin Cinema</div>
+
+  <!-- Бургер-меню -->
+  <div class="burger-menu" onclick="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <!-- Мобільне меню -->
+  <nav class="mobile-menu">
+    <ul>
+      <li><a href="{{ url_for('homepage') }}">Головна</a></li>
+      <li><a href="{{ url_for('movies') }}">Фільми</a></li>
+      <li><a href="{{ url_for('about') }}">Контакти</a></li>
+    </ul>
+  </nav>
+</header>

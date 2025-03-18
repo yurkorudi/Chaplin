@@ -1129,9 +1129,17 @@ li:active {
   margin-top: 0;
 }
 
+.burger-menu {
+  display: none;
+}
+
+.mobile-menu {
+  display: none;
+}
+
 /* end user page */
 
-@media (max-width: 560px) {
+@media (max-width: 768px) {
   .home .header {
     margin-top: 20px;
     padding: 15px;
@@ -1140,7 +1148,7 @@ li:active {
   .home .logo {
     width: 20vw;
     margin-left: 0px;
-    top: -35px;
+    top: -10px;
   }
 
   .home .text-wrapper {
@@ -1215,11 +1223,11 @@ li:active {
   .slider {
     width: 100vw;
     perspective: 0;
-    margin: -10px;
+    margin: -8vw;
   }
 
   .row {
-    margin-top: -60px;
+    margin-top: -2vh;
     display: flex;
     align-items: start;
     height: 70vh;
@@ -1231,7 +1239,7 @@ li:active {
   .slider-body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
+    gap: 10px;
     margin: 0px;
     width: 80%;
     height: 80vh;
@@ -1255,7 +1263,8 @@ li:active {
   }
 
   .footer {
-    margin-top: 0px;
+    margin-top: -10px;
+    margin-left: -4vw;
   }
 
   .button-wrapper.location {
@@ -1288,10 +1297,7 @@ li:active {
   .main.movie .base_info {
     margin-top: 30px;
   }
-/* 
-  .main.movie .base_info .book_button {
-    margin-left: -20px !important;
-  } */
+
 
   .main.movie .base_info div h1 {
     font-size: 20px;
@@ -1462,4 +1468,78 @@ li:active {
     height: 50px;
   }
 
+}
+
+
+
+
+
+@media (max-width: 768px) {
+
+  .header-menu {
+    display: none;
+  }
+
+  .burger-menu {
+    display: block;
+  }
+
+
+  .burger-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 50px;
+    height: 40px;
+    cursor: pointer;
+    position: absolute;
+    top: -1vh;
+    right: 15px;
+    z-index: 1001;
+  }
+
+  .burger-menu span {
+    display: block;
+    width: 40px;
+    height: 2px;
+    background-color: white;
+    transition: 0.3s;
+  }
+
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 45vh; 
+    background: rgba(53, 6, 6, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(-100%);
+    transition: transform 0.4s ease-in-out;
+    z-index: 1000;
+  }
+
+  .mobile-menu.active {
+    display: block;
+    transform: translateY(0);
+  }
+
+  .mobile-menu ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+  }
+
+  .mobile-menu li {
+    padding: 20px;
+  }
+
+  .mobile-menu a {
+    color: white;
+    font-size: 20px;
+    text-decoration: none;
+  }
 }

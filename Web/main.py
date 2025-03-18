@@ -25,7 +25,7 @@ from modls import *
 app = Flask(__name__)
 admin = Admin()
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://zulu:zuludf345@64.225.100.209:3306/chaplin"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://doadmin:AVNS_lvbAXpZUJsCIpmibnj5@db-mysql-lon1-07765-do-user-19553523-0.k.db.ondigitalocean.com:25060/defaultdb"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'AdminSecretKey(2025)s'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
@@ -394,23 +394,7 @@ def buy_ticket():
         print("Request JSON (parsed):", data)
         return jsonify({"message": "Received JSON!", "data": data}), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-
-
-@app.route('/buy_ticket', methods=['GET', 'POST'])
-def buy_ticket():
-    try:
-        print("Raw Request Data:", request.data)
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({"error": "Empty or invalid JSON received"}), 400
-        
-        print("Request JSON (parsed):", data)
-        return jsonify({"message": "Received JSON!", "data": data}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error", str(e)}), 400
 
 
 
@@ -484,15 +468,14 @@ def button_click():
     return render_template('User.html', city = "", cities = cities)
 
 
+
+
 if __name__ == "__main__":
     with app.app_context():
         create_sample_data()
         db.create_all()
-<<<<<<< Updated upstream
-    app.run(debug=True)
-=======
-    app.run(debug=True, host='192.168.0.152')
->>>>>>> Stashed changes
+    app.run(debug=True, host='192.168.87.143')
+
 
 
 
