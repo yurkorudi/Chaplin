@@ -467,6 +467,13 @@ def button_click():
     global user_device
     return render_template('User.html', city = "", cities = cities)
 
+@app.route('/profile')
+def profile():
+    global user_location
+    global cities
+    global user_device
+    return render_template('User-cabinet.html', city = "", cities = cities)
+
 
 
 

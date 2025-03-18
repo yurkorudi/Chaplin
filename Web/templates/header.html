@@ -43,11 +43,56 @@
     <nav class="mobile-menu">
         <ul>
             <li></li>
-            <li><div><a>ваше місто: {{ city }} </a></div>
-            <li><a href="{{ url_for('user') }}">профіль</a></li>
-            <li><a href="{{ url_for('homepage') }}">головна</a></li>
-            <li><a href="{{ url_for('movies') }}">фільми</a></li>
-            <li><a href="{{ url_for('about') }}">про нас</a></li>
+            <li><div><a>Ваше місто: <span id="selected-city">Виберіть місто</span></a></div>
+            <li>
+                <button class="city-btn" data-city='Львів'>Львів</button>
+                <button class="city-btn" data-city='Моршин'>Моршин</button>
+                <button class="city-btn" data-city='Стрий 1'>Стрий 1</button>
+            </li>
+            <li>
+                <button class="city-btn" data-city='Стрий 2'>Стрий 2</button>
+                <button class="city-btn" data-city='Стрий 3'>Стрий 3</button>
+                <button class="city-btn" data-city='Долина'>Долина</button>
+            </li>
+            <div class="topbtn-s_mobile">
+                <li><a href="{{ url_for('homepage') }}" style="font-size: 26px;">головна</a></li>
+                <li><a href="{{ url_for('user') }}">профіль</a></li>
+                <li><a href="{{ url_for('movies') }}">фільми</a></li>
+                <li><a href="{{ url_for('about') }}">про нас</a></li>
+            </div>
         </ul>
     </nav>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const cityButtons = document.querySelectorAll(".city-btn");
+            const selectedCitySpan = document.getElementById("selected-city");
+        
+            let savedCity = localStorage.getItem("selectedCity");
+            if (savedCity) {
+                selectedCitySpan.textContent = savedCity;
+                highlightSelectedCity(savedCity);
+            }
+        
+            cityButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    let selectedCity = this.getAttribute("data-city");
+                    localStorage.setItem("selectedCity", selectedCity);
+                    selectedCitySpan.textContent = selectedCity;
+                    highlightSelectedCity(selectedCity);
+                });
+            });
+        
+            function highlightSelectedCity(city) {
+                cityButtons.forEach(button => {
+                    if (button.getAttribute("data-city") === city) {
+                        button.classList.add("active");
+                    } else {
+                        button.classList.remove("active");
+                    }
+                });
+            }
+        });     
+        </script>
+        
 </header>
