@@ -192,7 +192,7 @@ body {
   gap: 0px;
 }
 
-.home .button-wrapper:hover {
+.home .header .button-wrapper:hover {
   background: black;
   transform: scale(1.1);
 }
@@ -363,9 +363,9 @@ body {
 }
 
 .row .button-wrapper button:hover {
-  background-color: rgba(128, 0, 0, 1);
-  color: black;
-  border: #000000 2px solid;
+  background-color: black;
+  color: white;
+  border: rgba(128, 0, 0, 1) 2px solid;
   transition: 0.5s ease-in-out;
 }
 
@@ -462,7 +462,7 @@ body {
   justify-content: center;
 }
 
-.button {
+.movie-back .button {
   background-color: #a21313;
   color: black;
   border: none;
@@ -476,7 +476,7 @@ body {
   margin-top: 10px;
 }
 
-.button:hover {
+.movie-back .button:hover {
   background-color: #ff9900;
 }
 
@@ -1224,6 +1224,38 @@ li:active {
 
 /* end user page */
 
+.city-btn {
+  background: linear-gradient(135deg, #410000, #470b01); /* Градієнтний фон */
+  color: white;
+  border: wheat;
+  padding: 12px 24px;
+  font-size: 12px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin: 2px;
+  outline: none;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.city-btn:hover {
+    background: linear-gradient(135deg, #000000, #6d0101); 
+    transform: scale(1.1);
+    border: white;
+}
+
+.city-btn:active {
+    transform: scale(0.95);
+}
+
+.city-btn.active {
+  background: #000000;
+  color: white;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.908);
+  transform: scale(1.1);
+}
+
 @media (max-width: 768px) {
   .home .header {
     margin-top: 20px;
@@ -1634,12 +1666,11 @@ li:active {
     font-size: 20px;
     text-decoration: none;
   }
-
-
+  
   .city-btn {
     background: linear-gradient(135deg, #410000, #470b01); /* Градієнтний фон */
     color: white;
-    border: none;
+    border: wheat;
     padding: 12px 24px;
     font-size: 12px;
     border-radius: 25px;
@@ -1654,6 +1685,7 @@ li:active {
   .city-btn:hover {
       background: linear-gradient(135deg, #000000, #6d0101); 
       transform: scale(1.1);
+      border: white;
   }
 
   .city-btn:active {
