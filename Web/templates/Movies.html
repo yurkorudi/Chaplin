@@ -22,17 +22,22 @@
     <div class="movie-card">
       <div class="movie-inner">
         <div class="movie-front">
-          <img src="{{ movie.img_src }}" alt="{{ movie.title }}">
+          <div class="movie-back-container">
+            <img src="{{ movie.img_src }}" alt="{{ movie.title }}">
+          </div>
           
         </div>
    
         <div class="movie-back">
         <div class="movie-back-container">
           <h1 style="font-size: 20px;">{{ movie.name }}</h1>
-          <p>Жанр:  {{ movie.genre }}</p>
-          <p>Тривалість:  {{ movie.duration }} хв</p>
-          <!-- ЯКІСЬ ПРИКОЛИ НЕ МОЖУ ЗРОБИТИ ЩОБ ВСЕ БУЛО З НОВОГО РЯДКА -->
-          <p>Вік: {{ movie.age }}</p>
+          <ul>
+            <li>Жанр:  {{ movie.genre }}</li>
+            <li>Тривалість:  {{ movie.duration }} хв</li>
+            <!-- ЯКІСЬ ПРИКОЛИ НЕ МОЖУ ЗРОБИТИ ЩОБ ВСЕ БУЛО З НОВОГО РЯДКА -->
+            <li>Вік: {{ movie.age }}</li>
+          </ul>
+          
           <a href="{{ url_for('movie', movie_name=movie.name) }}">
             <button class="button">Детальніше</button>
           </a>
