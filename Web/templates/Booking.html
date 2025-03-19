@@ -241,16 +241,17 @@
             buildHoll = hoursForDays.includes(chosenDay);
             rowsBoard = [14, 30, 46, 60, 74, 88, 102, 116, 122];
             row = 1;
+            placeNumber = 1;
+
             for (let i = 1; i <= seatPlaces; i++) {
 
                 if (buildHoll) {
                     const seatItem = document.createElement("div");
                     seatItem.classList.add("place");
 
-
-
                     if (i > rowsBoard[row - 1]) {
                         row++;
+                        placeNumber = 1;
                     }
 
                     if (row == 9) {
@@ -259,6 +260,13 @@
                             setEmptyPlace(seatContainer)
                         }
                     }
+
+                    const seatDetails = { seatNumber: placeNumber, row: row, cost: 100 };
+                    if (i > 116) {
+                        seatDetails.cost = 120;
+                    }
+
+                    placeNumber++;
 
                     if (unavailableSeatsSession[chosenDay] != null) {
                         unavailableSeats = unavailableSeatsSession[chosenDay];
@@ -276,10 +284,8 @@
                             seatItem.addEventListener("click", () => {
                                 updateSeatInfo();
                             });
-                            const seatDetails = { seatNumber: i, row: row, cost: 100 };
-                            if (i > 116){
-                                seatDetails.cost = 120;
-                            }
+                        
+
 
                             if (seatIndex === -1) {
                                 seatItem.style.backgroundColor = "green";
