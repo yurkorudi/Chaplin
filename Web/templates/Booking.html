@@ -277,14 +277,15 @@
                                 updateSeatInfo();
                             });
                             const seatDetails = { seatNumber: i, row: row, cost: 100 };
+                            if (i > 116){
+                                seatDetails.cost = 120;
+                            }
 
                             if (seatIndex === -1) {
                                 seatItem.style.backgroundColor = "green";
                                 selectedSeats.push(seatDetails);
 
                             }
-
-
                             else {
                                 seatItem.style.backgroundColor = "";
                                 selectedSeats.splice(seatIndex, 1);
