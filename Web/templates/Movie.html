@@ -60,11 +60,10 @@
                 <h1>Опис Фільму:</h1>
                 <p>{{movie_info['description']}}</p>
             </div>
-            <div class="trailer">
-                <video class="treiler" controls poster="{{movie_info['treiler_poster']}}">
-                    <source src="{{movie_info['treiler']}}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+            <div class="treiler">
+                <iframe style="width: 100%; height: 60%;"  frameborder="0" allowfullscreen
+                src="https://www.youtube.com/embed/tgbNymZ7vqY">
+                </iframe>
             </div>
         </div>
         <div class="right_menu">
@@ -87,39 +86,66 @@
 
 
 
-
-
-
-
-
-
-
-
     
     <script>
+
+    function toggleMenu() {
+      document.querySelector('.nav-menu').classList.toggle('active');
+    }
+    function toggleMenu() {
+      document.querySelector('.mobile-menu').classList.toggle('active');
+    }
+
+
+        const mediaQuery = window.matchMedia("(min-width: 460px)");
+        if (!mediaQuery.matches) {
+            const base = document.querySelector('.base_info');
+            const right = document.querySelector('.right_menu');
+            base.prepend(right);
+        }
         const scheduleContainer = document.getElementById("schedule");
         const today = new Date();
         const currentYear = today.getFullYear();
         const currentMonth = today.getMonth();
         const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
-
         const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const movieName = urlParams.get('movie_name');
+
+        var sessionDateTime = "{{ movie_info['date_time'] }}"
+            .slice(1, -1)
+            .replace(/&#39;/g, " ")
+            .split(" , ");
+
+        let hoursForDays = [];
+        let specificHour = [];
+
+        sessionDateTime.forEach((dt) => {
+            hoursForDays.push(new Date(dt).getDate())
+            minutes = new Date(dt).getMinutes();
+            if (minutes < 10) {
+                specificHour.push(new Date(dt).getHours() + ":" + minutes + "0")
+            }
+            else {
+                specificHour.push(new Date(dt).getHours() + ":" + minutes)
+            }
+        });
 
 
-        const hoursForDays = [1, 5, 10, 15, 20]; // Days with specific hours
-        const specificHour = "09:00";
+        const selectedDate = document.querySelector('.value_date');
+        const selectedTime = document.querySelector('.value_time');
+        const selectedSeat = document.querySelector('.value_seat');
+        const selectedRow = document.querySelector('.value_row');
+        const selectedCost = document.querySelector('.value_cost');
 
-        // Create empty slots for days before the first day of the month
         for (let i = 0; i < firstDayOfMonth; i++) {
             const emptyItem = document.createElement("li");
             emptyItem.classList.add("empty");
             scheduleContainer.appendChild(emptyItem);
         }
 
-        // Create list items for each day of the month
+
+        let lastClickedItem = null;
+
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(currentYear, currentMonth, day);
             const formattedDate = date.toISOString().split("T")[0];
@@ -129,6 +155,8 @@
             timeElement.setAttribute("datetime", formattedDate);
             timeElement.textContent = day;
 
+            listItem.style.backgroundColor = "";
+
             if (day === today.getDate()) {
                 listItem.classList.add("today");
             }
@@ -136,10 +164,55 @@
             listItem.appendChild(timeElement);
 
             if (hoursForDays.includes(day)) {
-                listItem.innerHTML += ` ${specificHour}`;
+                index = hoursForDays.indexOf(day);
+                listItem.innerHTML += ` ${specificHour[index]}`;
+
+                if(day === today.getDate()){
+                    selectedDate.textContent = day;
+                    selectedTime.textContent = specificHour[index];
+                }
             }
 
+            listItem.addEventListener("click", function () {
+                if (lastClickedItem) {
+                    lastClickedItem.style.backgroundColor = "";
+                }
+
+                listItem.style.backgroundColor = "gray";
+
+                lastClickedItem = listItem;
+                removeAllSeats();
+                bookSeat(day);
+
+                const selectedHour = listItem.textContent.split(' ');
+                minValue = document.querySelector('.value_date');
+                minValue = minValue.textContent.split(' ');
+
+
+                if (day < today.getDate()) {
+                    selectedDate.textContent = today.getDate();
+                    if (minValue[1] == null) {
+                        minValue[1] = 'no seans for this day';
+                    }
+                    selectedTime.textContent = minValue[1];
+                }
+                else {
+                    selectedDate.textContent = timeElement.textContent;
+
+                    if (selectedHour[1] == null) {
+                        selectedTime.textContent = 'no seans for this day';
+                    }
+                    else {
+                        selectedTime.textContent = selectedHour[1];
+                    }
+                }
+
+
+
+            });
+
             scheduleContainer.appendChild(listItem);
+
         }
     </script>
 
