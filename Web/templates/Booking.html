@@ -169,7 +169,7 @@
                 listItem.style.backgroundColor = "gray";
 
                 lastClickedItem = listItem;
-                console.log("Attempting to call removeAllSeats()");
+
                 removeAllSeats();
                 bookSeat(day);
 
@@ -316,12 +316,17 @@
 
         const seatForm = document.getElementById("seatForm");
         const seatInput = document.getElementById("selectedSeats");
-        
+
         function removeAllSeats() {
             const divsToRemove = document.querySelectorAll('div.place');
             divsToRemove.forEach((div) => {
                 div.remove();
             });
+
+            selectedSeats.length = 0;
+            selectedSeat.textContent = "";
+            selectedRow.textContent = "";
+            selectedCost.textContent = "";
         }
 
         function setEmptyPlace(seatContainer) {
