@@ -12,57 +12,32 @@
 
 <body class="fade-in">
   <div class="home">
-
-    <header class="header">
-      <div class="logo">
-        <div class="text-wrapper">Chaplin</div>
-        <div class="div">cinema</div>
-        <img class="blackhat" src="/static/img/hat.png" />
-      </div>
-      <div class="header-menu">
-        <div class="topbtn-s">
-          <form action="{{ url_for('homepage')}}">
-            <div class="button-wrapper"><button class="button" type="submit">Головна</button></div>
-          </form>
-          <form action="{{ url_for('about')}}">
-            <div class="button-wrapper"><button class="button" type="submit">Про нас</button></div>
-          </form>
-          <div class="dropdown">
-            <div class="button-wrapper"><button class="button" class="button-wrapper" class="dropdown">Локація: {{ city
-                }}</button>
-              <div class="dropdown-content">
-                {% for l, c in cities.items() %}
-                <a href="{{url_for('homepage')}}?location={{l}}" style="--delay: 0s;">{{c}}</a>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-          <div class="button-wrapper user">
-            <form action="{{ url_for('user')}}">
-              <div class="button"><button class="button" type="submit">Увійти</button></div>
-          </form>
-            <div class="ico"></div>
-          </div>
-        </div>
-      </div>
+    {%include('header.html')%}
   </div>
-  </header>
+
 
   <main class="main movies_catalog">
 
     {% for movie in movies %}
+    <br>
     <div class="movie-card">
       <div class="movie-inner">
         <div class="movie-front">
           <img src="{{ movie.img_src }}" alt="{{ movie.title }}">
+          
         </div>
    
         <div class="movie-back">
-          <h3>{{ movie.title }}</h3>
-          <p>{{ movie.description }}</p>
+        <div class="movie-back-container">
+          <h1 style="font-size: 20px;">{{ movie.name }}</h1>
+          <p>Жанр:  {{ movie.genre }}</p>
+          <p>Тривалість:  {{ movie.duration }} хв</p>
+          <!-- ЯКІСЬ ПРИКОЛИ НЕ МОЖУ ЗРОБИТИ ЩОБ ВСЕ БУЛО З НОВОГО РЯДКА -->
+          <p>Вік: {{ movie.age }}</p>
           <a href="{{ url_for('movie', movie_name=movie.name) }}">
             <button class="button">Детальніше</button>
           </a>
+        </div>
         </div>
       </div>
     </div>
@@ -70,26 +45,19 @@
     {% endfor %}
   </main>
 
-
-
-
-
-  <footer class="footer movies_catalog">
-    <div class="social_media">
-      <p>Соцмережі</p>
-      <a href="https://www.instagram.com/chaplin_cinema_lviv?igsh=MzRlODBiNWFlZA=="
-        class="footer_info">Chaplin_cinema_lviv</a>
-    </div>
-    <div class="contacts">
-      <p>Контакти</p>
-      <p class="footer_info">+38(050)2984715</p>
-    </div>
-    <div class="map">
-      <p>Адрес</p>
-      <p class="footer_info">пр. Червоної Калини, 81, Львів</p>
-    </div>
-  </footer>
+  {% include('footer.html') %}
   </div>
+
+  <script>
+    function toggleMenu() {
+      document.querySelector('.nav-menu').classList.toggle('active');
+    }
+    function toggleMenu() {
+      document.querySelector('.mobile-menu').classList.toggle('active');
+    }
+  </script>
+
+
 </body>
 
 </html>

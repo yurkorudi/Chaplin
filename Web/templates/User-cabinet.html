@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flask App</title>
+  <title>Кабінет користувача | Chaplin Cinema</title>
   <link rel="stylesheet" href="/static/css/globals.css">
   <link rel="stylesheet" href="/static/css/style.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -15,23 +15,92 @@
 
     {% include('header.html') %}
 
-    <main class="main">
+    <main class="main user-cabinet">
+      <div class="profile-container">
+        
 
-
-      <div class="profile-viev">
-      <div class="row gutters-sm">
-        <div class="col-md-4 mb-3">
-          <div class="card">
-            <div class="card-body">
-                <div class="text-in-card">
-                  <h2>Yura Pistun</h2>
-                  <p class="text-secondary mb-1">@Yureew</p>
-                  <p class="text-muted font-size-sm">Last visited: 12.05</p>
-                </div>
-              </div>
-            </div>
+        <div class="profile-card">
+          <div class="avatar">
+            <img src="/static/img/avatar.png" alt="User Avatar">
           </div>
+          <h2 class="username">Yura Pistun</h2>
+          <p class="nickname">@Yureew</p>
+          <p class="info"><strong>Останній візит:</strong> 12.05</p>
+          <p class="info"><strong>Email:</strong> example@gmail.com</p>
+          <p class="info"><strong>Дата створення акаунту:</strong> 01.01.2023</p>
+          <p class="info"><strong>Квитків куплено:</strong> 25</p>
+          <p class="info"><strong>Улюблені жанри:</strong> Horror, Sci-Fi, Drama</p>
+          <button class="edit-btn" onclick="editProfile()">Редагувати</button>
+          <button class="logout-btn">Вийти</button>
         </div>
 
+        <!-- Права частина - Історія переглядів -->
+        <div class="history">
+          <h3>Історія відвіданих фільмів</h3>
+          <ul class="history-list">
+            <li>
+              <span class="movie-title">Venom 3</span>
+              <span class="date">22.11.2024</span>
+            </li>
+            <li>
+              <span class="movie-title">Dune 2</span>
+              <span class="date">18.11.2024</span>
+            </li>
+            <li>
+              <span class="movie-title">Interstellar</span>
+              <span class="date">05.11.2024</span>
+            </li>
+          </ul>
+        </div>
 
       </div>
+
+      <div class="movies-section">
+        <h3>Новинки</h3>
+        <div class="movies-list">
+          <div class="movie-card">
+            <img src="/static/img/photo1.jpg" alt="Новий фільм 1">
+            <p class="movie-title">Avatar 3</p>
+          </div>
+          <div class="movie-card">
+            <img src="/static/img/photo2.jpg" alt="Новий фільм 2">
+            <p class="movie-title">Deadpool 3</p>
+          </div>
+          <div class="movie-card">
+            <img src="/static/img/photo3.jpg" alt="Новий фільм 3">
+            <p class="movie-title">Mad Max: The Wasteland</p>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Блок акцій -->
+      <div class="movies-section">
+        <h3>Акційні пропозиції</h3>
+        <div class="movies-list">
+          <div class="promo-card">
+            <img src="/static/img/img1.webp" alt="Акція 1">
+            <p class="promo-title">2 квитки за ціною 1</p>
+          </div>
+          <div class="promo-card">
+            <img src="/static/img/img2.webp" alt="Акція 2">
+            <p class="promo-title">Попкорн + Кола = знижка 30%</p>
+          </div>
+          <div class="promo-card">
+            <img src="/static/img/img3.webp" alt="Акція 3">
+            <p class="promo-title">Знижка для студентів -20%</p>
+          </div>
+        </div>
+      </div>
+
+
+    {% include('footer.html') %}
+
+  </div>
+
+  <script>
+    function editProfile() {
+      alert("Функція редагування профілю у розробці.");
+    }
+  </script>
+</body>
+</html>
