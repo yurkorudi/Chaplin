@@ -189,7 +189,7 @@ def get_films(name=False):
         films = Film.query.all()
         return [{"film_id": f.film_id, "name": f.name, "genre": f.genre, "description": f.description,
                 "release_start_date": f.release_start_date, "release_end_date": f.release_end_date,
-                "director": f.director, "actors": f.actors, "duration": f.duration, "image_id": f.image_id} for f in films]
+                "director": f.director, "actors": f.actors, "duration": f.duration, "image_id": f.image_id, "age": f.age} for f in films]
     else:
         film = Film.query.filter_by(name=name).first()
         if film:
@@ -203,6 +203,7 @@ def get_films(name=False):
                 "director": film.director,
                 "actors": film.actors,
                 "duration": film.duration,
+                "age": film.age,
                 "image_id": film.image_id
             }
         else:

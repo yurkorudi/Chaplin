@@ -12,44 +12,9 @@
 
 <body class="fade-in">
     <div class="home">
-        <header class="header">
-            <div class="logo">
-                <div class="text-wrapper">Chaplin</div>
-                <div class="div">cinema</div>
-                <img class="blackhat" src="/static/img/hat.png" />
-            </div>
-            <div class="header-menu">
-                <div class="topbtn-s">
-                    <form action="{{ url_for('homepage')}}">
-                        <div class="button-wrapper"><button class="button" type="submit">Головна</button></div>
-                    </form>
-                    <form action="{{ url_for('movies')}}">
-                        <div class="button-wrapper"><button class="button" type="submit">Фільми</button></div>
-                    </form>
-                    <form action="{{ url_for('about')}}">
-                        <div class="button-wrapper"><button class="button" type="submit">Про нас</button></div>
-                    </form>
-                    <div class="dropdown">
-                        <div class="button-wrapper location"><button class="button" class="button-wrapper"
-                                class="dropdown">Локація: {{ city
-                                }}</button>
-                            <div class="dropdown-content">
-                                {% for l, c in cities.items() %}
-                                <a href="{{url_for('homepage')}}?location={{l}}" style="--delay: 0s;">{{c}}</a>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="button-wrapper user">
-                        <form action="{{ url_for('user')}}">
-                            <div class="button"><button class="button" type="submit">Увійти</button></div>
-                        </form>
-                        <div class="ico"></div>
-                    </div>
-                </div>
-            </div>
-    </div>
-    </header>
+
+        
+        {% include('header.html') %}
 
     <main class="main movie">
         <div class="left_menu">
@@ -117,22 +82,8 @@
         </div>
     </main>
 
-    <footer class="footer movie">
-        <div class="social_media">
-            <p>Соцмережі</p>
-            <a href="https://www.instagram.com/chaplin_cinema_lviv?igsh=MzRlODBiNWFlZA=="
-                class="footer_info">Chaplin_cinema_lviv</a>
-        </div>
-        <div class="contacts">
-            <p>Контакти</p>
-            <p class="footer_info">+38(050)2984715</p>
-        </div>
-        <div class="map">
-            <p>Адрес</p>
-            <p class="footer_info">пр. Червоної Калини, 81, Львів</p>
-        </div>
-    </footer>
-    </div>
+    {% include('footer.html') %}
+    
 
 
 
