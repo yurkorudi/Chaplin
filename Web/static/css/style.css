@@ -375,8 +375,9 @@ body {
 
 .main.movies_catalog {
   display: grid;
+  column-gap: 20px;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 15px;
+  /* gap: 15px; */
   height: auto;
   margin-top: 0px;
 }
@@ -561,7 +562,7 @@ body {
 }
 
 .main.movie .left_menu {
-  height: auto;
+  height: 450px;
   width: 40vw;
   display: flex;
   flex-direction: column;
@@ -571,7 +572,7 @@ body {
 
 .main.movie .left_menu .movie_logo img {
   /* position: absolute; */
-  height: 100%;
+  min-height: 350px;
   width: 100%;
   padding: 0;
   margin: 0;
@@ -583,7 +584,7 @@ body {
   overflow: hidden;
   background-size: cover;
   background-position: center;
-  height: 350px;
+  height: 100%;
   width: 100%;
   position: relative;
 }
@@ -594,11 +595,11 @@ body {
   align-items: center;
 }
 
-.main.movie .base_info .book_button {
+/* .main.movie .base_info .book_button {
   display: flex;
   justify-content: center;
   align-items: start;
-}
+} */
 
 .main.movie .left_menu .book_button button,
 .main.movie .base_info .book_button button {
@@ -633,7 +634,7 @@ body {
 
 .main.movie .base_info {
   height: auto;
-  width: 100vw;
+  width: 70vw;
   color: white;
   margin-bottom: 15px;
 }
@@ -657,6 +658,10 @@ body {
   height: 70vh;
   object-fit: cover;
   object-position: center;
+}
+
+.main.movie .base_info .video-format{
+  width: 30vw;
 }
 
 .main.movie .base_info .movie_description {
@@ -1562,31 +1567,39 @@ li:active {
     display: none;
   }
 
+  /* movie's */
+
   .main.movie {
     flex-direction: column;
-    padding: 0 15px;
+    padding: 0 6px;
     margin: 0;
   }
 
   .main.movie .left_menu {
-    width: 100vw;
-    ;
+    width: 90vw;
+    height: auto;
     padding: 0;
     margin: 0;
   }
 
+  .main.movie .book_button{
+    top: -20px;
+  }
+
   .main.movie .left_menu .movie_logo img {
     width: 90vw;
-    padding: 0px 15px;
+    min-height: 350px;
+    padding: 15px 15px;
+    
   }
 
   .main.movie .left_menu .movie_logo {
-    height: 75vh;
     width: 100%;
   }
 
   .main.movie .base_info {
     margin-top: 30px;
+    width: 90vw;
   }
 
 
@@ -1611,7 +1624,14 @@ li:active {
   }
 
   .main.movies .base_info .treiler {
-    width: 50%;
+
+    width: 40px;
+    padding: 10px;
+    align-items: center;
+  }
+
+  .main.movie.base_info .video-format iframe{
+    width: 40px;
   }
 
   .main.movie .right_menu {
