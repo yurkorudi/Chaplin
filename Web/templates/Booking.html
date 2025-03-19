@@ -155,7 +155,7 @@
                 index = hoursForDays.indexOf(day);
                 listItem.innerHTML += ` ${specificHour[index]}`;
 
-                if(day === today.getDate()){
+                if (day === today.getDate()) {
                     selectedDate.textContent = day;
                     selectedTime.textContent = specificHour[index];
                 }
@@ -169,6 +169,7 @@
                 listItem.style.backgroundColor = "gray";
 
                 lastClickedItem = listItem;
+                console.log("Attempting to call removeAllSeats()");
                 removeAllSeats();
                 bookSeat(day);
 
@@ -203,7 +204,7 @@
 
         }
 
-        
+
 
 
         // ___________________________________________________________________________________________________________
@@ -241,12 +242,12 @@
             rowsBoard = [14, 30, 46, 60, 74, 88, 102, 116, 122];
             row = 1;
             for (let i = 1; i <= seatPlaces; i++) {
-               
+
                 if (buildHoll) {
                     const seatItem = document.createElement("div");
                     seatItem.classList.add("place");
 
-                    
+
 
                     if (i > rowsBoard[row - 1]) {
                         row++;
@@ -313,27 +314,18 @@
             }
         }
 
+        const seatForm = document.getElementById("seatForm");
+        const seatInput = document.getElementById("selectedSeats");
+        
+        function removeAllSeats() {
+            const divsToRemove = document.querySelectorAll('div.place');
+            divsToRemove.forEach((div) => {
+                div.remove();
+            });
+        }
 
         function setEmptyPlace(seatContainer) {
             for (e = 0; e < 2; e++) {
-
-        function bookSeatChek(dict) {
-            let url = '/buy_ticket';
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dict)
-            })
-            .then(response => response.json())
-            .then(data => console.log("Server response:", data))
-            .catch(error => console.error("Fetch error:", error));
-        };
-
-
-        function setEmptyPlace(seatContainer){
-            for(e = 0; e < 2; e++){
                 const seatEmptyItem = document.createElement("div");
                 seatEmptyItem.classList.add("place", "second");
                 seatContainer.appendChild(seatEmptyItem);
@@ -355,15 +347,6 @@
         };
 
 
-
-
-        function removeAllSeats() {
-            const divsToRemove = document.querySelectorAll('div.place');
-            divsToRemove.forEach((div) => {
-                div.remove();
-            });
-        }
-
         function updateSeatInfo() {
             selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
             selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber).join(", ");
@@ -371,11 +354,6 @@
             selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
             updateHiddenInput();
         }
-
-
-
-        const seatForm = document.getElementById("seatForm");
-        const seatInput = document.getElementById("selectedSeats");
 
         function updateHiddenInput() {
             seatInput.value = JSON.stringify(selectedSeats);
@@ -389,10 +367,6 @@
                 })
             }
         }
-    }}
-
-
-
         window.location.href = url;
 
 
