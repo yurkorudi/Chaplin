@@ -338,6 +338,7 @@
 
         function setEmptyPlace(seatContainer) {
             for (e = 0; e < 2; e++) {
+
                 const seatEmptyItem = document.createElement("div");
                 seatEmptyItem.classList.add("place", "second");
                 seatContainer.appendChild(seatEmptyItem);
@@ -357,6 +358,7 @@
                 .then(data => console.log("Server response:", data))
                 .catch(error => console.error("Fetch error:", error));
         };
+
 
 
         function updateSeatInfo() {
@@ -380,6 +382,7 @@
             }
         }
         window.location.href = url;
+
 
 
     </script>

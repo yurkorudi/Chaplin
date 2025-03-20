@@ -378,7 +378,6 @@ def book():
         print (selected_date, selected_hour)
         return render_template('Booking.html', city = "", cities = cities, movie_info = film.data, date=selected_date, time=selected_hour)
 
-
     return render_template('Booking.html', city = "", cities = cities, movie_info = film.data)
 
 
@@ -392,9 +391,12 @@ def buy_ticket():
             return jsonify({"error": "Empty or invalid JSON received"}), 400
         
         print("Request JSON (parsed):", data)
-        return jsonify({"message": "Received JSON!", "data": data}), 200
+        # return jsonify({"message": "Received JSON!", "data": data}), 200
+        return render_template('Homepage.html', city = "", cities = cities)
+
     except Exception as e:
-        return jsonify({"error", str(e)}), 400
+        # return jsonify({"error", str(e)}), 400
+        return render_template('Homepage.html', city = "", cities = cities)
 
 
 
@@ -481,7 +483,9 @@ if __name__ == "__main__":
     with app.app_context():
         create_sample_data()
         db.create_all()
-    app.run(debug=True)
+        
+    app.run(debug=True, host='192.168.0.173')
+
 
 
 
