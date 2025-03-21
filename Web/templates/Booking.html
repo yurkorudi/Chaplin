@@ -261,7 +261,7 @@
                         }
                     }
 
-                    const seatDetails = { seatNumber: placeNumber, row: row, cost: 100 };
+                    const seatDetails = { seatPlace: i, seatNumber: placeNumber, row: row, cost: 100 };
                     if (i > 116) {
                         seatDetails.cost = 120;
                     }
@@ -279,7 +279,7 @@
                         seatItem.style.backgroundColor = "gray";
                     } else {
                         seatItem.addEventListener("click", () => {
-                            const seatIndex = selectedSeats.findIndex(seat => seat.seatNumber === i);
+                            const seatIndex = selectedSeats.findIndex(seat => seat.seatPlace === i);
 
                             seatItem.addEventListener("click", () => {
                                 updateSeatInfo();
@@ -298,11 +298,11 @@
                                 delete DataFotTicket[i];
                             }
 
-                            console.log(selectedSeats);
+                            console.log(seatIndex);
                             selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
                             selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber);
                             selectedRow.textContent = selectedSeats
-                                .map(seat => seat.row)
+                                .map(({ row }) => row)
                                 .filter((value, index, self) => self.indexOf(value) === index);
                             selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
                             updateHiddenInput();
