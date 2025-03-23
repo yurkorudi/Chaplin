@@ -595,11 +595,11 @@ body {
   align-items: center;
 }
 
-/* .main.movie .base_info .book_button {
+.main.movie .base_info .book_button {
   display: flex;
   justify-content: center;
   align-items: start;
-} */
+}
 
 .main.movie .left_menu .book_button button,
 .main.movie .base_info .book_button button {
