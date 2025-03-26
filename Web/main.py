@@ -388,15 +388,16 @@ def buy_ticket():
         data = request.get_json()
         
         if not data:
-            return jsonify({"error": "Empty or invalid JSON received"}), 400
+            return jsonify({"error": "Empty or invalid JSON received EMPTYYYYYYYYY"}), 400
         
         print("Request JSON (parsed):", data)
         # return jsonify({"message": "Received JSON!", "data": data}), 200
-        return render_template('Homepage.html', city = "", cities = cities)
+        return jsonify({"message": "Payment method was not added"}), 200
 
     except Exception as e:
         # return jsonify({"error", str(e)}), 400
-        return render_template('Homepage.html', city = "", cities = cities)
+        
+        return jsonify({"message": "Payment method was not added"}), 400
 
 
 
@@ -432,9 +433,13 @@ def singup():
             return jsonify({"success": False, "error": "Цей email вже зареєстрований!"}), 400
         if i['login'] == user_info['login']:
             return jsonify({"success": False, "error": "Цей логін вже зайнятий!"}), 400 
-    add_user(phone_number=1, first_name=user_info['first_name'], last_name=user_info['last_name'], email=user_info['email'], login=user_info['login'], password=hashlib.sha256(user_info['password'].encode()).hexdigest(), bought_tickets_summary=0)
-    print("User added")       
-    return render_template('User.html', city = "", cities = cities)
+    try: 
+        add_user(phone_number=1, first_name=user_info['first_name'], last_name=user_info['last_name'], email=user_info['email'], login=user_info['login'], password=hashlib.sha256(user_info['password'].encode()).hexdigest(), bought_tickets_summary=0)
+        db.session.commit()
+        print("User added")       
+        return render_template('User-cabinet.html', city = "", cities = cities)
+    except:
+        return jsonify({"success": False, "error": "Щось пішло не так!"}), 400
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -451,8 +456,11 @@ def login():
         if user_info[i] == "":
             return jsonify({"success": False, "error": "Всі поля повинні бути заповнені!"}), 400
     existing_users = get_users()
+    print(existing_users)
+    print("___________________________________________________________________________________")
     for i in existing_users:
         if i["login"] == user_info['login']:
+            print (i["login"] == user_info['login'])
             print (i["password"])
             print (hashlib.sha256(user_info['password'].encode()).hexdigest())
             if i['password'] == hashlib.sha256(user_info['password'].encode()).hexdigest():
@@ -483,8 +491,8 @@ if __name__ == "__main__":
     with app.app_context():
         create_sample_data()
         db.create_all()
-        
-    app.run(debug=True, host='192.168.0.100')
+    app.run(debug=True, host='192.168.0.183')
+
 
 
 

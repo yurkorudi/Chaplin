@@ -48,8 +48,9 @@ def get_images(id=False):
 def add_user(phone_number, first_name, last_name, email, login, password, bought_tickets_summary):
     try:
 
-        existing_user = User.query.filter_by(phone_number=phone_number).first()
+        existing_user = User.query.filter_by(email=email).first()
         if existing_user:
+            print('massage: User already exists')
             return jsonify({"message": "User already exists"}), 200
 
         new_user = User(
@@ -64,9 +65,11 @@ def add_user(phone_number, first_name, last_name, email, login, password, bought
         )
         db.session.add(new_user)
         db.session.commit()
-        return jsonify({"message": "User added successfully"}), 201
+        print('massage: User added successfully')
+        return jsonify({"message": "User added successfully"}), 200
     except Exception as e:
         db.session.rollback()
+        print('error: ', e)
         return jsonify({"error": str(e)}), 500
 
 
