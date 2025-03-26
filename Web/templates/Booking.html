@@ -379,6 +379,13 @@
                 selectedSeats.forEach(place => {
                     selectedDate.textContent += place.row;
                 })
+                fetch ('/buy_ticket', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(selectedSeats)
+                })
             }
         }
         window.location.href = url;

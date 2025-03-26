@@ -13,92 +13,19 @@
 <body class="fade-in about">
   <div class="home">
 
-    <header class="header">
-      <div class="logo">
-        <div class="text-wrapper">Chaplin</div>
-        <div class="div">cinema</div>
-        <img class="blackhat" src="/static/img/hat.png" />
-      </div>
-      <div class="header-menu">
-        <div class="topbtn-s">
-          <form action="{{ url_for('homepage')}}">
-            <div class="button-wrapper"><button class="button" type="submit">Головна</button></div>
-          </form>
-          <form action="{{ url_for('movies')}}">
-            <div class="button-wrapper"><button class="button" type="submit">Фільми</button></div>
-          </form>
-          <div class="dropdown">
-            <div class="button-wrapper"><button class="button" class="button-wrapper" class="dropdown">Локація: {{ city
-                }}</button>
-              <div class="dropdown-content">
-                {% for l, c in cities.items() %}
-                <a href="{{url_for('homepage')}}?location={{l}}" style="--delay: 0s;">{{c}}</a>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-          <div class="button-wrapper user">
-            <form action="{{ url_for('user')}}">
-              <div class="button"><button class="button" type="submit">Увійти</button></div>
-          </form>
-            <div class="ico"></div>
-          </div>
-        </div>
-      </div>
-  </div>
-  </header>
+  {% include 'header.html' %}  
+  
 
   <main class="main about">
-    <div class="stici_picture">
-      <img src="/static/img/photo1.jpg" alt="">
-    </div>
-    <div class="company_info">
-      <div class="base_info">
-        <h1>Про компанію</h1>
-        <p>MULTIPLEX - це найбільша мережа кінотеатрів в Україні заснована у 2004 році.
-          MULTIPLEX - це 26 кінотеатрів та 147 кінозал у найбільших містах України.
-          Відповідно до кращої світової практики корпоративного управління, у серпні 2018 року був сформований найвищий
-          орган управління компанією MULTIPLEX – борд, до складу якого увійшли впливові українські підприємці,
-          управлінці і лідери громадської думки.
-          MULTIPLEX активно підтримує та інвестує у розвиток українського кінематографу.</p>
-      </div>
-      <div class="unique">
-        <h1>Наші особливості:</h1>
-        <li>унікальні смаки продукції попкорн-бару;</li>
-        <li>selfie-friendly дизайн інтер'єрів;</li>
-        <li>стандартні зали із місцями підвищеного комфорту в задніх рядах та інноваційні формати IMAX та ScreenX;</li>
-        <li>VIP кінотеатр з ексклюзивним сервісом у головному ТРЦ країни - ЦУМ у Києві;</li>
-      </div>
-      <div class="local_cinema">
-        <div class="gallery">
-          <img src="/static/img/photo.jpg" alt="">
-        </div>
-        <div class="short_discription">
-          <h1>Кінотеатр</h1>
-          <p>Кінозал центру Довженка вміщає до 160 осіб. Сучасні сидіння, зі зручною оббивкою та модерний дизайн
-            роблять перегляд неймовірно комфортним та приємним. А сучасна апаратура забезпечуж неймовірні візуальні
-            та звукові враження, які дозволять вам віжчути себе цчасником дійства.
-          </p>
+    <h1 style="font-size: 120px; color: azure;">Потребує інформації</h1>
         </div>
       </div>
     </div>
   </main>
 
-  <footer class="footer about">
-    <div class="social_media">
-      <p>Соцмережі</p>
-      <a href="https://www.instagram.com/chaplin_cinema_lviv?igsh=MzRlODBiNWFlZA=="
-        class="footer_info">Chaplin_cinema_lviv</a>
-    </div>
-    <div class="contacts">
-      <p>Контакти</p>
-      <p class="footer_info">+38(050)2984715</p>
-    </div>
-    <div class="map">
-      <p>Адрес</p>
-      <p class="footer_info">пр. Червоної Калини, 81, Львів</p>
-    </div>
-  </footer>
+  
+
+  {% include 'footer.html' %}
   </div>
 </body>
 
