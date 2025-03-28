@@ -32,7 +32,7 @@
             </div>
             <div class="button-wrapper user">
                 <form action="{{ url_for('user')}}">
-                    <div class="button"><button class="button" type="submit">Увійти</button></div>
+                    <div class="button"><button class="button" type="submit">Профіль</button></div>
                 </form>
                 <div class="ico"></div>
             </div>
@@ -73,22 +73,49 @@
         document.addEventListener("DOMContentLoaded", function () {
             const cityButtons = document.querySelectorAll(".city-btn");
             const selectedCitySpan = document.getElementById("selected-city");
-        
+
             let savedCity = localStorage.getItem("selectedCity");
+
             if (savedCity) {
                 selectedCitySpan.textContent = savedCity;
                 highlightSelectedCity(savedCity);
+                
+                // Перевіряємо, чи місто в сесії вже відповідає збереженому, щоб уникнути зациклення
+                fetch('/get_city')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.city !== savedCity) {
+                            sendCityToServer(savedCity);
+                        }
+                    });
             }
-        
+
             cityButtons.forEach(button => {
                 button.addEventListener("click", function () {
                     let selectedCity = this.getAttribute("data-city");
-                    localStorage.setItem("selectedCity", selectedCity);
-                    selectedCitySpan.textContent = selectedCity;
-                    highlightSelectedCity(selectedCity);
+
+                    if (selectedCity !== savedCity) { // Перевіряємо, чи місто реально змінилося
+                        localStorage.setItem("selectedCity", selectedCity);
+                        selectedCitySpan.textContent = selectedCity;
+                        highlightSelectedCity(selectedCity);
+                        sendCityToServer(selectedCity);
+                    }
                 });
             });
-        
+
+            function sendCityToServer(city) {
+                fetch('/set_city', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ city: city })
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    }
+                });
+            }
+
+                
             function highlightSelectedCity(city) {
                 cityButtons.forEach(button => {
                     if (button.getAttribute("data-city") === city) {

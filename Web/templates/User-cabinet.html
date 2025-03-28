@@ -23,33 +23,27 @@
           <div class="avatar">
             <img src="/static/img/avatar.png" alt="User Avatar">
           </div>
-          <h2 class="username">Yura Pistun</h2>
-          <p class="nickname">@Yureew</p>
+          <h2 class="username">{{ user.first_name}} {{ user.last_name }}</h2>
+          <p class="nickname">@{{ user.login }}</p>
           <p class="info"><strong>Останній візит:</strong> 12.05</p>
-          <p class="info"><strong>Email:</strong> example@gmail.com</p>
-          <p class="info"><strong>Дата створення акаунту:</strong> 01.01.2023</p>
-          <p class="info"><strong>Квитків куплено:</strong> 25</p>
-          <p class="info"><strong>Улюблені жанри:</strong> Horror, Sci-Fi, Drama</p>
+          <p class="info"><strong>Email:</strong>  {{ user.email }}</p>
+          <p class="info"><strong>Дата створення акаунту:</strong> {{ user.date_of_creation }}</p>
+          <p class="info"><strong>Квитків куплено:</strong> {{user.bought_tickets_summary}}</p>
+          <p class="info"><strong>Улюблені жанри:</strong> {{user.visited_genres}}</p>
           <button class="edit-btn" onclick="editProfile()">Редагувати</button>
           <button class="logout-btn">Вийти</button>
+          <br>
         </div>
 
         <!-- Права частина - Історія переглядів -->
         <div class="history">
-          <h3>Історія відвіданих фільмів</h3>
+          <h3>Історія відвіданих фільмів: </h3>
           <ul class="history-list">
+            {% for movie in films %}
             <li>
-              <span class="movie-title">Venom 3</span>
-              <span class="date">22.11.2024</span>
+              <span class="movie-title">{{ movie }}</span>
             </li>
-            <li>
-              <span class="movie-title">Dune 2</span>
-              <span class="date">18.11.2024</span>
-            </li>
-            <li>
-              <span class="movie-title">Interstellar</span>
-              <span class="date">05.11.2024</span>
-            </li>
+            {% endfor %}
           </ul>
         </div>
 
@@ -98,6 +92,16 @@
   </div>
 
   <script>
+
+    function toggleMenu() {
+      document.querySelector('.nav-menu').classList.toggle('active');
+    }
+    function toggleMenu() {
+      document.querySelector('.mobile-menu').classList.toggle('active');
+    }
+
+
+
     function editProfile() {
       alert("Функція редагування профілю у розробці.");
     }
