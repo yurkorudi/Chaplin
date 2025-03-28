@@ -25,11 +25,12 @@ from modls import *
 app = Flask(__name__)
 admin = Admin()
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://doadmin:AVNS_lvbAXpZUJsCIpmibnj5@db-mysql-lon1-07765-do-user-19553523-0.k.db.ondigitalocean.com:25060/defaultdb"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://doadmin:AVNS_lvbAXpZUJsCIpmibnj5@db-mysql-lon1-07765-do-user-19553523-0.k.db.ondigitalocean.com:25060/ChaplinDB"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'AdminSecretKey(2025)s'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
-
+# app.config['GEOIPIFY_API_KEY'] ="https://ip-geolocation.whoisxmlapi.com/api/v1?apiKey=at_mIjfuLmY9DhWVbW1I8EG5DVfTzNaG&ipAddress=8.8.8.8"
+GOOGLE_MAPS_API_KEY = 'AIzaSyCL1RYn2TgJBFu-7Vne8tdJBKc6v6GCzpM'
 
 db.init_app(app)
 
@@ -204,13 +205,13 @@ def create_sample_data():
                 contact_phone_number="555-3456", work_schedule="8:00 AM - 1:00 AM", instagram_link="https://instagram.com/galaxyscreens")
 
 
-        add_user(phone_number="1234567890", first_name="John", last_name="Doe",
+        add_user(first_name="John", last_name="Doe",
                 email="john.doe@example.com", login="johndoe", password="password123", bought_tickets_summary=3)
-        add_user(phone_number="0987654321", first_name="Jane", last_name="Smith",
+        add_user(first_name="Jane", last_name="Smith",
                 email="jane.smith@example.com", login="janesmith", password="password456", bought_tickets_summary=5)
-        add_user(phone_number="1122334455", first_name="Alice", last_name="Brown",
+        add_user(first_name="Alice", last_name="Brown",
                 email="alice.brown@example.com", login="alicebrown", password="password789", bought_tickets_summary=1)
-        add_user(phone_number="5566778899", first_name="Bob", last_name="Johnson",
+        add_user(first_name="Bob", last_name="Johnson",
                 email="bob.johnson@example.com", login="bobjohnson", password="password101", bought_tickets_summary=2)
 
 
@@ -226,13 +227,13 @@ def create_sample_data():
         add_seat(session_id=2, row=2, busy=True)
 
 
-        add_ticket(user_phone_number="1234567890", seat_id=1, session_id=1)
-        add_ticket(user_phone_number="0987654321", seat_id=2, session_id=1)
-        add_ticket(user_phone_number="1122334455", seat_id=3, session_id=2)
-        add_ticket(user_phone_number="5566778899", seat_id=4, session_id=2)
+        add_ticket(user_phone_number="1234567890", seat_id=1, session_id=1, user_id = 1)
+        add_ticket(user_phone_number="0987654321", seat_id=2, session_id=1, user_id = 2)
+        add_ticket(user_phone_number="1122334455", seat_id=3, session_id=2, user_id = 3)
+        add_ticket(user_phone_number="5566778899", seat_id=4, session_id=2, user_id = 4)
     print("created!")
 
-# create_sample_data()
+create_sample_data()
 
 
 with app.app_context():
@@ -240,10 +241,11 @@ with app.app_context():
 
 
 cities = {
-    "lviv":"Львів",
-    "mor":"Моршин",
-    "dol":"Долина",
-    "oks":"Оксана",
+    "Lviv":"Львів",
+    "Strui_1":"Стрий 1",
+    "Strui_2":"Стрий 2",
+    "Strui_3":"Стрий 3",
+    "Dolyna":"Долина",
 }
 user_location = []
 user_device = 'None'
@@ -254,12 +256,6 @@ user_device = 'None'
 @app.route('/')
 def early_start ():
     global user_device
-    user_agent = parse(request.headers.get('User-Agent'))
-    if user_agent.is_mobile:
-        user_device = "android"
-    else:
-        user_device = "desktop"
-
     return redirect(url_for('homepage'))
 
 
@@ -434,11 +430,13 @@ def singup():
         if i['login'] == user_info['login']:
             return jsonify({"success": False, "error": "Цей логін вже зайнятий!"}), 400 
     try: 
-        add_user(phone_number=1, first_name=user_info['first_name'], last_name=user_info['last_name'], email=user_info['email'], login=user_info['login'], password=hashlib.sha256(user_info['password'].encode()).hexdigest(), bought_tickets_summary=0)
+        add_user(first_name=user_info['first_name'], last_name=user_info['last_name'], email=user_info['email'], login=user_info['login'], password=hashlib.sha256(user_info['password'].encode()).hexdigest(), bought_tickets_summary=0)
         db.session.commit()
         print("User added")       
-        return render_template('User-cabinet.html', city = "", cities = cities)
-    except:
+        return jsonify({"success": True, "message": "Ви успішно зареєструвались!"}), 200
+        # return render_template('User-cabinet.html', city = "", cities = cities)
+    except Exception as e:
+        print(e)
         return jsonify({"success": False, "error": "Щось пішло не так!"}), 400
 
 
@@ -464,6 +462,8 @@ def login():
             print (i["password"])
             print (hashlib.sha256(user_info['password'].encode()).hexdigest())
             if i['password'] == hashlib.sha256(user_info['password'].encode()).hexdigest():
+                session['user'] = i['login']
+                print(session['user'])
                 return jsonify({"success": True, "message": "Ви успішно увійшли!"}), 200
             
         
@@ -482,7 +482,32 @@ def profile():
     global user_location
     global cities
     global user_device
-    return render_template('User-cabinet.html', city = "", cities = cities)
+    user_ = User.query.filter_by(login=session['user']).first()
+    films = []
+    try: 
+        history = Ticket.query.filter_by(user_id=user_.id).all()
+        for i in history: 
+            print(Film.query.filter_by(film_id=i.session.film_id).first().name)
+            films.append(Film.query.filter_by(film_id=i.session.film_id).first().name)
+        print(films)
+    except Exception as e:
+        print("No history")
+        print(e)
+    return render_template('User-cabinet.html', city = "", cities = cities, user=user_, films=films)
+
+
+
+@app.route('/set_city', methods=['POST'])
+def set_city():
+    data = request.json
+    session['city'] = data.get('city')
+    return '', 204
+
+
+@app.route('/get_city')
+def get_city():
+    print(session.get('city', ''))
+    return jsonify({'city': session.get('city', '')})
 
 
 
@@ -491,7 +516,7 @@ if __name__ == "__main__":
     with app.app_context():
         create_sample_data()
         db.create_all()
-    app.run(debug=True, host='192.168.0.183')
+    app.run(debug=True, host='192.168.31.36')
 
 
 

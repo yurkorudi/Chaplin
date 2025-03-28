@@ -1271,7 +1271,7 @@ li:active {
 
 .history-list li {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   background: rgba(255, 255, 255, 0.1);
   padding: 10px;
   margin-bottom: 8px;

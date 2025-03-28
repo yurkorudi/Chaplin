@@ -1,11 +1,12 @@
-from extensions import db
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy.sql import func 
 
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://doadmin:AVNS_lvbAXpZUJsCIpmibnj5@db-mysql-lon1-07765-do-user-19553523-0.k.db.ondigitalocean.com:25060/ChaplinDB"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-
-#>>> Here suppose to be all models of tables, so we can write to database new value to tables
-
+db = SQLAlchemy(app)
 
 class Image(db.Model):
     __tablename__ = 'images'
@@ -15,9 +16,6 @@ class Image(db.Model):
 
     def __repr__(self):
         return f'<Image {self.path}>'
-
-
-
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -36,8 +34,6 @@ class User(db.Model):
     cinema = db.relationship('Cinema', back_populates='users')
     image = db.relationship('Image')
 
-
-
 class Cinema(db.Model):
     __tablename__ = 'cinemas'
     cinema_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -49,8 +45,6 @@ class Cinema(db.Model):
 
     users = db.relationship('User', back_populates='cinema')
     sessions = db.relationship('Session', back_populates='cinema')
-
-
 
 class Session(db.Model):
     __tablename__ = 'sessions'
@@ -64,8 +58,6 @@ class Session(db.Model):
     film = db.relationship('Film', back_populates='sessions')
     tickets = db.relationship('Ticket', back_populates='session')
     seats = db.relationship('Seat', back_populates='session')
-
-
 
 class Film(db.Model):
     __tablename__ = 'films'
@@ -84,8 +76,6 @@ class Film(db.Model):
     image = db.relationship('Image')
     sessions = db.relationship('Session', back_populates='film')
 
-
-
 class Seat(db.Model):
     __tablename__ = 'seats'
     seat_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -95,8 +85,6 @@ class Seat(db.Model):
 
     session = db.relationship('Session', back_populates='seats')
 
-
-
 class Ticket(db.Model):
     __tablename__ = 'tickets'
     ticket_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -105,9 +93,11 @@ class Ticket(db.Model):
     session_id = db.Column(db.Integer, db.ForeignKey('sessions.session_id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-
     user = db.relationship('User', foreign_keys=[user_id])
     seat = db.relationship('Seat')
     session = db.relationship('Session', back_populates='tickets')
 
-
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+    print("Database created successfully!")

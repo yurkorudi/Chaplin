@@ -45,7 +45,7 @@ def get_images(id=False):
 
 
 
-def add_user(phone_number, first_name, last_name, email, login, password, bought_tickets_summary):
+def add_user(first_name, last_name, email, login, password, bought_tickets_summary):
     try:
 
         existing_user = User.query.filter_by(email=email).first()
@@ -54,7 +54,6 @@ def add_user(phone_number, first_name, last_name, email, login, password, bought
             return jsonify({"message": "User already exists"}), 200
 
         new_user = User(
-            phone_number=phone_number,
             first_name=first_name,
             last_name=last_name,
             email=email,
@@ -75,7 +74,7 @@ def add_user(phone_number, first_name, last_name, email, login, password, bought
 
 def get_users():
     users = User.query.all()
-    return [{"phone_number": u.phone_number, "email" : u.email, "login" : u.login, "password" : u.password, "name": f"{u.first_name} {u.last_name}", "tickets": u.bought_tickets_summary} for u in users]
+    return [{"user_id": u.id, "email" : u.email, "login" : u.login, "password" : u.password, "name": f"{u.first_name} {u.last_name}", "tickets": u.bought_tickets_summary} for u in users]
 
 
 def add_cinema(name, location, contact_phone_number, work_schedule, instagram_link):
@@ -241,10 +240,10 @@ def get_seats(session_id = False):
         seats = Seat.query.filter_by(session_id=session_id)
         return [{"seat_id": s.seat_id, "session_id": s.session_id, "row": s.row, "busy": s.busy} for s in seats]
 
-def add_ticket(user_phone_number, seat_id, session_id, date_of_purchase=None):
+def add_ticket(user_phone_number, seat_id, session_id, date_of_purchase=None, user_id=None):
     try:
 
-        existing_ticket = Ticket.query.filter_by(user_phone_number=user_phone_number, seat_id=seat_id, session_id=session_id).first()
+        existing_ticket = Ticket.query.filter_by(user_phone_number=user_phone_number, seat_id=seat_id, session_id=session_id, user_id=user_id ).first()
         if existing_ticket:
             return jsonify({"message": "Ticket already exists"}), 200
 
@@ -252,6 +251,7 @@ def add_ticket(user_phone_number, seat_id, session_id, date_of_purchase=None):
             user_phone_number=user_phone_number,
             seat_id=seat_id,
             session_id=session_id,
+            user_id=user_id,  
             date_of_purchase=date_of_purchase or datetime.utcnow()
         )
         db.session.add(new_ticket)
@@ -264,7 +264,7 @@ def add_ticket(user_phone_number, seat_id, session_id, date_of_purchase=None):
 def get_tickets():
     tickets = Ticket.query.all()
     return [{"ticket_id": t.ticket_id, "user_phone_number": t.user_phone_number,
-             "seat_id": t.seat_id, "session_id": t.session_id,
+             "seat_id": t.seat_id, "session_id": t.session_id, "user_id": t.user_id,
              "date_of_purchase": t.date_of_purchase} for t in tickets]
 
 
