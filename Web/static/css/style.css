@@ -295,6 +295,13 @@ body {
 }
 
 
+.invise{
+  border-color: transparent;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+
 /* Home page's base 360 degris's slider */
 
 .row {
