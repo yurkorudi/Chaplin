@@ -21,9 +21,21 @@
     <section class="slider row">
       <div class="slider-body">
         <div id="slideshow-form" class="slider-item" style="--j--:1">
-          <a href="{{ url_for('movie', movie_name='Трансформери: повернення')}}">
-            <input type="image" , src="./static/img/photo1.jpg" width="250" height="350">
-          </a>
+          <input type="image" , src="./static/img/photo1.jpg" width="250" height="350">
+          <div class="slider-film-back">
+            <div class="slider-film-button">
+              <a href="{{ url_for('movie', movie_name='Трансформери: повернення')}}">
+                <button>info</button>
+              </a>
+              <button>trailer</button>
+            </div>
+            <div class="slider-film-info">
+              <p>Назва: </p>
+              <p>Жанр: </p>
+              <p>Тривалість: </p>
+              <p>Вік: </p>
+            </div>
+          </div>
         </div>
         <div class="slider-item" style="--j--:2">
           <a href="{{ url_for('movie', movie_name='Веном 3')}}">
