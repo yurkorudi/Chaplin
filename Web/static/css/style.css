@@ -961,6 +961,25 @@ li:active {
   transform: translateX(-50%) translateY(0);
 }
 
+.tickets{
+  display: flex;
+  flex-direction: column;
+}
+
+.ticket{
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+  margin-bottom: 10px !important;
+  background-color: white;
+}
+
+.ticket div{
+  padding: 15px;
+  margin: 0 !important;
+  color: #000000;
+}
+
 /* end apout page */
 /* user page */
 

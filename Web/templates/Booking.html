@@ -61,6 +61,7 @@
                         <p>Екран</p>
                     </div>
                     <div class="seats" id="seats"></div>
+                    <div class="tickets" id="tickets"></div>
                     <form id="seatForm" action="/book" method="POST">
                         <div id="seats"></div>
                     </form>
@@ -290,7 +291,7 @@
                             if (seatIndex === -1) {
                                 seatItem.style.backgroundColor = "green";
                                 selectedSeats.push(seatDetails);
-
+                                createTicket(seatDetails.row, seatDetails.seatNumber, seatDetails.cost);
                             }
                             else {
                                 seatItem.style.backgroundColor = "";
@@ -390,7 +391,24 @@
         }
         window.location.href = url;
 
+        function createTicket(row, place, price){
+            const data = { row, place, price };
 
+            const ticketContainer = document.getElementById("tickets");
+
+            const ticket = document.createElement("div");
+            ticket.classList.add("ticket");
+            const ticketAttributes = ["row", "place", "price"];
+
+            ticketAttributes.forEach(attr => {
+                const item = document.createElement("div");
+                item.classList.add(attr + "Item");
+                item.textContent = attr.charAt(0).toUpperCase() + attr.slice(1) + ":\n" + data[attr];
+                ticket.appendChild(item);
+            });
+
+            ticketContainer.appendChild(ticket);
+        }
 
     </script>
 
