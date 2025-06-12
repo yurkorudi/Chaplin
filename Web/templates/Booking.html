@@ -297,6 +297,13 @@
                                 seatItem.style.backgroundColor = "";
                                 selectedSeats.splice(seatIndex, 1);
                                 delete DataFotTicket[i];
+
+                                // Видалити відповідний квиток
+                                const ticketId = `ticket-${seatDetails.row}-${seatDetails.seatNumber}`;
+                                const ticketToRemove = document.getElementById(ticketId);
+                                if (ticketToRemove) {
+                                    ticketToRemove.remove();
+                                }
                             }
 
                             console.log(seatIndex);
@@ -398,6 +405,11 @@
 
             const ticket = document.createElement("div");
             ticket.classList.add("ticket");
+
+            // Унікальний id для квитка, наприклад "ticket-3-5" для рядка 3, місця 5
+            const ticketId = `ticket-${row}-${place}`;
+            ticket.id = ticketId;
+
             const ticketAttributes = ["row", "place", "price"];
 
             ticketAttributes.forEach(attr => {
