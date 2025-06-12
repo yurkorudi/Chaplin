@@ -25,7 +25,7 @@ from modls import *
 app = Flask(__name__)
 admin = Admin()
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://doadmin:AVNS_lvbAXpZUJsCIpmibnj5@db-mysql-lon1-07765-do-user-19553523-0.k.db.ondigitalocean.com:25060/ChaplinDB"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://rootforchaplin:Super_Password22@167.172.62.229:3306/ChaplinDB"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'AdminSecretKey(2025)s'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
