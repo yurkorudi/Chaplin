@@ -4,6 +4,7 @@ from sqlalchemy.sql import func
 
 
 
+
 #>>> Here suppose to be all models of tables, so we can write to database new value to tables
 
 
@@ -109,5 +110,6 @@ class Ticket(db.Model):
     user = db.relationship('User', foreign_keys=[user_id])
     seat = db.relationship('Seat')
     session = db.relationship('Session', back_populates='tickets')
+
 
 
