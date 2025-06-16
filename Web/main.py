@@ -17,6 +17,8 @@ import os
 
 from extensions import db
 from models import Image, User, Cinema, Session, Film, Seat, Ticket
+
+
 from funcs import *
 from modls import *
 
@@ -25,7 +27,9 @@ from modls import *
 app = Flask(__name__)
 admin = Admin()
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://rootforchaplin:Super_Password22@167.172.62.229:3306/ChaplinDB"
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://rootforchaplin:Super_Password22@167.172.62.229:3306/ChaplinDB"
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'AdminSecretKey(2025)s'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
@@ -34,9 +38,13 @@ GOOGLE_MAPS_API_KEY = 'AIzaSyCL1RYn2TgJBFu-7Vne8tdJBKc6v6GCzpM'
 
 db.init_app(app)
 
+
+
 #### ___________________________________admin______________________________________ ####
 
 admin.init_app(app)
+
+
 
 
 class FilmView(ModelView):
@@ -234,6 +242,9 @@ def create_sample_data():
     print("created!")
 
 create_sample_data()
+
+create_sample_data()
+
 
 
 with app.app_context():
