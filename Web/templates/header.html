@@ -1,9 +1,13 @@
 <header class="header">
-    <div class="logo">
-        <div class="text-wrapper">Chaplin</div>
-        <div class="div">cinema</div>
-        <img class="blackhat" src="/static/img/hat.png" />
-    </div>
+    <form action="{{ url_for('homepage')}}">
+        <button class="invise" type="submit">
+            <div class="logo">
+                <div class="text-wrapper">Chaplin</div>
+                <div class="div">cinema</div>
+                <img class="blackhat" src="/static/img/hat.png" />
+            </div>
+        </button>
+    </form>
 
     <!-- Основне меню (для ПК) -->
     <div class="header-menu">
