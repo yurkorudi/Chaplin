@@ -2015,5 +2015,17 @@ li:active {
     width: 80vw;
     height: 500px;
   }
+
+  .movies-list {
+    flex-direction: column;
+  }
   
+  .movie-title, .promo-title {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .movie-card img, .promo-card img {
+    width: 90%;
+  }
 }  
