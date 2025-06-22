@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="form">
+        <form action="" method="post">
+            <label for="rows">Row count</label>
+            <input type="number" name="rows" id="rows">
+            <label for="columns">Coluns count</label>
+            <input type="number" name="columns" id="columns">
+            <button type="button" onclick="main()">Submit</button>
+        </form>
+    </div>
+    <div id="holl" class="holl"></div>
+    <script>
+        function getData(inputID){
+            const input = document.getElementById(inputID);
+            const value = Number(input.value);
+            
+            valid = checkValid(input, value);
+            
+            if (valid){
+                return value;
+            }
+        }
+
+        function checkValid(input, value){
+            if (!isNaN(value) && value != " "){
+                return true;
+            }
+            else{
+                input.value = "";
+                return false;
+            }
+        }
+
+        function setHollStyle(holl, columns){
+            const number = columns + 1;
+            holl.style.gridTemplateColumns = `repeat(${number}, 1fr)`;
+        }
+
+        function createElement(element, ...className){
+            const created = document.createElement(element);
+            created.classList.add(...className);
+            return created;
+        }
+
+        function createFill(holl, rows, columns){
+            placeCount = rows * columns;
+            t = 1;
+            rowCount = 1;
+
+            for (let i = 1; i <= placeCount; i++){
+                const seat = createElement("div", "seat");
+                
+                // const seatDetails = {seatPlace: 1 }
+                holl.appendChild(seat);
+         
+                if (t == columns || i == placeCount){
+                    const addButton = createElement("button", "add", rowCount); 
+                    holl.appendChild(addButton);
+                    t = 0;
+                    rowCount++;
+                }
+
+                t++;
+            }
+        }
+
+        function removeEl(className){
+            const element = document.querySelectorAll(className);   
+            element.forEach(el =>
+                el.remove()
+            );
+        }
+
+        function createHoll(){
+            const rows = getData("rows");
+            const columns = getData("columns");
+            const holl = document.getElementById("holl");
+
+            createFill(holl, rows, columns);
+            setHollStyle(holl, columns);
+            // setSeatStyle("seat");
+        }
+
+        function clearHoll(){
+            removeEl(".seat");
+            removeEl(".add");
+        }
+
+        function main(){
+            clearHoll();
+            createHoll();
+        }
+        
+    </script>
+</body>
+</html>
