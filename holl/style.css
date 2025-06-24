@@ -20,6 +20,11 @@ body{
     height: 15px;
 }
 
+.empty{
+    width: 15px;
+    height: 15px;
+}
+
 .add{
     width: 15px;
     height: 15px;
