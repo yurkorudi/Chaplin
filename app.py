@@ -5,13 +5,14 @@ from user_agents import *
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from time import *
-from flask_admin import Admin
+from flask_admin import Admin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import FileUploadField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from flask_admin.form import SecureForm
 from wtforms.validators import DataRequired
 from flask_admin.model import filters
+from flask_admin import helpers as admin_helpers
 from werkzeug.utils import secure_filename
 import hashlib
 import os
@@ -92,26 +93,8 @@ class SessionTable(ModelView):
         'session_duration': 'Тривалість (хв)'
     }
 
-
     column_searchable_list = ['film.name', 'cinema.name']
-
-
-    # class DateFilter(filters.BaseFilter):
-    #     def apply(self, query, value, alias=None):
-    #         selected_date = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')   
-    #         return query.filter(
-    #             Session.session_datetime >= selected_date,
-    #             Session.session_datetime < selected_date + timedelta(days=1)
-    #         )
-
-    #     def operation(self):
-    #         return 'День сеансу'
-
-    # column_filters = [
-    #     DateFilter(Session.session_datetime, 'Дата')
-    # ]
-
-
+    
     column_formatters = {
         'film': lambda v, c, m, p: m.film.name if m.film else '',
         'cinema': lambda v, c, m, p: m.cinema.name if m.cinema else ''
@@ -133,7 +116,11 @@ class SessionTable(ModelView):
         allow_blank=True,
         default=None
     )
-
+    
+class HollViev(BaseView):
+    @expose('/')
+    def index(self):
+        return render_template('admin/Holl.html') 
 
 
 
@@ -141,8 +128,8 @@ class SessionTable(ModelView):
 admin.add_view(SessionTable(Session, db.session))
 admin.add_view(FilmView(Film, db.session)) 
 admin.add_view(ImageView(Image, db.session))
-# admin.add_view(SessionView(Session, db.session))
 admin.add_view(CinemaView(Cinema, db.session))
+admin.add_view(HollViev(name='Holls', endpoint='holl'))
 
 #### ___________________________________admin______________________________________ ####
 
@@ -243,9 +230,7 @@ def create_sample_data():
         add_ticket(user_phone_number="5566778899", seat_id=4, session_id=2, user_id = 4)
     print("created!")
 
-create_sample_data()
 
-create_sample_data()
 
 
 
