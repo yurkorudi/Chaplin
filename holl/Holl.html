@@ -16,8 +16,19 @@
             <button type="button" onclick="main()">Submit</button>
         </form>
     </div>
-    <div id="holl" class="holl"></div>
+    <div class="main">
+        <div class="holls">
+            <a href="">Holl_1</a>
+            <a href="">Holl_2</a>
+        </div>
+        <div id="holl" class="holl"></div>        
+    </div>
+    
+    <button type="button" onclick="">Submit</button>
     <script>
+        let startColumns;
+        let extraRows = [];
+
         function getData(inputID){
             const input = document.getElementById(inputID);
             const value = Number(input.value);
@@ -50,33 +61,37 @@
             return created;
         }
 
-        function createFill(holl, rows, columns, empty = false, needRow = 0){
+        function createFill(holl, rows, columns, empty = false){
             placeCount = rows * columns;
             t = 1;
-            k = 1;
             rowCount = 1;
-            console.log(columns);
+            extraSeats = 0;
 
             for (let i = 1; i <= placeCount; i++){
+                k = (i - 1) % columns + 1;
+                
+                if (k == 1){
+                    count = extraRows.filter(n => n === rowCount).length;
+                    extraSeats = count - extraSeats;
+                }
+                
                 if(!empty){
                     seat = createElement("div", "seat");
                 }
                 else{
-                    if(k < columns){
+                    if(k <= startColumns){
                         seat = createElement("div", "seat");
                     }
-
-                    if(k == columns){
-                        if(needRow == rowCount){
-                            seat = createElement("div", "seat");
-                        }
-                        else{
-                            seat = createElement("div", "empty");
-                        }
-
-                        k = 0;
+                    else if(extraSeats > 0){
+                        seat = createElement("div", "seat");
+                        extraSeats--;
+                    }
+                    else{                      
+                        seat = createElement("div", "empty");
                     }
                 }
+
+                
                 
                 // const seatDetails = {seatPlace: 1 }
                 holl.appendChild(seat);
@@ -85,20 +100,27 @@
                     const addButton = createElement("button", "add"); 
                     addButton.dataset.row = rowCount;
                     addButton.addEventListener("click", function () {
-                        newCount = columns + 1;
                         empty = true;
                         const pressed = this.dataset.row;
+
+                        extraRows.push(Number(pressed));
+                        extraRows.sort((a, b) => a - b);
+                        maxCount = Math.max(
+                            ...extraRows.map(n => extraRows.filter(x => x === n).length)
+                        );
+
+                        newCount = startColumns + maxCount;
                         
                         clearHoll();
                         setHollStyle(holl, newCount);
-                        createHoll(newCount, empty, pressed);
+                        createHoll(newCount, empty);
                     });
                     holl.appendChild(addButton);
                     t = 0;
+                    // k = 0;
                     rowCount++;
                 }
                 
-                k++;
                 t++;
             }
         }
@@ -110,7 +132,7 @@
             );
         }
 
-        function createHoll(extraColumns=0, empty=false, rowCount = 0){
+        function createHoll(extraColumns=0, empty=false){
             const holl = document.getElementById("holl");
             const rows = getData("rows");            
             let columns = 0;
@@ -120,9 +142,10 @@
             }
             else{
                 columns = getData("columns");
+                startColumns = columns;
             }
 
-            createFill(holl, rows, columns, empty, rowCount);
+            createFill(holl, rows, columns, empty);
             setHollStyle(holl, columns);
             // setSeatStyle("seat");
         }
