@@ -117,11 +117,10 @@ class SessionTable(ModelView):
         default=None
     )
     
-class HollViev(BaseView):
+class HollView(BaseView):
     @expose('/')
     def index(self):
-        return render_template('admin/Holl.html') 
-
+        return self.render('holl/Holl.html')
 
 
 
@@ -129,7 +128,8 @@ admin.add_view(SessionTable(Session, db.session))
 admin.add_view(FilmView(Film, db.session)) 
 admin.add_view(ImageView(Image, db.session))
 admin.add_view(CinemaView(Cinema, db.session))
-admin.add_view(HollViev(name='Holls', endpoint='holl'))
+admin.add_view(HollView(name='Holls', endpoint='holls'))
+
 
 #### ___________________________________admin______________________________________ ####
 

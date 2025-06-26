@@ -1,146 +1,30 @@
-<!DOCTYPE html>
 {% extends 'admin/master.html' %}
 
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_holl.css') }}">
+{% endblock %}
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="form">
-        <form action="" method="post">
-            <label for="rows">Row count</label>
-            <input type="number" name="rows" id="rows">
-            <label for="columns">Coluns count</label>
-            <input type="number" name="columns" id="columns">
-            <button type="button" onclick="main()">Submit</button>
-        </form>
-    </div>
-    <div id="holl" class="holl"></div>
-    <script>
-        function getData(inputID){
-            const input = document.getElementById(inputID);
-            const value = Number(input.value);
-            
-            valid = checkValid(input, value);
-            
-            if (valid){
-                return value;
-            }
-        }
+{% block body %}
+  <div class="form">
+      <form action="" method="post">
+          <label for="rows">Row count</label>
+          <input type="number" name="rows" id="rows">
+          <label for="columns">Coluns count</label>
+          <input type="number" name="columns" id="columns">
+          <button type="button" onclick="main()">Submit</button>
+      </form>
+  </div>
 
-        function checkValid(input, value){
-            if (!isNaN(value) && value != " "){
-                return true;
-            }
-            else{
-                input.value = "";
-                return false;
-            }
-        }
+  <div class="main">
+      <div class="holls">
+          <a href="#">Holl_1</a>
+          <a href="#">Holl_2</a>
+      </div>
+      <div id="holl" class="holl"></div>        
+  </div>
 
-        function setHollStyle(holl, columns){
-            const number = columns + 1;
-            holl.style.gridTemplateColumns = `repeat(${number}, 1fr)`;
-        }
+  <button type="button" onclick="">Submit</button>
 
-        function createElement(element, ...className){
-            const created = document.createElement(element);
-            created.classList.add(...className);
-            return created;
-        }
-
-        function createFill(holl, rows, columns, empty = false, needRow = 0){
-            placeCount = rows * columns;
-            t = 1;
-            k = 1;
-            rowCount = 1;
-            console.log(columns);
-
-            for (let i = 1; i <= placeCount; i++){
-                if(!empty){
-                    seat = createElement("div", "seat");
-                }
-                else{
-                    if(k < columns){
-                        seat = createElement("div", "seat");
-                    }
-
-                    if(k == columns){
-                        if(needRow == rowCount){
-                            seat = createElement("div", "seat");
-                        }
-                        else{
-                            seat = createElement("div", "empty");
-                        }
-
-                        k = 0;
-                    }
-                }
-                
-                // const seatDetails = {seatPlace: 1 }
-                holl.appendChild(seat);
-         
-                if (t == columns || i == placeCount){
-                    const addButton = createElement("button", "add"); 
-                    addButton.dataset.row = rowCount;
-                    addButton.addEventListener("click", function () {
-                        newCount = columns + 1;
-                        empty = true;
-                        const pressed = this.dataset.row;
-                        
-                        clearHoll();
-                        setHollStyle(holl, newCount);
-                        createHoll(newCount, empty, pressed);
-                    });
-                    holl.appendChild(addButton);
-                    t = 0;
-                    rowCount++;
-                }
-                
-                k++;
-                t++;
-            }
-        }
-
-        function removeEl(className){
-            const element = document.querySelectorAll(className);   
-            element.forEach(el =>
-                el.remove()
-            );
-        }
-
-        function createHoll(extraColumns=0, empty=false, rowCount = 0){
-            const holl = document.getElementById("holl");
-            const rows = getData("rows");            
-            let columns = 0;
-
-            if(extraColumns > 0){
-                columns = extraColumns;
-            }
-            else{
-                columns = getData("columns");
-            }
-
-            createFill(holl, rows, columns, empty, rowCount);
-            setHollStyle(holl, columns);
-            // setSeatStyle("seat");
-        }
-
-        function clearHoll(){
-            removeEl(".seat");
-            removeEl(".add");
-            removeEl(".empty");
-        }
-
-        function main(){
-            clearHoll();
-            createHoll();
-        }
-        
-    </script>
-</body>
-</html>
+  <script src="{{ url_for('static', filename='js/holl_script.js') }}"></script>
+{% endblock %}
