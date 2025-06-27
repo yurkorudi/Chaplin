@@ -1,0 +1,37 @@
+{% extends 'admin/master.html' %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_home.css') }}">
+{% endblock %}
+
+{% block body %}
+  <div class="dashboard">
+    <h1>Панель адміністратора</h1>
+
+    {% for cinema in cinemas %}
+      <h2>{{ cinema.name }}</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>Продано квитків (онлайн)</h3>
+          <p>{{ cinema.tickets_today }}</p>
+        </div>
+
+        <div class="card">
+          <h3>Продано квитків (на касі)</h3>
+          <p>{{ cinema.total_income }}</p>
+        </div>
+
+        <div class="card">
+          <h3>Прибуток по фільмах</h3>
+          <p>{{ cinema.sessions_today }}</p>
+        </div>
+
+        <div class="card">
+          <h3>Загальна кількість квитків</h3>
+          <p>{{ cinema.visitors_today }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

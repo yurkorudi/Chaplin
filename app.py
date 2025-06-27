@@ -13,6 +13,7 @@ from flask_admin.form import SecureForm
 from wtforms.validators import DataRequired
 from flask_admin.model import filters
 from flask_admin import helpers as admin_helpers
+from flask_admin import AdminIndexView
 from werkzeug.utils import secure_filename
 import hashlib
 import os
@@ -28,7 +29,6 @@ from modls import *
 
 
 app = Flask(__name__)
-admin = Admin()
 
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://rootforchaplin:Super_Password22@167.172.62.229:3306/ChaplinDB"
@@ -45,9 +45,28 @@ db.init_app(app)
 
 #### ___________________________________admin______________________________________ ####
 
-admin.init_app(app)
 
 
+class CustomHomeView(AdminIndexView):
+    @expose('/')
+    def index(self):
+        cinemas_stats = [
+            {
+                'name': 'Кінотеатр А',
+                'tickets_today': 120,
+                'total_income': 15000,
+                'sessions_today': 10,
+                'visitors_today': 300,
+            },
+            {
+                'name': 'Кінотеатр Б',
+                'tickets_today': 90,
+                'total_income': 11000,
+                'sessions_today': 8,
+                'visitors_today': 220,
+            }
+        ]
+        return self.render('home/Home.html', cinemas=cinemas_stats)
 
 
 class FilmView(ModelView):
@@ -122,13 +141,19 @@ class HollView(BaseView):
     def index(self):
         return self.render('holl/Holl.html')
 
+admin = Admin(app, name='Адміністратор', template_mode='bootstrap3', index_view=CustomHomeView())
 
 
-admin.add_view(SessionTable(Session, db.session))
-admin.add_view(FilmView(Film, db.session)) 
-admin.add_view(ImageView(Image, db.session))
-admin.add_view(CinemaView(Cinema, db.session))
-admin.add_view(HollView(name='Holls', endpoint='holls'))
+
+
+
+
+admin.add_view(SessionTable(Session, db.session, name='Сеанси'))
+admin.add_view(FilmView(Film, db.session, name='Фільми')) 
+admin.add_view(ImageView(Image, db.session, name='Зображення'))
+admin.add_view(CinemaView(Cinema, db.session, name='Кінотеатри'))
+admin.add_view(HollView(endpoint='holls', name='Геометрія залів'))
+
 
 
 #### ___________________________________admin______________________________________ ####
