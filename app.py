@@ -139,7 +139,34 @@ class SessionTable(ModelView):
 class HollView(BaseView):
     @expose('/')
     def index(self):
-        return self.render('holl/Holl.html')
+        cinemas = [
+            {
+                'cinema_id' : 1,
+                'cinema_name' : 'Grand Cinema',
+                'holl_rows' : 10,
+                'holl_columns' : 15,
+            },
+            {
+                'cinema_id' : 2,
+                'cinema_name' : 'Elite Theaters',
+                'holl_rows' : 12,
+                'holl_columns' : 20,
+            },
+            {
+                'cinema_id' : 3,
+                'cinema_name' : 'Movie Palace',
+                'holl_rows' : 8,
+                'holl_columns' : 10,
+            },
+            {
+                'cinema_id' : 4,
+                'cinema_name' : 'Galaxy Screens',
+                'holl_rows' : 14,
+                'holl_columns' : 18,
+            }
+        ]
+        
+        return self.render('holl/Holl.html', data=cinemas)
 
 admin = Admin(app, name='Адміністратор', template_mode='bootstrap3', index_view=CustomHomeView())
 
@@ -294,6 +321,16 @@ def location():
             city = cities[location]
     return 
 
+
+
+@app.route("/api/save_hall_structure/<int:hall_id>", methods=["POST"])
+def save_hall_structure(hall_id):
+    structure = request.get_json()
+
+    hall = json.dumps(structure)
+    print("Received hall structure:", hall)
+
+    return jsonify({"status": "ok"})
 
 
 @app.route('/home')

@@ -18,13 +18,21 @@
 
   <div class="main">
       <div class="holls">
-          <a href="#">Holl_1</a>
-          <a href="#">Holl_2</a>
+        {% for i in data %}
+          <a href="#" 
+            class="cinema-link"
+            data-id="{{ i.cinema_id }}"
+            data-name="{{ i.cinema_name }}"
+            data-rows="{{ i.holl_rows }}"
+            data-columns="{{ i.holl_columns }}">
+            {{ i.cinema_name }}
+          </a>
+        {% endfor %}
       </div>
       <div id="holl" class="holl"></div>        
   </div>
 
-  <button type="button" onclick="">Submit</button>
+  <button type="button" onclick="saveStructure()">Save changes</button>
 
   <script src="{{ url_for('static', filename='js/holl_script.js') }}"></script>
 {% endblock %}

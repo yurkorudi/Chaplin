@@ -1,45 +1,135 @@
-body{
+body {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 20px;
 }
 
-.main{
+.form {
+    margin-bottom: 20px;
+}
+
+form {
     display: flex;
-    flex-direction: row;
-    width: min-content;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
-    margin: 30px 0;
 }
 
-.holls{
-    width: min-content;
-    margin-right: 30px;
+label {
+    font-weight: bold;
 }
 
-.holl{
+input {
+    width: 60px;
+    padding: 5px;
+}
+
+button {
+    padding: 5px 10px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    background-color: #2e8b57;
+    color: white;
+    cursor: pointer;
+}
+
+
+
+button:hover {
+    background-color: #246c46;
+}
+
+.main {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 30px;
+    gap: 30px;
+}
+
+.holls {
+    flex-shrink: 0;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: sticky;
+    top: 20px;
+}
+
+.holl {
+    flex-grow: 1;
     display: grid;
-    /* grid-template-columns: repeat(3, 1fr); */
-    gap: 2px;
+    gap: 4px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    justify-content: start;
 }
 
-.seat{
+.vip {
+    background-color: #dc3545;
+    border-color: #a71d2a;
+}
+
+.cinema-button {
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.cinema-button:hover {
+    background-color: #0056b3;
+}
+
+.holl {
+    display: grid;
+    gap: 4px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.seat {
+    width: 20px;
+    height: 20px;
     border: 2px solid black;
-    width: 15px;
-    height: 15px;
+    background-color: white;
 }
 
-.empty{
-    width: 15px;
-    height: 15px;
+.seat.vip {
+    background-color: crimson;
 }
 
-.add{
-    width: 15px;
-    height: 15px;
+.empty {
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border: 1px dashed gray;
 }
 
-.add::before{
-    content: "+  ";
+.add {
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+}
+.add:hover {
+    background-color: #1e7e34;
 }
