@@ -1,5 +1,4 @@
 {% extends 'admin/master.html' %}
-
 {% block head %}
   {{ super() }}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style_holl.css') }}">
@@ -7,32 +6,45 @@
 
 {% block body %}
   <div class="form">
-      <form action="" method="post">
-          <label for="rows">Row count</label>
-          <input type="number" name="rows" id="rows">
-          <label for="columns">Coluns count</label>
-          <input type="number" name="columns" id="columns">
-          <button type="button" onclick="main()">Submit</button>
-      </form>
+    <label for="rows">Row count</label>
+    <input type="number" id="rows" min="1">
+    <label for="columns">Columns count</label>
+    <input type="number" id="columns" min="1">
+    <button type="button" id="btn-generate">Submit</button>
   </div>
 
   <div class="main">
-      <div class="holls">
-        {% for i in data %}
-          <a href="#" 
-            class="cinema-link"
-            data-id="{{ i.cinema_id }}"
-            data-name="{{ i.cinema_name }}"
-            data-rows="{{ i.holl_rows }}"
-            data-columns="{{ i.holl_columns }}">
-            {{ i.cinema_name }}
-          </a>
-        {% endfor %}
-      </div>
-      <div id="holl" class="holl"></div>        
+    <div class="holls">
+      {% for cinema in cinemas %}
+        <div class="cinema-block">
+          <h4>{{ cinema.name }}</h4>
+          <ul>
+            {% for hall in cinema.halls %}
+              <li>
+                <a href="#"
+                   class="hall-link"
+                   data-cinema-id="{{ cinema.id }}"
+                   data-hall-id="{{ hall.id }}"
+                   data-rows="{{ hall.rows }}"
+                   data-columns="{{ hall.columns }}"
+                   data-structure='{{ hall.structure|tojson }}'>
+                  Зал №{{ hall.id }} — {{ hall.rows }}×{{ hall.columns }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+          <button type="button"
+                  class="new-hall-btn"
+                  data-cinema-id="{{ cinema.cinema_id }}">
+            Додати новий зал
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div id="holl" class="holl"></div>
   </div>
 
-  <button type="button" onclick="saveStructure()">Save changes</button>
-
+  <button type="button" id="btn-save">Зберегти зміни</button>
   <script src="{{ url_for('static', filename='js/holl_script.js') }}"></script>
 {% endblock %}

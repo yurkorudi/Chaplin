@@ -1,131 +1,154 @@
-let hallStructure = [];
-let hallId = null;
+let selectedCinemaId = null;
+let selectedHallId   = null;
+let hallStructure    = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btn-generate')
+          .addEventListener('click', main);
+  document.getElementById('btn-save')
+          .addEventListener('click', saveStructure);
+  document.querySelector('.holls')
+          .addEventListener('click', onCinemaListClick);
+});
+
+function onCinemaListClick(e) {
+  if (e.target.matches('.hall-link')) {
+    e.preventDefault();
+    selectedCinemaId = +e.target.dataset.cinemaId;
+    selectedHallId   = +e.target.dataset.hallId;
+
+    document.getElementById("rows").value    = +e.target.dataset.rows;
+    document.getElementById("columns").value = +e.target.dataset.columns;
+    hallStructure = JSON.parse(e.target.dataset.structure);
+    renderHall();
+    return;
+  }
+  if (e.target.matches('.new-hall-btn')) {
+    selectedCinemaId = +e.target.dataset.cinemaId;
+    selectedHallId   = null;
+
+    document.getElementById("rows").value    = '';
+    document.getElementById("columns").value = '';
+    hallStructure = [];
+    clearHoll();
+    alert(`Вибрано кінотеатр ID=${selectedCinemaId}.\n` +
+          `Введіть rows і columns та натисніть Submit.`);
+  }
+}
 
 function createElement(tag, ...classNames) {
-    const el = document.createElement(tag);
-    el.classList.add(...classNames);
-    return el;
+  const el = document.createElement(tag);
+  classNames
+    .filter(c => c && c.trim())
+    .forEach(c => el.classList.add(c));
+  return el;
 }
 
 function clearHoll() {
-    const holl = document.getElementById("holl");
-    holl.innerHTML = "";
+  document.getElementById("holl").innerHTML = "";
 }
 
-function setHollStyle(holl, columns) {
-    holl.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+function setHollStyle(holl, cols) {
+  holl.style.display = "grid";
+  holl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  holl.style.gap = "8px";
 }
 
 function renderHall() {
-    const holl = document.getElementById("holl");
-    clearHoll();
+  const holl = document.getElementById("holl");
+  clearHoll();
 
-    const rows = hallStructure.length;
-    const columns = Math.max(...hallStructure.map(row => row.length));
-    setHollStyle(holl, columns + 1);
+  const rows    = hallStructure.length;
+  const columns = rows ? hallStructure[0].length : 0;
+  setHollStyle(holl, columns + 1);
 
-    hallStructure.forEach((row, rowIndex) => {
-        for (let col = 0; col < columns; col++) {
-            const val = row[col] ?? 0;
-            let seat;
-            if (val === 0) {
-                seat = createElement("div", "empty");
-            } else if (val === 2) {
-                seat = createElement("div", "seat", "vip");
-            } else {
-                seat = createElement("div", "seat");
-            }
 
-            seat.dataset.row = rowIndex;
-            seat.dataset.col = col;
-            seat.addEventListener("click", () => {
-                if (hallStructure[rowIndex][col] === 1) hallStructure[rowIndex][col] = 2;
-                else if (hallStructure[rowIndex][col] === 2) hallStructure[rowIndex][col] = 1;
-                renderHall();
-            });
-            holl.appendChild(seat);
-        }
-
-        const addButton = createElement("button", "add");
-        addButton.innerText = "+";
-        addButton.dataset.row = rowIndex;
-        addButton.addEventListener("click", () => {
-            const row = hallStructure[rowIndex];
-            let added = false;
-
-            for (let i = 0; i < row.length; i++) {
-                if (row[i] === 0) {
-                    row[i] = 1;
-                    added = true;
-                    break;
-                }
-            }
-
-            if (!added) {
-                const newColIndex = Math.max(...hallStructure.map(r => r.length));
-                hallStructure.forEach((r, i) => {
-                    r[newColIndex] = (i === rowIndex) ? 1 : 0;
-                });
-            }
-            renderHall();
-        });
-        holl.appendChild(addButton);
+  hallStructure.forEach((row, i) => {
+    row.forEach((val, j) => {
+      const seat = val === 0
+        ? createElement("div", "empty")
+        : createElement("div", "seat", val === 2 ? "vip" : "");
+      seat.addEventListener("click", () => {
+        hallStructure[i][j] = hallStructure[i][j] === 1 ? 2 : 1;
+        renderHall();
+      });
+      holl.appendChild(seat);
     });
+    const btnRow = createElement("button", "add");
+    btnRow.innerText = "+";
+    btnRow.addEventListener("click", () => {
+      let added = false;
+      for (let k = 0; k < row.length; k++) {
+        if (row[k] === 0) { row[k] = 1; added = true; break; }
+      }
+      if (!added) {
+        hallStructure.forEach((r, idx) => r.push(idx === i ? 1 : 0));
+      }
+      renderHall();
+    });
+    holl.appendChild(btnRow);
+  });
 
-    const vipRow = createElement("div");
-    vipRow.style.gridColumn = `span ${columns + 1}`;
-    vipRow.style.display = "contents";
 
-    for (let j = 0; j < columns; j++) {
-        const vipButton = createElement("button", "add");
-        vipButton.innerText = "+";
-        vipButton.dataset.columns = j;
-        vipButton.addEventListener("click", () => {
-            const newRow = Array(columns).fill(0);
-            newRow[j] = 2;
-            hallStructure.push(newRow);
-            renderHall();
-        });
-        vipRow.appendChild(vipButton);
-    }
-
-    holl.appendChild(vipRow);
+  for (let j = 0; j < columns; j++) {
+    const vipBtn = createElement("button", "add", "vip-btn");
+    vipBtn.innerText = "+";
+    vipBtn.style.gridColumnStart = j + 1;
+    vipBtn.style.gridRowStart    = rows + 1;
+    vipBtn.addEventListener("click", () => {
+      const vipIdx = hallStructure.findIndex(r =>
+        r.includes(2) && r.every(v => v===0||v===2)
+      );
+      if (vipIdx >= 0) hallStructure[vipIdx][j] = 2;
+      else {
+        const newRow = Array(columns).fill(0);
+        newRow[j] = 2;
+        hallStructure.push(newRow);
+      }
+      renderHall();
+    });
+    holl.appendChild(vipBtn);
+  }
 }
 
 function main() {
-    const rows = Number(document.getElementById("rows").value);
-    const columns = Number(document.getElementById("columns").value);
-    hallStructure = Array.from({ length: rows }, () => Array(columns).fill(1));
-    renderHall();
+  const rows = Number(document.getElementById("rows").value);
+  const cols = Number(document.getElementById("columns").value);
+  if (!rows || !cols) return alert("Вкажіть обидва числа!");
+  hallStructure = Array.from({length: rows}, () => Array(cols).fill(1));
+  renderHall();
 }
 
-document.querySelectorAll('.cinema-link').forEach(link => {
-    link.addEventListener('click', function (e) {
-        e.preventDefault();
-        const rows = Number(this.dataset.rows);
-        const columns = Number(this.dataset.columns);
-        hallId = this.dataset.id;
-
-        document.getElementById("rows").value = rows;
-        document.getElementById("columns").value = columns;
-
-        if (this.dataset.structure) {
-            hallStructure = JSON.parse(this.dataset.structure);
-        } else {
-            hallStructure = Array.from({ length: rows }, () => Array(columns).fill(1));
-        }
-        renderHall();
-    });
-});
-
 function saveStructure() {
-    if (!hallId) return alert("Виберіть кінотеатр спочатку.");
-    fetch(`/api/save_hall_structure/${hallId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(hallStructure)
-    }).then(res => {
-        if (res.ok) alert("Збережено успішно!");
-        else alert("Помилка при збереженні!");
-    });
+  if (!selectedCinemaId && !selectedHallId) {
+    return alert("Спочатку виберіть зал або натисніть «Додати новий зал».");
+  }
+
+  let url, method, body;
+  if (selectedHallId) {
+    url    = `/api/halls/${selectedHallId}`;
+    method = 'PUT';
+    body   = { structure: hallStructure };
+  } else {
+    url    = '/api/halls';
+    method = 'POST';
+    body   = {
+      cinema_id: selectedCinemaId,
+      rows:      hallStructure.length,
+      columns:   hallStructure[0].length,
+      structure: hallStructure
+    };
+  }
+
+  fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  })
+  .then(r => r.ok ? r.json() : Promise.reject(r))
+  .then(() => {
+    alert("Успішно збережено!");
+    location.reload();
+  })
+  .catch(() => alert("Помилка збереження — перевір логи сервера."));
 }

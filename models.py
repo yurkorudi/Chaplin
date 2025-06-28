@@ -47,9 +47,16 @@ class Cinema(db.Model):
     contact_phone_number = db.Column(db.String(20))
     work_schedule = db.Column(db.String(200))
     instagram_link = db.Column(db.String(255))
+    halls = db.relationship(
+        "Hall",
+        back_populates="cinema",
+        cascade="all, delete-orphan"
+    )
+
 
     users = db.relationship('User', back_populates='cinema')
     sessions = db.relationship('Session', back_populates='cinema')
+    
 
 
 
@@ -89,27 +96,40 @@ class Film(db.Model):
 
 class Seat(db.Model):
     __tablename__ = 'seats'
-    seat_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    session_id = db.Column(db.Integer, db.ForeignKey('sessions.session_id'), nullable=False)
-    row = db.Column(db.Integer, nullable=False)
-    busy = db.Column(db.Boolean, default=False)
+    seat_id       = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    session_id    = db.Column(db.Integer, db.ForeignKey('sessions.session_id'), nullable=False)
+    row           = db.Column(db.Integer, nullable=False)
+    busy          = db.Column(db.Boolean, default=False)
 
-    session = db.relationship('Session', back_populates='seats')
+    session     = db.relationship('Session', back_populates='seats')
 
 
 
 class Ticket(db.Model):
-    __tablename__ = 'tickets'
-    ticket_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    __tablename__    = 'tickets'
+    ticket_id        = db.Column(db.Integer, primary_key=True, autoincrement=True)
     date_of_purchase = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    seat_id = db.Column(db.Integer, db.ForeignKey('seats.seat_id'), nullable=False)
-    session_id = db.Column(db.Integer, db.ForeignKey('sessions.session_id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    seat_id          = db.Column(db.Integer, db.ForeignKey('seats.seat_id'), nullable=False)
+    session_id       = db.Column(db.Integer, db.ForeignKey('sessions.session_id'), nullable=False)
+    user_id          = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
-    user = db.relationship('User', foreign_keys=[user_id])
-    seat = db.relationship('Seat')
-    session = db.relationship('Session', back_populates='tickets')
+    user             = db.relationship('User', foreign_keys=[user_id])
+    seat             = db.relationship('Seat')
+    session          = db.relationship('Session', back_populates='tickets')
+    
+    
+    
+    
+class Hall(db.Model):
+    __tablename__ = "halls"
+    id         = db.Column(db.Integer, primary_key=True)
+    cinema_id  = db.Column(db.Integer, db.ForeignKey("cinemas.cinema_id"), nullable=False)
+    rows       = db.Column(db.Integer, nullable=False)
+    columns    = db.Column(db.Integer, nullable=False)
+    structure  = db.Column(db.JSON,    nullable=False)
 
+
+    cinema     = db.relationship("Cinema", back_populates="halls")
 
 

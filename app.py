@@ -20,7 +20,7 @@ import os
 
 
 from extensions import db
-from models import Image, User, Cinema, Session, Film, Seat, Ticket
+from models import Image, User, Cinema, Session, Film, Seat, Ticket, Hall
 
 
 from funcs import *
@@ -139,34 +139,15 @@ class SessionTable(ModelView):
 class HollView(BaseView):
     @expose('/')
     def index(self):
-        cinemas = [
-            {
-                'cinema_id' : 1,
-                'cinema_name' : 'Grand Cinema',
-                'holl_rows' : 10,
-                'holl_columns' : 15,
-            },
-            {
-                'cinema_id' : 2,
-                'cinema_name' : 'Elite Theaters',
-                'holl_rows' : 12,
-                'holl_columns' : 20,
-            },
-            {
-                'cinema_id' : 3,
-                'cinema_name' : 'Movie Palace',
-                'holl_rows' : 8,
-                'holl_columns' : 10,
-            },
-            {
-                'cinema_id' : 4,
-                'cinema_name' : 'Galaxy Screens',
-                'holl_rows' : 14,
-                'holl_columns' : 18,
-            }
-        ]
-        
-        return self.render('holl/Holl.html', data=cinemas)
+        cinemas = (
+            Cinema
+            .query
+            .options(db.joinedload(Cinema.halls))
+            .order_by(Cinema.name)
+            .all()
+        )
+        print("Cinemas with halls:", cinemas)
+        return self.render('holl/Holl.html', cinemas=cinemas)
 
 admin = Admin(app, name='Адміністратор', template_mode='bootstrap3', index_view=CustomHomeView())
 
@@ -322,12 +303,68 @@ def location():
     return 
 
 
+@app.route('/api/halls/<int:hall_id>', methods=['PUT'])
+def update_hall(hall_id):
+    data = request.get_json() or {}
+    # 1) Дістаємо з БД сам зал
+    hall = Hall.query.get(hall_id)
+    if hall is None:
+        # якщо не знайшли — повернути 404
+        abort(404, description=f"Hall {hall_id} not found")
+
+    # 2) Оновлюємо тільки ту частину, яка прийшла (зазвичай — structure)
+    if 'structure' in data:
+        hall.structure = data['structure']
+    # Опційно можна оновлювати rows/columns, якщо тобі потрібно:
+    if 'rows' in data:
+        hall.rows = data['rows']
+    if 'columns' in data:
+        hall.columns = data['columns']
+
+    # 3) Зберігаємо зміни
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    # 4) Відповідаємо успіхом
+    return jsonify({
+        "id": hall.id,
+        "rows": hall.rows,
+        "columns": hall.columns,
+        "structure": hall.structure
+    }), 200
+
+@app.route('/api/halls', methods=['POST'])
+def create_hall():
+    data = request.get_json() or {}
+    cinema_id = data.get('cinema_id')
+    rows      = data.get('rows')
+    cols      = data.get('columns')
+
+    if not cinema_id or not rows or not cols:
+        return jsonify({"error": "cinema_id, rows та columns мають бути в тілі запиту"}), 400
+
+    # Початкова структура: всі місця = 1
+    structure = [[1]*cols for _ in range(rows)]
+    hall = Hall(cinema_id=cinema_id, rows=rows, columns=cols, structure=structure)
+
+    db.session.add(hall)
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    return jsonify({"id": hall.id}), 201
 
 @app.route("/api/save_hall_structure/<int:hall_id>", methods=["POST"])
 def save_hall_structure(hall_id):
     structure = request.get_json()
 
     hall = json.dumps(structure)
+    print("Saving hall structure for hall_id:", hall_id)
     print("Received hall structure:", hall)
 
     return jsonify({"status": "ok"})
