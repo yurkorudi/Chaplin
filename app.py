@@ -70,7 +70,30 @@ class CustomHomeView(AdminIndexView):
 
 
 class FilmView(ModelView):
-    form_columns = ['name', 'genre', 'description', 'release_start_date', 'release_end_date', 'director', 'actors', 'duration', 'age', 'image_id']
+    form_columns = [
+        'name', 'genre', 'description',
+        'release_start_date', 'release_end_date',
+        'director', 'actors', 'duration',
+        'age', 'image', 'hall'
+    ]
+
+    form_args = {
+        'image': {
+            'query_factory': lambda: Image.query.all(),
+            'get_label': lambda i: i.path
+        },
+        'hall': {
+            'query_factory': lambda: Hall.query.all(),
+            'get_label': lambda h: f"{h.name} ({h.cinema.name})"
+        }
+    }
+
+    column_list = [
+        'name', 'genre', 'director',
+        'release_start_date', 'hall'
+    ]
+
+
 
 class ImageView(ModelView):
     form_base_class = SecureForm
@@ -98,43 +121,32 @@ class SessionView(ModelView):
 class CinemaView(ModelView):
     form_columns = ['name', 'location', 'contact_phone_number', 'work_schedule', 'instagram_link']
 
-class SessionTable(ModelView):
-    form_base_class = SecureForm
+class SessionView(ModelView):
+    form_columns = [
+        'film', 'cinema', 'hall',
+        'session_datetime', 'session_duration'
+    ]
+    column_list = form_columns
 
-    form_columns = ['film', 'cinema', 'session_datetime', 'session_duration']
-    column_list = ['film', 'cinema', 'session_datetime', 'session_duration']
-
-
-    column_labels = {
-        'film': 'Фільм',
-        'cinema': 'Кінотеатр',
-        'session_datetime': 'Дата та час сеансу',
-        'session_duration': 'Тривалість (хв)'
+    form_args = {
+        'film': {
+            'query_factory': lambda: Film.query.all(),
+            'get_label': 'name'
+        },
+        'cinema': {
+            'query_factory': lambda: Cinema.query.all(),
+            'get_label': 'name'
+        },
+        'hall': {
+            'query_factory': lambda: Hall.query.all(),
+            'get_label': lambda h: f"{h.name} ({h.cinema.name})"
+        }
     }
-
-    column_searchable_list = ['film.name', 'cinema.name']
-    
-    column_formatters = {
-        'film': lambda v, c, m, p: m.film.name if m.film else '',
-        'cinema': lambda v, c, m, p: m.cinema.name if m.cinema else ''
+    form_ajax_refs = {
+        'film':   {'fields': ['name']},
+        'cinema': {'fields': ['name']},
+        'hall':   {'fields': ['name']}
     }
-
-
-    film = QuerySelectField(
-        'Фільм',
-        query_factory=lambda: Film.query.all(),
-        get_label='name',  
-        allow_blank=True,
-        default=None
-    )
-
-    cinema = QuerySelectField(
-        'Кінотеатр',
-        query_factory=lambda: Cinema.query.all(),
-        get_label='name',  
-        allow_blank=True,
-        default=None
-    )
     
 class HollView(BaseView):
     @expose('/')
@@ -148,6 +160,22 @@ class HollView(BaseView):
         )
         print("Cinemas with halls:", cinemas)
         return self.render('holl/Holl.html', cinemas=cinemas)
+    
+    
+class HallView(ModelView):
+    form_columns = ['name', 'cinema', 'rows', 'columns', 'structure']
+    column_list  = ['name', 'cinema', 'rows', 'columns']
+    form_args = {
+        'cinema': {
+            'query_factory': lambda: Cinema.query.all(),
+            'get_label': 'name'
+        }
+    }
+    
+    
+class CinemaView(ModelView):
+    form_columns = ['name', 'location', 'contact_phone_number', 'work_schedule', 'instagram_link']
+    
 
 admin = Admin(app, name='Адміністратор', template_mode='bootstrap3', index_view=CustomHomeView())
 
@@ -156,13 +184,13 @@ admin = Admin(app, name='Адміністратор', template_mode='bootstrap3'
 
 
 
-admin.add_view(SessionTable(Session, db.session, name='Сеанси'))
-admin.add_view(FilmView(Film, db.session, name='Фільми')) 
-admin.add_view(ImageView(Image, db.session, name='Зображення'))
-admin.add_view(CinemaView(Cinema, db.session, name='Кінотеатри'))
+
 admin.add_view(HollView(endpoint='holls', name='Геометрія залів'))
-
-
+admin.add_view(CinemaView(Cinema, db.session, name='Кінотеатри'))
+admin.add_view(HallView(Hall, db.session, name='Зали'))
+admin.add_view(FilmView(Film, db.session, name='Фільми'))
+admin.add_view(SessionView(Session, db.session, name='Сеанси'))
+admin.add_view(ImageView(Image, db.session, name='Зображення'))
 
 #### ___________________________________admin______________________________________ ####
 
@@ -301,6 +329,19 @@ def location():
         if location:
             city = cities[location]
     return 
+
+@app.route("/api/films")
+def get_films():
+    cinema_id = request.args.get('cinema_id')
+    films = Film.query.join(Hall).filter(Hall.cinema_id == cinema_id).all()
+    return jsonify([{
+        "id": f.id,
+        "title": f.title,
+        "hall_structure": f.hall.structure,
+  
+    } for f in films])
+
+
 
 
 @app.route('/api/halls/<int:hall_id>', methods=['PUT'])
