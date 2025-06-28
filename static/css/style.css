@@ -1052,6 +1052,11 @@ li:active {
   align-items: center;
 }
 
+.seat-row{
+  display: flex;
+  justify-content: center;
+}
+
 #seats {
   display: grid;
   gap: 6px;
