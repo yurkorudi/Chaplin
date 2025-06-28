@@ -123,7 +123,7 @@ class SessionTable(ModelView):
     film = QuerySelectField(
         'Фільм',
         query_factory=lambda: Film.query.all(),
-        get_label='name',  # Переконайтесь, що це правильний атрибут
+        get_label='name',  
         allow_blank=True,
         default=None
     )
@@ -131,7 +131,7 @@ class SessionTable(ModelView):
     cinema = QuerySelectField(
         'Кінотеатр',
         query_factory=lambda: Cinema.query.all(),
-        get_label='name',  # Так само перевірте, чи це правильний атрибут
+        get_label='name',  
         allow_blank=True,
         default=None
     )
@@ -306,29 +306,28 @@ def location():
 @app.route('/api/halls/<int:hall_id>', methods=['PUT'])
 def update_hall(hall_id):
     data = request.get_json() or {}
-    # 1) Дістаємо з БД сам зал
+
     hall = Hall.query.get(hall_id)
     if hall is None:
-        # якщо не знайшли — повернути 404
         abort(404, description=f"Hall {hall_id} not found")
 
-    # 2) Оновлюємо тільки ту частину, яка прийшла (зазвичай — structure)
+
     if 'structure' in data:
         hall.structure = data['structure']
-    # Опційно можна оновлювати rows/columns, якщо тобі потрібно:
+
     if 'rows' in data:
         hall.rows = data['rows']
     if 'columns' in data:
         hall.columns = data['columns']
 
-    # 3) Зберігаємо зміни
+
     try:
         db.session.commit()
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-    # 4) Відповідаємо успіхом
+
     return jsonify({
         "id": hall.id,
         "rows": hall.rows,
@@ -346,7 +345,7 @@ def create_hall():
     if not cinema_id or not rows or not cols:
         return jsonify({"error": "cinema_id, rows та columns мають бути в тілі запиту"}), 400
 
-    # Початкова структура: всі місця = 1
+
     structure = [[1]*cols for _ in range(rows)]
     hall = Hall(cinema_id=cinema_id, rows=rows, columns=cols, structure=structure)
 
@@ -398,12 +397,7 @@ def movies():
                 a.update({'img_src': i['path']})
                 print(a['img_src'])
     
-        # try:
-        #     src = get_images(id=a['image_id'])
-        #     path = src['path']
-        #     a.update({'img_src': path})
-        # except: 
-        #     print("No image")
+
     return render_template('Movies.html', city = "", cities = cities, movies = all_movies)
     
 
@@ -613,7 +607,7 @@ if __name__ == "__main__":
     with app.app_context():
         create_sample_data()
         db.create_all()
-    app.run(debug=True, host="192.168.0.100")
+    app.run(debug=True)
 
 
 
