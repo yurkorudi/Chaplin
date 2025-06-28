@@ -408,6 +408,36 @@ body {
 
 }
 
+.inf{
+  display: flex;
+  justify-content: end;
+  align-items: flex-end;
+  gap: 10px;
+  position: absolute;
+  top: 90%;
+  left: 60%;
+  z-index: 2;
+}
+
+.d,
+.age{
+  text-align: center;
+  padding: 5% 0 0 0;
+  width: 50px;
+  height: 30px;
+  color: white;
+  border: transparent 2px solid;
+  border-radius: 10px;
+}
+
+.d{
+  background: rgba(122, 14, 14, 0.7);
+}
+
+.age{
+  background: rgba(255, 116, 2, 0.7);
+}
+
 .slider-item input {
   width: 100%;
   height: 100%;
@@ -1691,7 +1721,7 @@ li:active {
   .slider-body {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
-    gap: 10px;
+    gap: 20px;
     margin: 0px;
     width: 80%;
     height: 80vh;
@@ -1708,6 +1738,10 @@ li:active {
   .slider-item:hover {
     transform: none;
 
+  }
+
+  .slider-item input {
+    -webkit-box-reflect: inherit;
   }
 
   .slider-film-back{
