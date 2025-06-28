@@ -415,9 +415,12 @@ def homepage():
     global user_location
     global cities
     global user_device
+    
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
 
-
-    return render_template('Homepage.html', city = "", cities = cities)
+    return render_template('Homepage.html', city = "", cities = cities, mobile = is_mobile)
 
 
 

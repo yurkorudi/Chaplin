@@ -16,7 +16,7 @@
       
       
   <main class="main homePage">
-    <div class="session-row">
+     <div class="session-row">
       <div class="sessions">
         <div class="nearest">
           <p>🕒 Найближчі сеанси</p>
@@ -32,6 +32,9 @@
       </div>
     </div>
     
+    {% if mobile %}
+      <div>Mobile</div>
+    {% else %}
     
     <!-- Home page's base 360 degris's slider -->
 
@@ -227,6 +230,7 @@
     </section>
 
     <!-- end home page's base 360 degris's slider -->
+    {% endif %}
   </main>
 
   {% include('footer.html') %}
