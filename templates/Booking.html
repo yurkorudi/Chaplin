@@ -1,429 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chaplin cinema | movies</title>
-    <link rel="stylesheet" href="/static/css/globals.css">
-    <link rel="stylesheet" href="/static/css/style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chaplin cinema | booking</title>
+  <link rel="stylesheet" href="/static/css/globals.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
+<body class="fade-in">
+  <div class="home booking">
+    <main class="main movie booking">
+      <div class="left_menu">
+        <div class="movie_logo">
+          <img src="{{movie_info['img_src']}}" alt="">
+        </div>
+      </div>
 
-<body class="fade-in" onload="bookSeat(today.getDate())">
-    <div class="home booking">
+      <div class="base_info">
+        <div class="movie_name">
+          <h1>{{movie_info['name']}}</h1>
+        </div>
+        <div class="movie_short_info">
+          <p class="category">Локація:</p>
+          <p class="value_location">{{movie_info['location']}}</p>
+          <p class="category">Дата:</p>
+          <p class="value_date"></p>
+          <p class="category">Час:</p>
+          <p class="value_time"></p>
+          <p class="category">Місце:</p>
+          <p class="value_seat"></p>
+          <p class="category">Ряд:</p>
+          <p class="value_row"></p>
+          <p class="category">Тривалість:</p>
+          <p class="value_duration">{{movie_info['duration']}} хв</p>
+          <p class="category">Вартість:</p>
+          <p class="value_cost"></p>
+        </div>
 
+        <form action="{{ url_for('buy_ticket') }}" method="post">
+          <div class="book_button">
+            <button type="submit">Придбати квиток</button>
+          </div>
+        </form>
 
-        <main class="main movie booking">
-            <div class="left_menu">
-                <div class="movie_logo">
-                    <img src="{{movie_info['img_src']}}" alt="шьп р==аволі(ЩШЛД)">
-                </div>
-            </div>
+        <div class="seat">
+          <div class="monitor"><p>Екран</p></div>
+          <div class="seats" id="seats"></div>
+          <div class="tickets" id="tickets"></div>
+        </div>
+      </div>
 
-            <div class="base_info">
-                <div class="movie_name">
-                    <h1>{{movie_info['name']}}</h1>
-                </div>
+      <div class="right_menu">
+        <h1>Розклад Сеансів</h1>
+        <ul class="weekdays">
+          <li>Sun</li><li>Mon</li><li>Tue</li><li>Wed</li><li>Thu</li><li>Fri</li><li>Sat</li>
+        </ul>
+        <ul class="schedule" id="schedule"></ul>
+        <div id="session-buttons" class="session-buttons"></div>
+      </div>
+    </main>
+  </div>
 
-                <div class="movie_short_info">
+  <script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const sessions = {{ movie_info['sessions'] | tojson }};
+    console.log("📦 Сесії отримані:", sessions);
 
-                    <p class="category">Локація:</p>
-                    <p class="value_location">Львів, пр. Червоної Калини, 81</p>
+    const sessionsByDay = {};
+    sessions.forEach(s => {
+      s._date = new Date(s.datetime);
+      const d = s._date.getDate();
+      if (!sessionsByDay[d]) sessionsByDay[d] = [];
+      sessionsByDay[d].push(s);
+    });
 
-                    <p class="category">Дата:</p>
-                    <p class="value_date"></p>
+    const scheduleEl = document.getElementById('schedule');
+    const sessionBtnsEl = document.getElementById('session-buttons');
+    const seatsEl = document.getElementById('seats');
 
-                    <p class="category">Час:</p>
-                    <p class="value_time"></p>
+    const valDate = document.querySelector('.value_date');
+    const valTime = document.querySelector('.value_time');
+    const valSeat = document.querySelector('.value_seat');
+    const valRow = document.querySelector('.value_row');
+    const valCost = document.querySelector('.value_cost');
 
-                    <p class="category">Місце:</p>
-                    <p class="value_seat"></p>
+    let lastDayLi = null;
+    let hallStructure = [];
 
-                    <p class="category">Ряд:</p>
-                    <p class="value_row"></p>
+    function drawHall() {
+      seatsEl.innerHTML = '';
+      if (!hallStructure || !hallStructure.length) {
+        console.warn("❗ Порожня або невизначена структура залу");
+        return;
+      }
 
-                    <p class="category">Тривалість:</p>
-                    <p class="value_duration">{{movie_info['duration']}} хв</p>
+      const rows = hallStructure.length;
+      const cols = Math.max(...hallStructure.map(r => r.length));
 
-                    <p class="category">Вартість:</p>
-                    <p class="value_cost"></p>
+      seatsEl.style.display = 'grid';
+      seatsEl.style.gridTemplateColumns = `repeat(${cols},1fr)`;
 
-                </div>
+      hallStructure.forEach((row, rIdx) => {
+        row.forEach((cell, cIdx) => {
+          const div = document.createElement('div');
+          div.dataset.row = rIdx;
+          div.dataset.col = cIdx;
+          if (cell === 0) div.className = 'empty';
+          else if (cell === 2) div.className = 'seat vip';
+          else div.className = 'seat';
+          seatsEl.appendChild(div);
+        });
+      });
+    }
 
-                <form action="{{url_for('buy_ticket')}}" method="post">
-                    <div class="book_button"><button type="submit" , onclick="addBookeSeat()">Придбати квиток</button>
-                    </div>
-                </form>
+    function renderSessionButtons(day) {
+      sessionBtnsEl.innerHTML = '';
+      const arr = sessionsByDay[day] || [];
 
-                <div class="seat">
-                    <div class="monitor">
-                        <p>Екран</p>
-                    </div>
-                    <div class="seats" id="seats"></div>
-                    <div class="tickets" id="tickets"></div>
-                    <form id="seatForm" action="/book" method="POST">
-                        <div id="seats"></div>
-                    </form>
-                </div>
-            </div>
-            <div class="right_menu">
-                <h1>Розклад Сеансів</h1>
-                <ul class="weekdays">
-                    <li>Sun</li>
-                    <li>Mon</li>
-                    <li>Tue</li>
-                    <li>Wed</li>
-                    <li>Thu</li>
-                    <li>Fri</li>
-                    <li>Sat</li>
-                </ul>
-                <ul class="schedule" id="schedule">
-                </ul>
-            </div>
-        </main>
+      if (!arr.length) {
+        sessionBtnsEl.textContent = 'Немає сесій на цей день.';
+        hallStructure = [];
+        drawHall();
+        return;
+      }
 
-    </div>
+      arr.forEach(s => {
+        const hallName = s.hall?.name || s.hall_name || 'Без назви';
+        const hallStruct = s.hall?.structure || s.hall_structure;
 
-    <script>
-        const mediaQuery = window.matchMedia("(min-width: 460px)");
-        if (!mediaQuery.matches) {
-            const base = document.querySelector('.base_info');
-            const right = document.querySelector('.right_menu');
-            base.prepend(right);
-        }
-        const scheduleContainer = document.getElementById("schedule");
-        const today = new Date();
-        const currentYear = today.getFullYear();
-        const currentMonth = today.getMonth();
-        const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
-        const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+        const hh = s._date.getHours().toString().padStart(2, '0');
+        const mm = s._date.getMinutes().toString().padStart(2, '0');
 
-
-        var sessionDateTime = "{{ movie_info['date_time'] }}"
-            .slice(1, -1)
-            .replace(/&#39;/g, " ")
-            .split(" , ");
-
-        let hoursForDays = [];
-        let specificHour = [];
-
-        sessionDateTime.forEach((dt) => {
-            hoursForDays.push(new Date(dt).getDate())
-            minutes = new Date(dt).getMinutes();
-            if (minutes < 10) {
-                specificHour.push(new Date(dt).getHours() + ":" + minutes + "0")
-            }
-            else {
-                specificHour.push(new Date(dt).getHours() + ":" + minutes)
-            }
+        const btn = document.createElement('button');
+        btn.textContent = `${hh}:${mm} — ${hallName}`;
+        btn.addEventListener('click', () => {
+          sessionBtnsEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          valTime.textContent = `${hh}:${mm}`;
+          hallStructure = hallStruct;
+          console.log("🎭 Встановлена структура залу:", hallStructure);
+          drawHall();
         });
 
+        sessionBtnsEl.appendChild(btn);
+      });
 
-        const selectedDate = document.querySelector('.value_date');
-        const selectedTime = document.querySelector('.value_time');
-        const selectedSeat = document.querySelector('.value_seat');
-        const selectedRow = document.querySelector('.value_row');
-        const selectedCost = document.querySelector('.value_cost');
 
-        for (let i = 0; i < firstDayOfMonth; i++) {
-            const emptyItem = document.createElement("li");
-            emptyItem.classList.add("empty");
-            scheduleContainer.appendChild(emptyItem);
+      const firstBtn = sessionBtnsEl.querySelector('button');
+      if (firstBtn) firstBtn.click();
+    }
+
+    function onDayClick(day, li) {
+      if (lastDayLi) lastDayLi.classList.remove('active');
+      li.classList.add('active');
+      lastDayLi = li;
+      valDate.textContent = day;
+      valTime.textContent = '';
+      valSeat.textContent = '';
+      valRow.textContent = '';
+      valCost.textContent = '';
+      renderSessionButtons(day);
+    }
+
+    function renderCalendar() {
+      scheduleEl.innerHTML = '';
+      const today = new Date();
+      const Y = today.getFullYear(), M = today.getMonth();
+      const daysInMonth = new Date(Y, M + 1, 0).getDate();
+      const firstDow = new Date(Y, M, 1).getDay();
+
+      for (let i = 0; i < firstDow; i++) {
+        const li = document.createElement('li');
+        li.classList.add('empty');
+        scheduleEl.appendChild(li);
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const li = document.createElement('li');
+        li.textContent = d;
+        if (d === today.getDate()) li.classList.add('today');
+
+        if (sessionsByDay[d]?.length) {
+          const s0 = sessionsByDay[d][0]._date;
+          const hh = s0.getHours().toString().padStart(2, '0');
+          const mm = s0.getMinutes().toString().padStart(2, '0');
+          li.innerHTML += ` <small>${hh}:${mm}</small>`;
         }
 
-
-        let lastClickedItem = null;
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(currentYear, currentMonth, day);
-            const formattedDate = date.toISOString().split("T")[0];
-
-            const listItem = document.createElement("li");
-            const timeElement = document.createElement("time");
-            timeElement.setAttribute("datetime", formattedDate);
-            timeElement.textContent = day;
-
-            listItem.style.backgroundColor = "";
-
-            if (day === today.getDate()) {
-                listItem.classList.add("today");
-            }
-
-            listItem.appendChild(timeElement);
-
-            if (hoursForDays.includes(day)) {
-                index = hoursForDays.indexOf(day);
-                listItem.innerHTML += ` ${specificHour[index]}`;
-
-                if (day === today.getDate()) {
-                    selectedDate.textContent = day;
-                    selectedTime.textContent = specificHour[index];
-                }
-            }
-
-            listItem.addEventListener("click", function () {
-                if (lastClickedItem) {
-                    lastClickedItem.style.backgroundColor = "";
-                }
-
-                listItem.style.backgroundColor = "gray";
-
-                lastClickedItem = listItem;
-
-                removeAllSeats();
-                bookSeat(day);
-
-                const selectedHour = listItem.textContent.split(' ');
-                minValue = document.querySelector('.value_date');
-                minValue = minValue.textContent.split(' ');
-
-
-                if (day < today.getDate()) {
-                    selectedDate.textContent = today.getDate();
-                    if (minValue[1] == null) {
-                        minValue[1] = 'no seans for this day';
-                    }
-                    selectedTime.textContent = minValue[1];
-                }
-                else {
-                    selectedDate.textContent = timeElement.textContent;
-
-                    if (selectedHour[1] == null) {
-                        selectedTime.textContent = 'no seans for this day';
-                    }
-                    else {
-                        selectedTime.textContent = selectedHour[1];
-                    }
-                }
-
-
-
-            });
-
-            scheduleContainer.appendChild(listItem);
-
-        }
-
-
-
-
-        // ___________________________________________________________________________________________________________
-
-
-        const seatContainer = document.getElementById("seats");
-        const selectedSeats = [];
-        const seatPlaces = 122;
-        const seatsPerRow = 14;
-        const DataFotTicket = {};
-
-        let busySeat = "{{ movie_info['busy_seats'] }}";
-        unavailableSeatsSession = {};
-
-        let unavailableSeats = busySeat
-            .slice(1, -1)
-            .match(/\d+: \[[^\]]*\]/g);
-
-        unavailableSessionKey = [];
-
-        unavailableSeats.forEach(seats => {
-            const [key, value] = seats.split(": ");
-            const parsedKey = parseInt(key);
-            unavailableSessionKey.push(parsedKey);
-            const parsedValue = value.replace(/\[|\]/g, "").split(", ").map(Number);
-            unavailableSeatsSession[parsedKey] = parsedValue;
-        });
-
-        function bookSeat(chosenDay) {
-            if (chosenDay == null) {
-                chosenDay = today;
-            }
-
-            buildHoll = hoursForDays.includes(chosenDay);
-            rowsBoard = [14, 30, 46, 60, 74, 88, 102, 116, 122];
-            row = 1;
-            placeNumber = 1;
-
-            for (let i = 1; i <= seatPlaces; i++) {
-
-                if (buildHoll) {
-                    const seatItem = document.createElement("div");
-                    seatItem.classList.add("place");
-
-                    if (i > rowsBoard[row - 1]) {
-                        row++;
-                        placeNumber = 1;
-                    }
-
-                    if (row == 9) {
-                        seatItem.classList.add("sofa");
-                        if (i % 2 != 0) {
-                            setEmptyPlace(seatContainer)
-                        }
-                    }
-
-                    const seatDetails = { seatPlace: i, seatNumber: placeNumber, row: row, cost: 100 };
-                    if (i > 116) {
-                        seatDetails.cost = 120;
-                    }
-
-                    placeNumber++;
-
-                    if (unavailableSeatsSession[chosenDay] != null) {
-                        unavailableSeats = unavailableSeatsSession[chosenDay];
-                    } else {
-                        unavailableSeats = [];
-                    }
-
-                    if (unavailableSeats.includes(i)) {
-                        seatItem.classList.add("unavailable");
-                        seatItem.style.backgroundColor = "gray";
-                    } else {
-                        seatItem.addEventListener("click", () => {
-                            const seatIndex = selectedSeats.findIndex(seat => seat.seatPlace === i);
-
-                            seatItem.addEventListener("click", () => {
-                                updateSeatInfo();
-                            });
-                        
-
-
-                            if (seatIndex === -1) {
-                                seatItem.style.backgroundColor = "green";
-                                selectedSeats.push(seatDetails);
-                                createTicket(seatDetails.row, seatDetails.seatNumber, seatDetails.cost);
-                            }
-                            else {
-                                seatItem.style.backgroundColor = "";
-                                selectedSeats.splice(seatIndex, 1);
-                                delete DataFotTicket[i];
-
-                                // Видалити відповідний квиток
-                                const ticketId = `ticket-${seatDetails.row}-${seatDetails.seatNumber}`;
-                                const ticketToRemove = document.getElementById(ticketId);
-                                if (ticketToRemove) {
-                                    ticketToRemove.remove();
-                                }
-                            }
-
-                            console.log(seatIndex);
-                            selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
-                            selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber);
-                            selectedRow.textContent = selectedSeats
-                                .map(({ row }) => row)
-                                .filter((value, index, self) => self.indexOf(value) === index);
-                            selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
-                            updateHiddenInput();
-                            bookSeatChek(DataFotTicket);
-                        });
-                    }
-                    seatContainer.appendChild(seatItem);
-
-                    empty = [14, 60, 74, 88, 102, 116, 122]
-                    empty.forEach((num) => {
-                        if (i == num) {
-                            setEmptyPlace(seatContainer);
-                        }
-                    });
-                }
-            }
-        }
-
-        const seatForm = document.getElementById("seatForm");
-        const seatInput = document.getElementById("selectedSeats");
-
-        function removeAllSeats() {
-            const divsToRemove = document.querySelectorAll('div.place');
-            divsToRemove.forEach((div) => {
-                div.remove();
-            });
-
-            selectedSeats.length = 0;
-            selectedSeat.textContent = "";
-            selectedRow.textContent = "";
-            selectedCost.textContent = "";
-        }
-
-        function setEmptyPlace(seatContainer) {
-            for (e = 0; e < 2; e++) {
-
-                const seatEmptyItem = document.createElement("div");
-                seatEmptyItem.classList.add("place", "second");
-                seatContainer.appendChild(seatEmptyItem);
-            }
-        }
-
-        function bookSeatChek(dict) {
-            let url = '/buy_ticket';
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dict)
-            })
-                .then(response => response.json())
-                .then(data => console.log("Server response:", data))
-                .catch(error => console.error("Fetch error:", error));
-        };
-
-
-
-        function updateSeatInfo() {
-            selectedSeats.sort((a, b) => a.seatNumber - b.seatNumber);
-            selectedSeat.textContent = selectedSeats.map(seat => seat.seatNumber).join(", ");
-            selectedRow.textContent = [...new Set(selectedSeats.map(seat => seat.row))].join(", ");
-            selectedCost.textContent = selectedSeats.reduce((sum, seat) => sum + seat.cost, 0);
-            updateHiddenInput();
-        }
-
-        function updateHiddenInput() {
-            seatInput.value = JSON.stringify(selectedSeats);
-            console.log("Form data updated:", seatInput.value);
-        }
-
-        function addBookeSeat() {
-            if (selectedSeat.textContent != null) {
-                selectedSeats.forEach(place => {
-                    selectedDate.textContent += place.row;
-                })
-                fetch ('/buy_ticket', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(selectedSeats)
-                })
-            }
-        }
-        window.location.href = url;
-
-        function createTicket(row, place, price){
-            const data = { row, place, price };
-
-            const ticketContainer = document.getElementById("tickets");
-
-            const ticket = document.createElement("div");
-            ticket.classList.add("ticket");
-
-            // Унікальний id для квитка, наприклад "ticket-3-5" для рядка 3, місця 5
-            const ticketId = `ticket-${row}-${place}`;
-            ticket.id = ticketId;
-
-            const ticketAttributes = ["row", "place", "price"];
-
-            ticketAttributes.forEach(attr => {
-                const item = document.createElement("div");
-                item.classList.add(attr + "Item");
-                item.textContent = attr.charAt(0).toUpperCase() + attr.slice(1) + ":\n" + data[attr];
-                ticket.appendChild(item);
-            });
-
-            ticketContainer.appendChild(ticket);
-        }
-
-    </script>
-
+        li.addEventListener('click', () => onDayClick(d, li));
+        scheduleEl.appendChild(li);
+      }
+    }
+
+    renderCalendar();
+    const todayLi = scheduleEl.querySelector('li.today');
+    if (todayLi) todayLi.click();
+  });
+  </script>
 </body>
-
 </html>

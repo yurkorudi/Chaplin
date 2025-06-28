@@ -20,6 +20,8 @@ class Cinema(db.Model):
     halls    = db.relationship('Hall',    back_populates='cinema', cascade='all, delete-orphan')
     sessions = db.relationship('Session', back_populates='cinema')
     users    = db.relationship('User',    back_populates='cinema')
+    def __str__(self):
+        return self.name
 
 class Hall(db.Model):
     __tablename__ = 'halls'
@@ -32,7 +34,8 @@ class Hall(db.Model):
 
     cinema = db.relationship('Cinema', back_populates='halls')
     sessions = db.relationship('Session', back_populates='hall')
-    films    = db.relationship('Film',    back_populates='hall')
+    def __str__(self):
+        return self.name
 
 class Film(db.Model):
     __tablename__ = 'films'
@@ -47,10 +50,12 @@ class Film(db.Model):
     duration           = db.Column(db.Integer, nullable=False)
     age                = db.Column(db.String(100))
     image_id           = db.Column(db.Integer, db.ForeignKey('images.image_id'), nullable=True)
-    hall_id            = db.Column(db.Integer, db.ForeignKey('halls.id'), nullable=True)
+    
+    def __str__(self):
+        return self.name
+
 
     image    = db.relationship('Image')
-    hall     = db.relationship('Hall', back_populates='films')
     sessions = db.relationship('Session', back_populates='film')
 
 class Session(db.Model):

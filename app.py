@@ -36,7 +36,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://rootforchaplin:Super_Pa
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'AdminSecretKey(2025)s'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
-# app.config['GEOIPIFY_API_KEY'] ="https://ip-geolocation.whoisxmlapi.com/api/v1?apiKey=at_mIjfuLmY9DhWVbW1I8EG5DVfTzNaG&ipAddress=8.8.8.8"
 GOOGLE_MAPS_API_KEY = 'AIzaSyCL1RYn2TgJBFu-7Vne8tdJBKc6v6GCzpM'
 
 db.init_app(app)
@@ -73,8 +72,7 @@ class FilmView(ModelView):
     form_columns = [
         'name', 'genre', 'description',
         'release_start_date', 'release_end_date',
-        'director', 'actors', 'duration',
-        'age', 'image', 'hall'
+        'director', 'actors', 'duration', 'age', 'image'
     ]
 
     form_args = {
@@ -82,15 +80,11 @@ class FilmView(ModelView):
             'query_factory': lambda: Image.query.all(),
             'get_label': lambda i: i.path
         },
-        'hall': {
-            'query_factory': lambda: Hall.query.all(),
-            'get_label': lambda h: f"{h.name} ({h.cinema.name})"
-        }
     }
 
     column_list = [
         'name', 'genre', 'director',
-        'release_start_date', 'hall'
+        'release_start_date'
     ]
 
 
@@ -116,15 +110,12 @@ class ImageView(ModelView):
 
 
 class SessionView(ModelView):
-    form_columns = ['film_id', 'cinema_id', 'session_datetime', 'session_duration']
-
-class CinemaView(ModelView):
-    form_columns = ['name', 'location', 'contact_phone_number', 'work_schedule', 'instagram_link']
-
-class SessionView(ModelView):
     form_columns = [
-        'film', 'cinema', 'hall',
-        'session_datetime', 'session_duration'
+        'film',     
+        'cinema',      
+        'hall',       
+        'session_datetime',
+        'session_duration'
     ]
     column_list = form_columns
 
@@ -147,10 +138,48 @@ class SessionView(ModelView):
         'cinema': {'fields': ['name']},
         'hall':   {'fields': ['name']}
     }
+
+class CinemaView(ModelView):
+    form_columns = ['name', 'location', 'contact_phone_number', 'work_schedule', 'instagram_link']
+
+class SessionView(ModelView):
+    # у list-view колонки “film”, “cinema”, “hall” з __str__ уже відобразять назви
+    column_list = ['film', 'cinema', 'hall', 'session_datetime', 'session_duration']
+
+    # у формі покажемо саме зв’язки, а не id
+    form_columns = ['film', 'cinema', 'hall', 'session_datetime', 'session_duration']
+
+    # Явно вкажемо, що для цих полів використовувати QuerySelectField
+    form_overrides = {
+        'film':   QuerySelectField,
+        'cinema': QuerySelectField,
+        'hall':   QuerySelectField,
+    }
+
+    # І налаштуємо, як заповнювати опції
+    form_args = {
+        'film': {
+            'query_factory': lambda: Film.query.all(),
+            'get_label': 'name',        # використовуємо name для підпису
+            'allow_blank': False
+        },
+        'cinema': {
+            'query_factory': lambda: Cinema.query.all(),
+            'get_label': 'name',
+            'allow_blank': False
+        },
+        'hall': {
+            'query_factory': lambda: Hall.query.all(),
+            'get_label': lambda h: f"{h.name} ({h.cinema.name})",
+            'allow_blank': False
+        }
+    }
+    
+
     
 class HollView(BaseView):
     @expose('/')
-    def index(self):
+    def index(self, **kwargs):
         cinemas = (
             Cinema
             .query
@@ -452,14 +481,52 @@ def movie():
     global user_device
     global json
     film_name = request.args.get('movie_name')
-    with app.app_context():
-        film = Film_obj(film_name)
+    film = Film.query.filter_by(name=film_name).first()
+    
+    sessions = []
+    for s in film.sessions:
+        if not s.hall:
+            continue
+        hall_obj = Hall.query.get(s.hall.id)
+        sessions.append({
+            'session_id':       s.session_id,
+            'datetime':         s.session_datetime.isoformat(),
+            'hall_id':          s.hall.id,
+            'hall_name':        s.hall.name,
+            'hall_structure':   hall_obj.structure
+        })
+        print("____________________________________________________________________________________")
+        print("Session ID:", s.session_id)
+        print("Session datetime:", s.session_datetime)
+        print("Hall ID:", s.hall.id)
+        print("Hall name:", s.hall.name)
+        print("Hall structure:", hall_obj.structure)
+        print("____________________________________________________________________________________")
+        
+    print("Sessions for film:", film_name, "are", sessions)
+        
+        
+        
+    movie_info = {
+        'film_id':             film.film_id,
+        'name':                film.name,
+        'genre':               film.genre,
+        'description':         film.description,
+        'release_start_date':  film.release_start_date,
+        'release_end_date':    film.release_end_date,
+        'director':            film.director,
+        'actors':              film.actors,
+        'duration':            film.duration,
+        'age':                 film.age,
+        'img_src':             film.image.path if film.image else None,
+        'sessions':            sessions,
+    }
+
+    return render_template('Movie.html',
+                           movie_info=movie_info,
+                           city="" , cities=cities)
 
 
-    if user_location == []:
-        a = location()
-
-    return render_template('Movie.html', city = "", cities = cities, movie_info = film.data)
         
 
 
@@ -473,43 +540,46 @@ def about():
 
 @app.route('/book', methods=['GET', 'POST'])
 def book():
-    global user_location
-    global user_device
-    global json
-
     if request.method == 'POST':
         film_name = request.args.get('movie_name')
-        try:
-            data = request.form.get("selectedSeats")
-            seat_details = json.loads(data)
+        data = request.form.get("selectedSeats")
 
+        try:
+            seat_details = json.loads(data)
             for seat in seat_details:
                 seat_number = seat.get("seatNumber")
                 row = seat.get("row")
                 cost = seat.get("cost")
-                print(f"Seat ____!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {seat_number} in row {row} costs {cost}.")
-        except:
-            pass
-        with app.app_context():
-            film = Film_obj(film_name)
+                print(f"Seat: {seat_number} in row {row} costs {cost}")
+        except Exception as e:
+            print("Error parsing seats:", e)
 
-        if user_location == []:
-            a = location()
+        fake_structure = [
+            [1, 1, 1, 1, 1, 0],
+            [1, 1, 1, 1, 1, 1],
+            [1, 1, 2, 2, 1, 1]
+        ]
 
-    if request.method == 'GET':
-        try:
-            selected_date = request.args.get('date')
-            selected_hour = request.args.get('hour')
-            film_name = request.args.get('film')
-        except:
-            pass
-        print('___________________________________________________________________________________', film_name)
-        with app.app_context():
-            film = Film_obj(film_name)
-        print (selected_date, selected_hour)
-        return render_template('Booking.html', city = "", cities = cities, movie_info = film.data, date=selected_date, time=selected_hour)
+        film = Film_obj(film_name)
+        print("____________________________________________________________________")
+        print("film.data:", film.data)
+        print(film.data['sessions'])
+        film.data['sessions'] = [{
+            'datetime': '2025-06-29T18:00:00',
+            'hall': {
+                'name': 'Тестовий зал',
+                'structure': fake_structure
+            }
+        }]
+        print("____________________________________________________________________")
+        print(film.data['sessions'])
 
-    return render_template('Booking.html', city = "", cities = cities, movie_info = film.data)
+        return render_template(
+            'Booking.html',
+            city="",
+            cities=cities,
+            movie_info=film.data
+        )
 
 
 @app.route('/buy_ticket', methods=['GET', 'POST'])
@@ -652,6 +722,7 @@ if __name__ == "__main__":
         create_sample_data()
         db.create_all()
     app.run(debug=True)
+
 
 
 

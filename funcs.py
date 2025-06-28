@@ -186,8 +186,8 @@ def add_film(name, genre, description, release_start_date, release_end_date, dir
 
 
 
-def get_films(name=False):
-    if name == False:
+def get_films(name=None):
+    if name is None:
         films = Film.query.all()
         return [{"film_id": f.film_id, "name": f.name, "genre": f.genre, "description": f.description,
                 "release_start_date": f.release_start_date, "release_end_date": f.release_end_date,
@@ -195,7 +195,7 @@ def get_films(name=False):
     else:
         film = Film.query.filter_by(name=name).first()
         if film:
-            return {
+            result = {
                 "film_id": film.film_id,
                 "name": film.name,
                 "genre": film.genre,
@@ -206,8 +206,18 @@ def get_films(name=False):
                 "actors": film.actors,
                 "duration": film.duration,
                 "age": film.age,
-                "image_id": film.image_id
+                "image_id": film.image_id,
+                "sessions": []
             }
+            for s in film.sessions:
+                if s.hall: 
+                    result["sessions"].append({
+                        "session_id": s.session_id,
+                        "datetime":   s.session_datetime.isoformat(),
+                        "hall_id":    s.hall.id,
+                        "hall_name":  s.hall.name
+                })
+            return result
         else:
             return {"error": f"Film with name '{name}' not found."}
 
