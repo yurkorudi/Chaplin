@@ -157,21 +157,69 @@ body {
 }
 
 
+.session-row{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10%;
+}
+
 .sessions{
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   width: fit-content;
-  margin-bottom: 10%;
   padding: 15px;
   background: rgba(255, 255, 255, 0.5);
 }
 
-.nearest{
+.nearest,
+.weekly{
   display: flex;
   flex-direction: column;
-  
+  margin-bottom: 25px;
+}
+
+.weekly{
+  margin: 0;
+}
+
+.nearest p,
+.weekly p{
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.nearest button,
+.weekly a{
+  margin: 5px 0;
+}
+
+.nearest button{
+  background: transparent;
+  color: white;
+  padding: 5px;
+  border: 2px solid rgba(128, 0, 0, 1);
+  border-radius: 5px;
+}
+
+.nearest button:hover{
+  cursor: pointer;
+  background-color: rgba(128, 0, 0, 1);
+  border: 2px solid transparent;
+}
+
+.nearest a,
+.weekly a{
+  color: #000000;
+  width: 100%;
+  padding: 2px 0;
+}
+
+.nearest a:hover,
+.weekly a:hover{
+  color: white;
+  background: rgba(128, 0, 0, 1);
 }
 
 
@@ -257,11 +305,15 @@ body {
   height: 80vh;
 }
 
+.homePage{
+  margin-bottom: 25%;
+}
+
 .footer {
   height: 100px;
   width: 100vw;
   padding: 15px;
-  margin: 0px 15px 0 0;
+  margin: 0 55px 0 0;
   display: flex;
   gap: 10px;
   justify-content: space-around;
@@ -2044,5 +2096,9 @@ li:active {
 
   .movie-card img, .promo-card img {
     width: 90%;
+  }
+
+  .homePage{
+    margin-bottom: 50%;
   }
 }  
