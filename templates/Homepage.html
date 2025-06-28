@@ -16,153 +16,173 @@
       
       
   <main class="main">
+    <div class="sessions">
+      <div class="nearest">
+        <p>Найближчі сеанси</p>
+
+        <h1 class="filmNane">Test</h1>
+        <button class="book_button">Time</button>
+        <h1 class="filmNane">Test</h1>
+        <button class="book_button">Time</button>
+        <h1 class="filmNane">Test</h1>
+        <button class="book_button">Time</button>
+        <h1 class="filmNane">Test</h1>
+        <button class="book_button">Time</button>
+      </div>
+      <div class="weekly">
+        <p>Прем'єри тижня</p>
+
+        <a href="">Test</a>
+      </div>
+    </div>
+    
     <!-- Home page's base 360 degris's slider -->
 
     <section class="slider row">
       <div class="slider-body">
         <div id="slideshow-form" class="slider-item" style="--j--:1">
           <input type="image" , src="./static/img/photo1.jpg" width="250" height="350">
-          <div class="slider-film-back">
-            <div class="slider-film-button">
-              <a href="{{ url_for('movie', movie_name='Трансформери: повернення')}}">
-                <button>info</button>
-              </a>
-              <button>trailer</button>
+          <a href="{{ url_for('movie', movie_name='Трансформери: повернення')}}">
+            <div class="slider-film-back">
+              <div class="slider-film-button">
+                  <button>info</button>
+                <button>trailer</button>
+              </div>
+              <div class="slider-film-info">
+                <p>Назва: Трансформери: повернення</p>
+                <p>Жанр: Екшн, Пригоди, Фантастика</p>
+                <p>Тривалість: 148 хв</p>
+                <p>Вік: 3+</p>
+              </div>
             </div>
-            <div class="slider-film-info">
-              <p>Назва: Трансформери: повернення</p>
-              <p>Жанр: Екшн, Пригоди, Фантастика</p>
-              <p>Тривалість: 148 хв</p>
-              <p>Вік: 3+</p>
-            </div>
-          </div>
+          </a>
         </div>
         <div class="slider-item" style="--j--:2">
           <input type="image" , src="./static/img/venomposter.jpg" name="selected_image" value="image5" id="slide5"
               width="250" height="350">
-          <div class="slider-film-back">
-            <div class="slider-film-button">
-              <a href="{{ url_for('movie', movie_name='Веном 3')}}">
-                <button>info</button>
-              </a>
-              <button>trailer</button>
+          <a href="{{ url_for('movie', movie_name='Веном 3')}}">
+            <div class="slider-film-back">
+              <div class="slider-film-button">
+                  <button>info</button>
+                <button>trailer</button>
+              </div>
+              <div class="slider-film-info">
+                <p>Назва: Веном 3</p>
+                <p>Жанр: Фантастика, Екшн, Marvel</p>
+                <p>Тривалість: 109 хв</p>
+                <p>Вік: 3+</p>
+              </div>
             </div>
-            <div class="slider-film-info">
-              <p>Назва: Веном 3</p>
-              <p>Жанр: Фантастика, Екшн, Marvel</p>
-              <p>Тривалість: 109 хв</p>
-              <p>Вік: 3+</p>
-            </div>
-          </div>
+          </a>
         </div>
         <div class="slider-item" style="--j--:3">
           <input type="image" , src="./static/img/robotposter.jpg" name="selected_image" value="image5" id="slide5"
               width="250" height="350">
           </a>
-          <div class="slider-film-back">
-            <div class="slider-film-button">
-              <a href="{{ url_for('movie', movie_name='Дикий робот')}}">
-                <button>info</button>
-              </a>
-              <button>trailer</button>
+          <a href="{{ url_for('movie', movie_name='Дикий робот')}}">
+            <div class="slider-film-back">
+              <div class="slider-film-button">
+                  <button>info</button>
+                <button>trailer</button>
+              </div>
+              <div class="slider-film-info">
+                <p>Назва: Дикий робот</p>
+                <p>Жанр: Пригоди, Анімація</p>
+                <p>Тривалість: 100 хв</p>
+                <p>Вік: 3+</p>
+              </div>
             </div>
-            <div class="slider-film-info">
-              <p>Назва: Дикий робот</p>
-              <p>Жанр: Пригоди, Анімація</p>
-              <p>Тривалість: 100 хв</p>
-              <p>Вік: 3+</p>
-            </div>
-          </div>
+          </a>
         </div>
         <div class="slider-item" style="--j--:4">
           <input type="image" , src="./static/img/redposter.jpg" name="selected_image" value="image5" id="slide5"
               width="250" height="350">
-          <div class="slider-film-back">
-            <div class="slider-film-button">
-              <a href="{{ url_for('movie', movie_name='Кодове імя: червоний')}}">
-                <button>info</button>
-              </a>
-              <button>trailer</button>
+          <a href="{{ url_for('movie', movie_name='Кодове імя: червоний')}}">
+            <div class="slider-film-back">
+              <div class="slider-film-button">
+                  <button>info</button>
+                <button>trailer</button>
+              </div>
+              <div class="slider-film-info">
+                <p>Назва: Кодове ім'я червоний</p>
+                <p>Жанр: Пригоди, Екшн, Комедія</p>
+                <p>Тривалість: 123 хв</p>
+                <p>Вік: 3+</p>
+              </div>
             </div>
-            <div class="slider-film-info">
-              <p>Назва: Кодове ім'я червоний</p>
-              <p>Жанр: Пригоди, Екшн, Комедія</p>
-              <p>Тривалість: 123 хв</p>
-              <p>Вік: 3+</p>
-            </div>
-          </div>
+          </a>
         </div>
         <div class="slider-item" style="--j--:5">
           <input type="image" , src="./static/img/buchaposter.jpg" name="selected_image" value="image5" id="slide5"
               width="250" height="350">
-          <div class="slider-film-back">
-            <div class="slider-film-button">
-              <a href="{{ url_for('movie', movie_name='Буча')}}">
-                <button>info</button>
-              </a>
-              <button>trailer</button>
+          <a href="{{ url_for('movie', movie_name='Буча')}}">
+            <div class="slider-film-back">
+              <div class="slider-film-button">
+                  <button>info</button>
+                <button>trailer</button>
+              </div>
+              <div class="slider-film-info">
+                <p>Назва: Буча</p>
+                <p>Жанр: Історичний, Військовий, Драма</p>
+                <p>Тривалість: 118 хв</p>
+                <p>Вік: 3+</p>
+              </div>
             </div>
-            <div class="slider-film-info">
-              <p>Назва: Буча</p>
-              <p>Жанр: Історичний, Військовий, Драма</p>
-              <p>Тривалість: 118 хв</p>
-              <p>Вік: 3+</p>
-            </div>
-          </div>
+          </a>
         </div>
         <div class="slider-item" style="--j--:6">
           <input type="image" , src="./static/img/gladiatorposter.jpg" name="selected_image" value="image" id="slide7"
               width="250" height="350">
-          <div class="slider-film-back">
-            <div class="slider-film-button">
-              <a href="{{ url_for('movie', movie_name='Гладіатор ІІ')}}">
-                <button>info</button>
-              </a>
-              <button>trailer</button>
+          <a href="{{ url_for('movie', movie_name='Гладіатор ІІ')}}">
+            <div class="slider-film-back">
+              <div class="slider-film-button">
+                  <button>info</button>
+                <button>trailer</button>
+              </div>
+              <div class="slider-film-info">
+                <p>Назва: Гладіатор II</p>
+                <p>Жанр: Історичний, Епічна історія</p>
+                <p>Тривалість: 165 хв</p>
+                <p>Вік: 3+</p>
+              </div>
             </div>
-            <div class="slider-film-info">
-              <p>Назва: Гладіатор II</p>
-              <p>Жанр: Історичний, Епічна історія</p>
-              <p>Тривалість: 165 хв</p>
-              <p>Вік: 3+</p>
-            </div>
-          </div>
+          </a>
         </div>
         <div class="slider-item" style="--j--:7">
           <input type="image" , src="./static/img/poster07.jpg" name="selected_image" value="image7" id="slide7"
               width="250" height="350">
-          <div class="slider-film-back">
-            <div class="slider-film-button">
-              <a href="{{ url_for('movie', movie_name='Божевільні')}}">
-                <button>info</button>
-              </a>
-              <button>trailer</button>
+          <a href="{{ url_for('movie', movie_name='Божевільні')}}">
+            <div class="slider-film-back">
+              <div class="slider-film-button">
+                  <button>info</button>
+                <button>trailer</button>
+              </div>
+              <div class="slider-film-info">
+                <p>Назва: Божевільні</p>
+                <p>Жанр: Трилер, Драма</p>
+                <p>Тривалість: 120 хв</p>
+                <p>Вік: 3+</p>
+              </div>
             </div>
-            <div class="slider-film-info">
-              <p>Назва: Божевільні</p>
-              <p>Жанр: Трилер, Драма</p>
-              <p>Тривалість: 120 хв</p>
-              <p>Вік: 3+</p>
-            </div>
-          </div>
+          </a>
         </div>
         <div class="slider-item" style="--j--:8">
           <input type="image" , src="./static/img/wickedposter.jpg" name="selected_image" value="image8" id="slide8"
               width="250" height="350">
-          <div class="slider-film-back">
-            <div class="slider-film-button">
-              <a href="{{ url_for('movie', movie_name='Чародійка')}}">
-                <button>info</button>
-              </a>
-              <button>trailer</button>
+          <a href="{{ url_for('movie', movie_name='Чародійка')}}">
+            <div class="slider-film-back">
+              <div class="slider-film-button">
+                  <button>info</button>
+                <button>trailer</button>
+              </div>
+              <div class="slider-film-info">
+                <p>Назва: Чародійка</p>
+                <p>Жанр: Пригоди, Фентезі, Фантастика, Мюзикл</p>
+                <p>Тривалість: 150 хв</p>
+                <p>Вік: 3+</p>
+              </div>
             </div>
-            <div class="slider-film-info">
-              <p>Назва: Чародійка</p>
-              <p>Жанр: Пригоди, Фентезі, Фантастика, Мюзикл</p>
-              <p>Тривалість: 150 хв</p>
-              <p>Вік: 3+</p>
-            </div>
-          </div>
+          </a>
         </div>
       </div>
       <div class="button-wrapper">
