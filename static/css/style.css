@@ -1041,15 +1041,13 @@ li:active {
 }
 
 .seat {
-  width: 30px;
-  height: 30px;
-  margin: 5px;
-  background-color: #aaa;
+  width: min-content;
+  height: fit-content;
   border-radius: 5px;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 0;
 }
 
 .seat-row{
@@ -1061,12 +1059,11 @@ li:active {
   display: grid;
   gap: 6px;
   justify-content: center;
-  justify-content: center;
-  margin: 0 auto 40px auto;
+  /* margin: 0 auto 40px auto; */
 }
 
 
-.seat.vip {
+.place.vip {
   background-color: gold;
 }
 
@@ -1075,48 +1072,51 @@ li:active {
 }
 
 .empty {
-  width: 30px;
-  height: 30px;
-  margin: 5px;
+  width: 25px;
+  height: 35px;
   background-color: transparent;
+  margin: 0px !important;
+}
+
+.empty:hover{
+  cursor: default;
 }
 
 
 .monitor {
-  background-color: #888;
+  background-color: red;
   height: 10px;
-  width: 80%;
-  margin: 60px auto 20px auto;
+  width: 100%;
+  margin: 60px auto 90px auto;
   border-radius: 6px;
   position: relative;
 }
 
 .monitor p {
   position: absolute;
-  top: -25px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   color: white;
   font-weight: bold;
   font-size: 14px;
-  margin: 0;
   text-transform: uppercase;
 }
 
-.seat .seats {
+/* .seat .seats {
   width: 100%;
   height: auto;
   display: grid;
   grid-template-columns: repeat(16, 1fr);
   row-gap: 10px;
   column-gap: 0;
-}
+} */
 
 .seat .seats .place {
   width: 25px;
   height: 35px;
   border: 2px solid gray;
-  margin: 0 25% !important;
+  margin: 0px !important;
   cursor: pointer;
   border-radius: 5px;
   position: relative;
