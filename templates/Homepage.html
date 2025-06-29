@@ -33,7 +33,21 @@
     </div>
     
     {% if mobile %}
-      <div>Mobile</div>
+      {% for movie in movies %}
+        <div class="film-session">
+          <div class="film-item">
+            <img src="{{ movie.img_src }}" alt="{{ movie.title }}">
+            <div class="film-inf">
+              <h1 style="font-size: 20px;">{{ movie.name }}</h1>
+              <p>{{ movie.genre }}</p>
+            </div>
+            <div class="inf">
+              <div class="d">2D</div>
+              <div class="age">{{ movie.age }}</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
     {% else %}
     
     <!-- Home page's base 360 degris's slider -->

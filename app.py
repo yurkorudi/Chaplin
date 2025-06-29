@@ -452,7 +452,14 @@ def homepage():
     user_agent = parse(ua_string)    
     is_mobile = user_agent.is_mobile
 
-    return render_template('Homepage.html', city = "", cities = cities, mobile = is_mobile)
+    all_movies = get_films()
+    all_images = get_images()
+    for a in all_movies:
+        for i in all_images:
+            if a['image_id'] == i['id']:
+                a.update({'img_src': i['path']})
+
+    return render_template('Homepage.html', city = "", cities = cities, mobile = is_mobile, movies = all_movies)
 
 
 
@@ -724,7 +731,7 @@ if __name__ == "__main__":
     with app.app_context():
         create_sample_data()
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, host="192.168.0.101")
 
 
 
