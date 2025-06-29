@@ -143,24 +143,24 @@ class CinemaView(ModelView):
     form_columns = ['name', 'location', 'contact_phone_number', 'work_schedule', 'instagram_link']
 
 class SessionView(ModelView):
-    # у list-view колонки “film”, “cinema”, “hall” з __str__ уже відобразять назви
+
     column_list = ['film', 'cinema', 'hall', 'session_datetime', 'session_duration']
 
-    # у формі покажемо саме зв’язки, а не id
+
     form_columns = ['film', 'cinema', 'hall', 'session_datetime', 'session_duration']
 
-    # Явно вкажемо, що для цих полів використовувати QuerySelectField
+
     form_overrides = {
         'film':   QuerySelectField,
         'cinema': QuerySelectField,
         'hall':   QuerySelectField,
     }
 
-    # І налаштуємо, як заповнювати опції
+
     form_args = {
         'film': {
             'query_factory': lambda: Film.query.all(),
-            'get_label': 'name',        # використовуємо name для підпису
+            'get_label': 'name',    
             'allow_blank': False
         },
         'cinema': {
@@ -359,16 +359,16 @@ def location():
             city = cities[location]
     return 
 
-@app.route("/api/films")
-def get_films():
-    cinema_id = request.args.get('cinema_id')
-    films = Film.query.join(Hall).filter(Hall.cinema_id == cinema_id).all()
-    return jsonify([{
-        "id": f.id,
-        "title": f.title,
-        "hall_structure": f.hall.structure,
+# @app.route("/api/films")
+# def get_films():
+#     cinema_id = request.args.get('cinema_id')
+#     films = Film.query.join(Hall).filter(Hall.cinema_id == cinema_id).all()
+#     return jsonify([{
+#         "id": f.id,
+#         "title": f.title,
+#         "hall_structure": f.hall.structure,
   
-    } for f in films])
+#     } for f in films])
 
 
 
@@ -409,21 +409,24 @@ def update_hall(hall_id):
 def create_hall():
     data = request.get_json() or {}
     cinema_id = data.get('cinema_id')
-    rows      = data.get('rows')
-    cols      = data.get('columns')
+    rows = data.get('rows')
+    cols = data.get('columns')
+    structure = data.get('structure') or [[1]*cols for _ in range(rows)]
+
+    print("Отримані дані:", data)
 
     if not cinema_id or not rows or not cols:
         return jsonify({"error": "cinema_id, rows та columns мають бути в тілі запиту"}), 400
 
-
-    structure = [[1]*cols for _ in range(rows)]
     hall = Hall(cinema_id=cinema_id, rows=rows, columns=cols, structure=structure)
 
     db.session.add(hall)
     try:
         db.session.commit()
+        print("Зал успішно створено:", hall.id)
     except Exception as e:
         db.session.rollback()
+        print("Помилка при створенні залу:", e)
         return jsonify({"error": str(e)}), 500
 
     return jsonify({"id": hall.id}), 201

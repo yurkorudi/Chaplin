@@ -26,7 +26,7 @@ class Cinema(db.Model):
 class Hall(db.Model):
     __tablename__ = 'halls'
     id        = db.Column(db.Integer, primary_key=True)
-    name      = db.Column(db.String(100), nullable=False)    
+    name      = db.Column(db.String(100), nullable=True)    
     cinema_id = db.Column(db.Integer, db.ForeignKey('cinemas.cinema_id'), nullable=False)
     rows      = db.Column(db.Integer, nullable=False)
     columns   = db.Column(db.Integer, nullable=False)
