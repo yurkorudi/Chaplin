@@ -78,6 +78,11 @@
       sessionsByDay[d].push(s);
     });
 
+      let occupiedSeats = [
+    { row: 0, col: 2 },  
+    { row: 1, col: 4 }   
+  ];
+
     const scheduleEl = document.getElementById('schedule');
     const sessionBtnsEl = document.getElementById('session-buttons');
     const seatsEl = document.getElementById('seats');
@@ -91,31 +96,53 @@
     let lastDayLi = null;
     let hallStructure = [];
 
+    const staticPrice = 100;
+
     function drawHall() {
-      seatsEl.innerHTML = '';
-      if (!hallStructure || !hallStructure.length) {
-        console.warn("❗ Порожня або невизначена структура залу");
-        return;
+  seatsEl.innerHTML = '';
+  if (!hallStructure.length) return;
+
+  const cols = Math.max(...hallStructure.map(r => r.length));
+  seatsEl.style.display = 'grid';
+  seatsEl.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+
+  hallStructure.forEach((rowArr, rIdx) => {
+    rowArr.forEach((cell, cIdx) => {
+      const div = document.createElement('div');
+      div.dataset.row = rIdx;
+      div.dataset.col = cIdx;
+
+      if (cell === 0) {
+        div.className = 'empty';
+      } else {
+        // перевіряємо, чи це зайняте місце
+        const isOcc = occupiedSeats
+          .some(o => o.row === rIdx && o.col === cIdx);
+
+        if (isOcc) {
+          div.className = 'place occupied';
+        } else {
+          div.className = 'place';
+          // зберігаємо ціну в да́таса
+          div.dataset.price = staticPrice;
+          // hover — показуємо ціну
+          div.addEventListener('mouseover', () => {
+            valCost.textContent = `${staticPrice} грн`;
+          });
+          // клік — вибір місця
+          div.addEventListener('click', () => {
+            div.classList.toggle('selected');
+            valRow.textContent = rIdx + 1;
+            valSeat.textContent = cIdx + 1;
+            updateSelectedSeats();
+          });
+        }
       }
 
-      const rows = hallStructure.length;
-      const cols = Math.max(...hallStructure.map(r => r.length));
-
-      seatsEl.style.display = 'grid';
-      seatsEl.style.gridTemplateColumns = `repeat(${cols},1fr)`;
-
-      hallStructure.forEach((row, rIdx) => {
-        row.forEach((cell, cIdx) => {
-          const div = document.createElement('div');
-          div.dataset.row = rIdx;
-          div.dataset.col = cIdx;
-          if (cell === 0) div.className = 'empty';
-          else if (cell === 2) div.className = 'place vip';
-          else div.className = 'place';
-          seatsEl.appendChild(div);
-        });
-      });
-    }
+      seatsEl.appendChild(div);
+    });
+  });
+}
 
     function renderSessionButtons(day) {
       sessionBtnsEl.innerHTML = '';
@@ -165,6 +192,16 @@
       valCost.textContent = '';
       renderSessionButtons(day);
     }
+
+    function updateSelectedSeats() {
+      const selected = Array.from(seatsEl.querySelectorAll('.selected'));
+      const seatsArray = selected.map(el => ({
+        row: +el.dataset.row + 1,
+        seatNumber: +el.dataset.col + 1,
+        cost: +el.dataset.price
+    }));
+    document.getElementById('selectedSeatsInput').value = JSON.stringify(seatsArray);
+}
 
     function renderCalendar() {
       scheduleEl.innerHTML = '';

@@ -1004,7 +1004,19 @@ li:active {
   filter: grayscale(50%);
 }
 
+.place.selected {
+  background: orange;
+}
 
+.place.occupied {
+  background: lightgray;
+  cursor: default;
+  pointer-events: none; 
+}
+
+.empty {
+  background: transparent;
+}
 
 .place {
   background-color: transparent;

@@ -105,7 +105,8 @@ class Ticket(db.Model):
     seat_id          = db.Column(db.Integer, db.ForeignKey('seats.seat_id'), nullable=False)
     session_id       = db.Column(db.Integer, db.ForeignKey('sessions.session_id'), nullable=False)
     user_id          = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-
+    row_index        = db.Column(db.Integer, nullable=False)
+    column_index     = db.Column(db.Integer, nullable=False)
     seat    = db.relationship('Seat')
     session = db.relationship('Session', back_populates='tickets')
     user    = db.relationship('User')

@@ -550,46 +550,54 @@ def about():
 
 @app.route('/book', methods=['GET', 'POST'])
 def book():
-    if request.method == 'POST':
-        film_name = request.args.get('movie_name')
-        data = request.form.get("selectedSeats")
 
-        try:
-            seat_details = json.loads(data)
-            for seat in seat_details:
-                seat_number = seat.get("seatNumber")
-                row = seat.get("row")
-                cost = seat.get("cost")
-                print(f"Seat: {seat_number} in row {row} costs {cost}")
-        except Exception as e:
-            print("Error parsing seats:", e)
+    film_name = request.args.get('movie_name')
+    data = request.form.get("selectedSeats")
 
-        fake_structure = [
-            [1, 1, 1, 1, 1, 0],
-            [1, 1, 1, 1, 1, 1],
-            [1, 1, 2, 2, 1, 1]
-        ]
+    try:
+        seat_details = json.loads(data)
+        for seat in seat_details:
+            seat_number = seat.get("seatNumber")
+            row = seat.get("row")
+            cost = seat.get("cost")
+            print(f"Seat: {seat_number} in row {row} costs {cost}")
+    except Exception as e:
+        print("Error parsing seats:", e)
 
-        film = Film_obj(film_name)
-        print("____________________________________________________________________")
-        print("film.data:", film.data)
-        print(film.data['sessions'])
-        film.data['sessions'] = [{
-            'datetime': '2025-06-29T18:00:00',
+    fake_structure = [
+        [1, 1, 1, 1, 1, 0],
+        [1, 1, 1, 1, 1, 1],
+        [1, 1, 2, 2, 1, 1]
+    ]
+
+    film = Film_obj(film_name)
+    print("____________________________________________________________________")
+    print("film.data:", film.data)
+    print(film.data['sessions'])
+    sessions_data = []
+    for i in film.data['sessions']:
+        hhall = Hall.query.filter_by(id=i['hall_id']).first()
+        a = {
+            'datetime': i['datetime'],
             'hall': {
-                'name': 'Тестовий зал',
-                'structure': fake_structure
+                'name': i['hall_name'],
+                'structure': hhall.structure if hhall else fake_structure
             }
-        }]
-        print("____________________________________________________________________")
-        print(film.data['sessions'])
+        }
+        sessions_data.append(a)
+        
+        
+        
+    film.data['sessions'] = sessions_data
+    print("____________________________________________________________________")
+    print(film.data['sessions'])
 
-        return render_template(
-            'Booking.html',
-            city="",
-            cities=cities,
-            movie_info=film.data
-        )
+    return render_template(
+        'Booking.html',
+        city="",
+        cities=cities,
+        movie_info=film.data
+    )
 
 
 @app.route('/buy_ticket', methods=['GET', 'POST'])
@@ -731,7 +739,7 @@ if __name__ == "__main__":
     with app.app_context():
         create_sample_data()
         db.create_all()
-    app.run(debug=True, host="192.168.0.101")
+    app.run(debug=True)
 
 
 
