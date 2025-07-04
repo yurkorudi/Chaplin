@@ -968,10 +968,41 @@ li:active {
   margin-bottom: -30px;
 }
 
-/* .footer.movie {
-  margin-top: 0px;
-} */
+.admin_body {
+  background-color: #000000;
+}
 
+.admin_header {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  background-color: #000000;
+  color: white;
+  font-size: 44px;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+}
+
+.admin_txt {
+  align-items: center;
+  justify-content: center;
+  color: red;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+}
+
+
+.admin_btn {
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #a21313;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+}
 
 /* end movie's page */
 /* about page */
@@ -1041,7 +1072,7 @@ li:active {
 .selected-seat-info .ticket-label {
   position: absolute;
   right: 4px;
-  top: 90%;
+  top: 105%;
   transform: translateY(-50%) rotate(90deg);
   transform-origin: right top;
   font-size: 20px;

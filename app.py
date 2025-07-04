@@ -1,6 +1,7 @@
 import pymysql
 pymysql.install_as_MySQLdb()
 from flask import *
+from flask import session as flask_session
 from user_agents import *
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
@@ -15,8 +16,32 @@ from flask_admin.model import filters
 from flask_admin import helpers as admin_helpers
 from flask_admin import AdminIndexView
 from werkzeug.utils import secure_filename
-import hashlib
+from io import BytesIO
+from flask import send_file
+from io import BytesIO
+from flask import send_file, session as flask_session
+from reportlab.lib.pagesizes import A6
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.units import mm
 import os
+
+
+pdfmetrics.registerFont(
+    TTFont('DejaVuSans', 'static/fonts/DejaVuSans.ttf'),
+)
+pdfmetrics.registerFont(
+    TTFont('DejaVuSans-Bold', 'static/fonts/DejaVuSans-Bold.ttf')
+)
+pdfmetrics.registerFont(
+    TTFont('DejaVuSans-BoldOblique', 'static/fonts/DejaVuSans-BoldOblique.ttf')
+)
+pdfmetrics.registerFont(
+    TTFont('DejaVuSans-ExtraLight', 'static/fonts/DejaVuSans-ExtraLight.ttf') 
+)
+        
+
 
 
 from extensions import db
@@ -37,6 +62,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'AdminSecretKey(2025)s'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
 app.config['JSON_AS_ASCII'] = False
+app.config['ADMIN_PASSWORD'] = os.environ.get('ADMIN_PASSWORD', 'supersecret123')
 GOOGLE_MAPS_API_KEY = 'AIzaSyCL1RYn2TgJBFu-7Vne8tdJBKc6v6GCzpM'
 
 db.init_app(app)
@@ -67,7 +93,21 @@ class CustomHomeView(AdminIndexView):
             }
         ]
         return self.render('home/Home.html', cinemas=cinemas_stats)
+    
+    def is_accessible(self):
+        return flask_session.get('is_admin')
+    
+    
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('admin_login'))
 
+
+
+class AuthModelView(ModelView):
+    def is_accessible(self):
+        return flask_session.get('is_admin')
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('admin_login'))
 
 class FilmView(ModelView):
     form_columns = [
@@ -207,7 +247,14 @@ class CinemaView(ModelView):
     form_columns = ['name', 'location', 'contact_phone_number', 'work_schedule', 'instagram_link']
     
 
-admin = Admin(app, name='Адміністратор', template_mode='bootstrap3', index_view=CustomHomeView())
+admin = Admin(
+    app,
+    name='Адміністратор',
+    template_mode='bootstrap3',
+    index_view=CustomHomeView(),
+    url='/admin', 
+    endpoint='admin'   
+)
 
 
 
@@ -216,11 +263,11 @@ admin = Admin(app, name='Адміністратор', template_mode='bootstrap3'
 
 
 admin.add_view(HollView(endpoint='holls', name='Геометрія залів'))
-admin.add_view(CinemaView(Cinema, db.session, name='Кінотеатри'))
-admin.add_view(HallView(Hall, db.session, name='Зали'))
-admin.add_view(FilmView(Film, db.session, name='Фільми'))
-admin.add_view(SessionView(Session, db.session, name='Сеанси'))
-admin.add_view(ImageView(Image, db.session, name='Зображення'))
+admin.add_view(AuthModelView(Cinema, db.session, name='Кінотеатри'))
+admin.add_view(AuthModelView(Hall, db.session, name='Зали'))
+admin.add_view(AuthModelView(Film, db.session, name='Фільми'))
+admin.add_view(AuthModelView(Session, db.session, name='Сеанси'))
+admin.add_view(AuthModelView(Image, db.session, name='Зображення'))
 
 #### ___________________________________admin______________________________________ ####
 
@@ -340,6 +387,21 @@ user_location = []
 user_device = 'None'
 
 
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        pwd = request.form.get('password')
+        if pwd == app.config['ADMIN_PASSWORD']:
+            flask_session['is_admin'] = True
+            return redirect(url_for('admin.index'))
+        flash('Невірний пароль', 'error')
+    return render_template('admin_login.html')
+
+@app.route('/admin/logout')
+def admin_logout():
+    flask_session.pop('is_admin', None)
+    return redirect(url_for('admin_login'))
 
 
 @app.route('/')
@@ -591,14 +653,28 @@ def book():
         
         
     film.data['sessions'] = sessions_data
-    print("____________________________________________________________________")
-    print(film.data['sessions'])
+    occupied_seats = {}
 
+    for sess in film.data['sessions']:
+        sid = sess['session_id']
+        occupied_seats[sid] = []
+
+        tickets = Ticket.query.filter_by(session_id=sid).all()
+        for t in tickets:
+            occupied_seats[sid].append({
+                'row':        t.row_index,
+                'seatNumber': t.column_index
+            })
+    print("____________________________________________ occupied_seats ___________________________________________")
+    print("Occupied seats:", occupied_seats)
+    
+    
     return render_template(
         'Booking.html',
         city="",
         cities=cities,
-        movie_info=film.data
+        movie_info=film.data,
+        occupied_seats=occupied_seats,
     )
 
 
@@ -617,15 +693,22 @@ def buy_ticket():
         print("Request JSON (parsed):", data)
         session_id = data.get('session_id')
         tickets = data.get('tickets')
+        info = []
         if not session_id or not tickets:
             return jsonify({"error": "Session ID and tickets are required"}), 400
         
+        
+        if flask_session.get('user') is None:
+            redirect_url = url_for('login')
+            
+
+        
         for i in tickets: 
-            session = db.Session.query.filter_by(session_id=session_id).first()
+            session = Session.query.filter_by(session_id=session_id).first()
             new_ticket = Ticket(
                 seat_id = 1,
                 session_id = session_id,
-                user_id = 1, 
+                user_id = User.query.filter_by(login=flask_session['user']).first().id, 
                 cost = i['cost'],
                 sell_type = 'online',
                 cinema_id = session.cinema_id,
@@ -633,13 +716,21 @@ def buy_ticket():
                 column_index = i['seatNumber']
             )
             db.session.add(new_ticket)
-            db.session.commit()
-            
-            
-
         
-        return jsonify({
-            'status': 'success'}), 200
+        
+        db.session.commit()
+        
+        flask_session['confirmation_data'] = payload = {
+            "session_id": session_id,
+            "movie_name": Film.query.filter_by(film_id=session.film_id).first().name,
+            "movie_details": 'b',
+            "tickets":    tickets,
+            "user": flask_session.get('user')
+        }
+        
+        print(flask_session['confirmation_data'])
+            
+        return redirect(url_for('ticket_confirmation'))
     except Exception as e:
         print("Error in buy_ticket:", e)
         return jsonify({"error": "An error occurred while processing the request"}), 500
@@ -648,20 +739,117 @@ def buy_ticket():
 
 
 
-@app.route('/ticket_confirmation', methods=['POST'])
+@app.route('/ticket_confirmation', methods=['POST', 'GET'])
 def ticket_confirmation():
     print("___________________________________________ ticket_confirmation ___________________________________________")
-    data = request.get_json(force=True)
-    session_id = data.get('session_id')
-    tickets = data.get('tickets')
+    # data = request.get_json(force=True)
+    # session_id = data.get('session_id')
+    # tickets = data.get('tickets')
+    
+    data = flask_session.get('confirmation_data', None)
+    
+    print("Raw Request Data:", data)
+    
+    return render_template('TicketConfirmation.html',)
+
+
+
+
+@app.route('/ticket_pdf', methods=['GET'])
+def ticket_pdf():
+    from io import BytesIO
+    from flask import send_file, session as flask_session
+    from reportlab.lib.pagesizes import A6
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.units import mm
+    from models import Session as DBSess, Film as DBFilm, User as DBUser
+
+
+    data = flask_session.get('confirmation_data')
+    if not data:
+        return "Немає даних квитка", 400
+
+
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A6)
+    width, height = A6
+
+
+    banner_h = 8 * mm
+    p.setFillColorRGB(129, 0, 0)
+    p.rect(0, height - banner_h, width, banner_h, fill=1, stroke=0)
+
+    margin_x = 6 * mm
+    header_bottom = height - banner_h - 2 * mm
+
+
+    film = DBFilm.query.filter_by(name=data['movie_name']).first()
+    poster_path = film.image.path if film and film.image else 'static/img/default_poster.png'
+    poster_w = 30 * mm
+    poster_h = 40 * mm
+    p.drawImage(
+        poster_path,
+        margin_x,
+        header_bottom - poster_h,
+        width=poster_w,
+        height=poster_h,
+        mask='auto'
+    )
+
+
+    title_x = margin_x + poster_w + 3 * mm
+    title_y = header_bottom - 3 * mm
+    p.setFillColorRGB(0, 0, 0)
+    p.setFont("DejaVuSans-Bold", 10)
+    p.drawString(title_x, title_y, data['movie_name'])
+
+    y = header_bottom - poster_h - 6 * mm
+    p.setFont("DejaVuSans", 6)
+    p.drawString(margin_x, y, f"Куплено користувачем: {DBUser.query.filter_by(login=data.get('user', '')).first().first_name} {DBUser.query.filter_by(login=data.get('user', '')).first().last_name}")
+    y -= 6 * mm
+
+    sess = DBSess.query.filter_by(session_id=data['session_id']).first()
+    dt_str = sess.session_datetime.strftime('%Y-%m-%d %H:%M')
+    p.drawString(margin_x, y, f"Сеанс: {dt_str}")
+    y -= 8 * mm
+
+    for t in data['tickets']:
+        p.drawString(
+            margin_x,
+            y,
+            f"Місце: {t['seatNumber']}   Ряд: {t['row']}   Ціна: {t['cost']} грн"
+        )
+        y -= 6 * mm
+
+
+    footer_y = 8 * mm
+    p.setStrokeColorRGB(128, 0, 0)
+    p.setLineWidth(0.5)
+    p.line(margin_x, footer_y + 4 * mm, width - margin_x, footer_y + 4 * mm)
+
+    p.setFont("DejaVuSans", 6)
+    footer = (
+        "Телефон: +38 (044) 123-45-67   •   "
+        "Місто: Львів   •   "
+        "Адреса: Червоної калини 81 "
+    )
+    p.drawString(margin_x + 4, footer_y, footer)
+
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name='ticket.pdf',
+        mimetype='application/pdf'
+    )
+
     
     
-    confirmation_data = {
-        "session_id": session_id,
-        "tickets":    tickets,
-    }
     
-    return jsonify(confirmation_data), 200
+    
 
 
 
@@ -730,8 +918,8 @@ def login():
             print (i["password"])
             print (hashlib.sha256(user_info['password'].encode()).hexdigest())
             if i['password'] == hashlib.sha256(user_info['password'].encode()).hexdigest():
-                session['user'] = i['login']
-                print(session['user'])
+                flask_session['user'] = i['login']
+                print(flask_session['user'])
                 return jsonify({"success": True, "message": "Ви успішно увійшли!"}), 200
             
         

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Підтвердження квитків</title>
+</head>
+<body>
+  <h1>Дякуємо</h1>
+  <p>Ваші квитки успішно заброньовані для сесії</p>
+    <a href="{{ url_for('ticket_pdf') }}" class="btn btn-primary">
+    Завантажити квиток (PDF)
+    </a>
+  <p><a href="{{ url_for('homepage') }}">Повернутися на головну</a></p>
+</body>
+</html>

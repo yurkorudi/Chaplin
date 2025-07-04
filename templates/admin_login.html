@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Centered Form</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background-color:rgb(0, 0, 0); 
+    }
+
+    .center-wrapper {
+      display: flex;
+      justify-content: center;  
+      align-items: center;
+    }
+
+
+    .login-box {
+      padding: 2rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(112, 0, 0, 0.57);
+      text-align: center;    
+
+
+    .login-box input,
+    .login-box button {
+      display: block;
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      box-sizing: border-box;
+    }
+
+    .txt {
+      color: #fff;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="center-wrapper">
+    <div class="login-box">
+      <form action="/admin/login" method="post">
+        <input type="password" name="password" placeholder="Пароль" required>
+        <button type="submit">Увійти</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

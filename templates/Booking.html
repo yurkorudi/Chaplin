@@ -6,7 +6,7 @@
   <title>Chaplin cinema | booking</title>
   <link rel="stylesheet" href="/static/css/globals.css">
   <link rel="stylesheet" href="/static/css/style.css">
-  <!-- вставити в <head> -->
+
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;700&display=swap" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -61,29 +61,28 @@
 <script>
 window.addEventListener('DOMContentLoaded', () => {
 
-  const sessions  = {{ movie_info['sessions'] | tojson }};
-  const movieName = "{{ movie_info['name'] }}";
-  let currentSession = null;
+  const sessions      = {{ movie_info['sessions'] | tojson }};
+  const movieName     = "{{ movie_info['name'] }}";
+  let currentSession  = null;
 
 
-  let occupiedSeats = [
-    { row: 0, col: 2 },
-    { row: 1, col: 4 }
-  ];
+  const occupiedBySession = {{ occupied_seats | tojson }};
+  let occupiedSeats = [];
 
 
-  const form      = document.getElementById('buyTicketForm');
-  const submitBtn = form.querySelector('button[type="submit"]');
-  submitBtn.disabled = true;
-
-  const valDate    = document.querySelector('.value_date');
-  const valTime    = document.querySelector('.value_time');
-  const valSeat    = document.querySelector('.value_seat');
-  const valRow     = document.querySelector('.value_row');
-  const valCost    = document.querySelector('.value_cost');
+  const form          = document.getElementById('buyTicketForm');
+  const submitBtn     = form.querySelector('button[type="submit"]');
+  const valDate       = document.querySelector('.value_date');
+  const valTime       = document.querySelector('.value_time');
+  const valSeat       = document.querySelector('.value_seat');
+  const valRow        = document.querySelector('.value_row');
+  const valCost       = document.querySelector('.value_cost');
   const scheduleEl    = document.getElementById('schedule');
   const sessionBtnsEl = document.getElementById('session-buttons');
   const seatsEl       = document.getElementById('seats');
+  const selectedInfo  = document.getElementById('selected-seats-info');
+
+  submitBtn.disabled = true;
 
 
   form.addEventListener('submit', async e => {
@@ -102,9 +101,8 @@ window.addEventListener('DOMContentLoaded', () => {
       return alert('Будь ласка, спочатку оберіть сеанс.');
     }
 
-
     const payload = {
-      session_id:  currentSession.id || currentSession.session_id,
+      session_id:  currentSession.session_id,
       movie_name: movieName,
       date:       valDate.textContent,
       time:       valTime.textContent,
@@ -112,50 +110,25 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     try {
-
       const buyResp = await fetch(form.action, {
         method:  'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-          'Accept':       'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(payload)
       });
-      const buyData = await buyResp.json();
-      if (!buyResp.ok) {
-        throw new Error(buyData.error || buyData.message || buyResp.statusText);
-      }
 
-
-      const confResp = await fetch('/ticket_confirmation', {
-        method:  'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-          'Accept':       'application/json'
-        },
-        body:    JSON.stringify(payload)
-      });
-      const confData = await confResp.json();
-      if (!confResp.ok) {
-        throw new Error(confData.error || confData.message || confResp.statusText);
-      }
-
-      console.log('Confirmation data:', confData);
-
-
+      window.location.href = '/ticket_confirmation'
     } catch (err) {
       console.error(err);
       alert('Помилка: ' + err.message);
     }
   });
 
-  
+
   const sessionsByDay = {};
-  sessions.forEach((s, i) => {
+  sessions.forEach(s => {
     s._date = new Date(s.datetime);
-    s._idx  = i;
     const d = s._date.getDate();
-    if (!sessionsByDay[d]) sessionsByDay[d] = [];
+    sessionsByDay[d] = sessionsByDay[d] || [];
     sessionsByDay[d].push(s);
   });
 
@@ -165,10 +138,8 @@ window.addEventListener('DOMContentLoaded', () => {
   function drawHall() {
     seatsEl.innerHTML = '';
     if (!hallStructure.length) return;
-    const cols = Math.max(...hallStructure.map(r => r.length));
     seatsEl.style.display = 'grid';
-    seatsEl.style.gridTemplateColumns = `repeat(${cols},1fr)`;
-
+    seatsEl.style.gridTemplateColumns = `repeat(${Math.max(...hallStructure.map(r=>r.length))},1fr)`;
     hallStructure.forEach((rowArr, rIdx) => {
       rowArr.forEach((cell, cIdx) => {
         const div = document.createElement('div');
@@ -177,15 +148,13 @@ window.addEventListener('DOMContentLoaded', () => {
         if (cell === 0) {
           div.className = 'empty';
         } else {
-          const isOcc = occupiedSeats.some(o => o.row === rIdx && o.col === cIdx);
+          const isOcc = occupiedSeats.some(o => o.row === rIdx && o.seatNumber === cIdx);
           if (isOcc) {
             div.className = 'place occupied';
           } else {
             div.className = 'place';
             div.dataset.price = staticPrice;
-            div.addEventListener('mouseover', () => {
-              valCost.textContent = `${staticPrice} грн`;
-            });
+            div.addEventListener('mouseover', () => valCost.textContent = `${staticPrice} грн`);
             div.addEventListener('click', () => {
               div.classList.toggle('selected');
               valRow.textContent = rIdx + 1;
@@ -201,112 +170,90 @@ window.addEventListener('DOMContentLoaded', () => {
 
   function renderSessionButtons(day) {
     sessionBtnsEl.innerHTML = '';
-    const arr = sessionsByDay[day] || [];
-    if (!arr.length) {
-      sessionBtnsEl.textContent = 'Немає сесій на цей день.';
-      hallStructure = [];
-      drawHall();
+    const daySessions = sessionsByDay[day] || [];
+    if (!daySessions.length) {
+      sessionBtnsEl.textContent = 'Немає сесій';
+      hallStructure = []; occupiedSeats = []; drawHall();
       return;
     }
-    arr.forEach(s => {
-      const hallName   = s.hall?.name || s.hall_name || 'Без назви';
-      const hallStruct = s.hall?.structure || s.hall_structure;
-      const hh         = s._date.getHours().toString().padStart(2, '0');
-      const mm         = s._date.getMinutes().toString().padStart(2, '0');
-      const btn        = document.createElement('button');
-      btn.textContent = `${hh}:${mm} — ${hallName}`;
+    daySessions.forEach(s => {
+      const hh = s._date.getHours().toString().padStart(2,'0');
+      const mm = s._date.getMinutes().toString().padStart(2,'0');
+      const btn = document.createElement('button');
+      btn.textContent = `${hh}:${mm} — ${s.hall?.name||'Без назви'}`;
       btn.addEventListener('click', () => {
-        sessionBtnsEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        sessionBtnsEl.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
-        currentSession     = s;
+        currentSession = s;
         submitBtn.disabled = false;
+        valDate.textContent = day;
         valTime.textContent = `${hh}:${mm}`;
-        hallStructure       = hallStruct;
+        hallStructure = s.hall?.structure||[];
+        occupiedSeats = occupiedBySession[s.session_id]||[];
         drawHall();
-        document.getElementById('selected-seats-info').innerHTML = '';
-        valSeat.textContent = '';
-        valRow.textContent  = '';
-        valCost.textContent = '';
+        selectedInfo.innerHTML = '';
         document.getElementById('selectedSeatsInput').value = '[]';
+        valSeat.textContent = ''; valRow.textContent = ''; valCost.textContent = '';
       });
       sessionBtnsEl.appendChild(btn);
     });
-    const firstBtn = sessionBtnsEl.querySelector('button');
-    if (firstBtn) firstBtn.click();
+    sessionBtnsEl.querySelector('button')?.click();
   }
 
   function onDayClick(day, li) {
-    const last = scheduleEl.querySelector('.active');
-    if (last) last.classList.remove('active');
+    scheduleEl.querySelectorAll('li.active').forEach(n=>n.classList.remove('active'));
     li.classList.add('active');
-    valDate.textContent = day;
-    valTime.textContent = '';
-    valSeat.textContent = '';
-    valRow.textContent = '';
-    valCost.textContent = '';
     renderSessionButtons(day);
   }
 
   function updateSelectedSeats() {
-    const selected = Array.from(seatsEl.querySelectorAll('.selected'));
-    const seatsArray = selected.map(el => ({
-      row: +el.dataset.row + 1,
-      seatNumber: +el.dataset.col + 1,
+    const sel = Array.from(seatsEl.querySelectorAll('.selected'));
+    const arr = sel.map(el => ({
+      row: +el.dataset.row,
+      seatNumber: +el.dataset.col,
       cost: +el.dataset.price
     }));
-    document.getElementById('selectedSeatsInput').value = JSON.stringify(seatsArray);
-
-    const container = document.getElementById('selected-seats-info');
-    container.innerHTML = '';
-    seatsArray.forEach(seat => {
-      const div = document.createElement('div');
-      div.className = 'selected-seat-info';
-      div.innerHTML = `
-        <div class="ticket-label">Квиток</div>
+    document.getElementById('selectedSeatsInput').value = JSON.stringify(arr);
+    selectedInfo.innerHTML = '';
+    arr.forEach((seat,i) => {
+      const d = document.createElement('div');
+      d.className = 'selected-seat-info';
+      d.innerHTML = `
+        <div class="ticket-label">Квиток ${i+1}</div>
         <p><strong>Фільм:</strong> ${movieName}</p>
         <p><strong>Дата:</strong> ${valDate.textContent}</p>
         <p><strong>Час:</strong> ${valTime.textContent}</p>
-        <p><strong>Ряд:</strong> ${seat.row}</p>
-        <p><strong>Місце:</strong> ${seat.seatNumber}</p>
+        <p><strong>Ряд:</strong> ${seat.row + 1}</p>
+        <p><strong>Місце:</strong> ${seat.seatNumber + 1}</p>
         <p><strong>Вартість:</strong> ${seat.cost} грн</p>
       `;
-      container.appendChild(div);
+      selectedInfo.appendChild(d);
     });
   }
 
   function renderCalendar() {
     scheduleEl.innerHTML = '';
-    const today       = new Date();
-    const Y           = today.getFullYear(), M = today.getMonth();
-    const daysInMonth = new Date(Y, M + 1, 0).getDate();
-    const firstDow    = new Date(Y, M, 1).getDay();
-    for (let i = 0; i < firstDow; i++) {
-      const li = document.createElement('li');
-      li.classList.add('empty');
-      scheduleEl.appendChild(li);
-    }
-    for (let d = 1; d <= daysInMonth; d++) {
-      const li = document.createElement('li');
-      li.textContent = d;
-      if (d === today.getDate()) li.classList.add('today');
-      if (sessionsByDay[d]?.length) {
-        const s0 = sessionsByDay[d][0]._date;
-        const hh = s0.getHours().toString().padStart(2, '0');
-        const mm = s0.getMinutes().toString().padStart(2, '0');
-        li.innerHTML += ` <small>${hh}:${mm}</small>`;
+    const now=new Date(),Y=now.getFullYear(),M=now.getMonth();
+    const days=new Date(Y,M+1,0).getDate(),start=new Date(Y,M,1).getDay();
+    for(let i=0;i<start;i++){ const li=document.createElement('li');li.classList.add('empty');scheduleEl.appendChild(li);}
+    for(let d=1;d<=days;d++){
+      const li=document.createElement('li');li.textContent=d;
+      if(d===now.getDate())li.classList.add('today');
+      if(sessionsByDay[d]?.length){
+        const x=sessionsByDay[d][0]._date;
+        li.innerHTML+=` <small>${x.getHours().toString().padStart(2,'0')}:${x.getMinutes().toString().padStart(2,'0')}</small>`;
       }
-      li.addEventListener('click', () => onDayClick(d, li));
+      li.addEventListener('click',()=>onDayClick(d,li));
       scheduleEl.appendChild(li);
     }
   }
 
-
   renderCalendar();
-  const todayLi = scheduleEl.querySelector('li.today') ||
-                  scheduleEl.querySelector('li:not(.empty)');
-  if (todayLi) todayLi.click();
+  const todayLi = scheduleEl.querySelector('li.today')||scheduleEl.querySelector('li:not(.empty)');
+  todayLi?.click();
 });
 </script>
+
 
 
 </body>
