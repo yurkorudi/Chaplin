@@ -263,11 +263,11 @@ admin = Admin(
 
 
 admin.add_view(HollView(endpoint='holls', name='Геометрія залів'))
-admin.add_view(AuthModelView(Cinema, db.session, name='Кінотеатри'))
-admin.add_view(AuthModelView(Hall, db.session, name='Зали'))
-admin.add_view(AuthModelView(Film, db.session, name='Фільми'))
-admin.add_view(AuthModelView(Session, db.session, name='Сеанси'))
-admin.add_view(AuthModelView(Image, db.session, name='Зображення'))
+admin.add_view(CinemaView(Cinema, db.session, name='Кінотеатри'))
+admin.add_view(HallView(Hall, db.session, name='Зали'))
+admin.add_view(FilmView(Film, db.session, name='Фільми'))
+admin.add_view(SessionView(Session, db.session, name='Сеанси'))
+admin.add_view(ImageView(Image, db.session, name='Зображення'))
 
 #### ___________________________________admin______________________________________ ####
 
