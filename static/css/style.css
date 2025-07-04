@@ -14,6 +14,7 @@
 
 body {
   background-color: #000000;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .home {
@@ -1007,6 +1008,52 @@ li:active {
 .place.selected {
   background: orange;
 }
+
+.left_menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.selected-seats-info {
+  margin-top: 12px;
+  width: 100%;
+  max-width: 460px;
+  font-size: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.selected-seat-info {
+  position: relative;
+  padding-left: 2px;
+  background: rgba(128, 0, 0, 1);
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.selected-seat-info p {
+  margin: 2px 0;
+  line-height: 1.2;
+}
+
+
+.selected-seat-info .ticket-label {
+  position: absolute;
+  right: 4px;
+  top: 90%;
+  transform: translateY(-50%) rotate(90deg);
+  transform-origin: right top;
+  font-size: 20px;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing:  4px;
+  font-weight: 300; 
+  color: #000000;
+  /* white-space: nowrap; */
+}
+
+
+
 
 .place.occupied {
   background: lightgray;

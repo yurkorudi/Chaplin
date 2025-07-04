@@ -36,6 +36,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://rootforchaplin:Super_Pa
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SECRET_KEY'] = 'AdminSecretKey(2025)s'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
+app.config['JSON_AS_ASCII'] = False
 GOOGLE_MAPS_API_KEY = 'AIzaSyCL1RYn2TgJBFu-7Vne8tdJBKc6v6GCzpM'
 
 db.init_app(app)
@@ -578,6 +579,7 @@ def book():
     for i in film.data['sessions']:
         hhall = Hall.query.filter_by(id=i['hall_id']).first()
         a = {
+            'session_id': i['session_id'],
             'datetime': i['datetime'],
             'hall': {
                 'name': i['hall_name'],
@@ -600,23 +602,66 @@ def book():
     )
 
 
-@app.route('/buy_ticket', methods=['GET', 'POST'])
+@app.route('/buy_ticket', methods=['POST'])
 def buy_ticket():
+    print("___________________________________________ buy_ticket ___________________________________________")
     try:
+        
         print("Raw Request Data:", request.data)
+        
         data = request.get_json()
         
         if not data:
             return jsonify({"error": "Empty or invalid JSON received EMPTYYYYYYYYY"}), 400
         
         print("Request JSON (parsed):", data)
-        # return jsonify({"message": "Received JSON!", "data": data}), 200
-        return jsonify({"message": "Payment method was not added"}), 200
-
-    except Exception as e:
-        # return jsonify({"error", str(e)}), 400
+        session_id = data.get('session_id')
+        tickets = data.get('tickets')
+        if not session_id or not tickets:
+            return jsonify({"error": "Session ID and tickets are required"}), 400
         
-        return jsonify({"message": "Payment method was not added"}), 400
+        for i in tickets: 
+            session = db.Session.query.filter_by(session_id=session_id).first()
+            new_ticket = Ticket(
+                seat_id = 1,
+                session_id = session_id,
+                user_id = 1, 
+                cost = i['cost'],
+                sell_type = 'online',
+                cinema_id = session.cinema_id,
+                row_index = i['row'],
+                column_index = i['seatNumber']
+            )
+            db.session.add(new_ticket)
+            db.session.commit()
+            
+            
+
+        
+        return jsonify({
+            'status': 'success'}), 200
+    except Exception as e:
+        print("Error in buy_ticket:", e)
+        return jsonify({"error": "An error occurred while processing the request"}), 500
+        
+
+
+
+
+@app.route('/ticket_confirmation', methods=['POST'])
+def ticket_confirmation():
+    print("___________________________________________ ticket_confirmation ___________________________________________")
+    data = request.get_json(force=True)
+    session_id = data.get('session_id')
+    tickets = data.get('tickets')
+    
+    
+    confirmation_data = {
+        "session_id": session_id,
+        "tickets":    tickets,
+    }
+    
+    return jsonify(confirmation_data), 200
 
 
 
