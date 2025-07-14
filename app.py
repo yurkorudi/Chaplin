@@ -27,6 +27,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.units import mm
 import os
 
+import hashlib
+
 
 pdfmetrics.registerFont(
     TTFont('DejaVuSans', 'static/fonts/DejaVuSans.ttf'),
