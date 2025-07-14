@@ -18,7 +18,7 @@ class Film_obj:
             # заброньовані місця відповідно до певного ід
             self.seats = get_seats(session_id = g['session_id'])
             id = g['session_datetime']
-            id = id.day
+            id = id.strftime("%Y-%m-%d")
             for s in self.seats:
                 if id not in self.busy_seats:
                     self.busy_seats[id] = []

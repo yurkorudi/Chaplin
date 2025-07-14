@@ -756,6 +756,7 @@ body {
   /* position: absolute; */
   min-height: 350px;
   width: 100%;
+  min-width: 350px;
   padding: 0;
   margin: 0;
   /* background-image: url("/static/mini_db/Venom/poster/venomposter.jpg"); */
@@ -832,7 +833,7 @@ body {
 
 .main.movie .base_info {
   height: auto;
-  width: 70vw;
+  width: 60vw;
   color: white;
   margin-bottom: 15px;
 }

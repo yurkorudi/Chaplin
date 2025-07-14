@@ -127,7 +127,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const sessionsByDay = {};
   sessions.forEach(s => {
     s._date = new Date(s.datetime);
-    const d = s._date.getDate();
+    const d = s._date.toISOString().split('T')[0];
     sessionsByDay[d] = sessionsByDay[d] || [];
     sessionsByDay[d].push(s);
   });
@@ -170,7 +170,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
   function renderSessionButtons(day) {
     sessionBtnsEl.innerHTML = '';
-    const daySessions = sessionsByDay[day] || [];
+    
+    const now=new Date(),Y=now.getFullYear(),M=now.getMonth();
+    const dateStr = `${Y}-${(M + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    
+    const daySessions = sessionsByDay[dateStr] || [];
     if (!daySessions.length) {
       sessionBtnsEl.textContent = 'Немає сесій';
       hallStructure = []; occupiedSeats = []; drawHall();
@@ -238,9 +242,12 @@ window.addEventListener('DOMContentLoaded', () => {
     for(let i=0;i<start;i++){ const li=document.createElement('li');li.classList.add('empty');scheduleEl.appendChild(li);}
     for(let d=1;d<=days;d++){
       const li=document.createElement('li');li.textContent=d;
+
+      const dateStr = `${Y}-${(M + 1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
+  
       if(d===now.getDate())li.classList.add('today');
-      if(sessionsByDay[d]?.length){
-        const x=sessionsByDay[d][0]._date;
+      if(sessionsByDay[dateStr]?.length){
+        const x=sessionsByDay[dateStr][0]._date;
         li.innerHTML+=` <small>${x.getHours().toString().padStart(2,'0')}:${x.getMinutes().toString().padStart(2,'0')}</small>`;
       }
       li.addEventListener('click',()=>onDayClick(d,li));
