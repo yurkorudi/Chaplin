@@ -27,6 +27,15 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.units import mm
 import os
 
+
+from flask import Blueprint
+from flask_admin import Admin, AdminIndexView, expose, BaseView
+from flask_admin.contrib.sqla import ModelView
+from flask_admin.form import SecureForm
+from flask_admin.form import FileUploadField
+from wtforms_sqlalchemy.fields import QuerySelectField
+from werkzeug.utils import secure_filename
+
 import hashlib
 
 
@@ -72,6 +81,14 @@ db.init_app(app)
 
 
 #### ___________________________________admin______________________________________ ####
+
+
+bp_admin = Blueprint(
+    'bp_admin',
+    __name__,
+    template_folder='templates', 
+    url_prefix='/admin'
+)
 
 
 
@@ -248,19 +265,27 @@ class HallView(ModelView):
 class CinemaView(ModelView):
     form_columns = ['name', 'location', 'contact_phone_number', 'work_schedule', 'instagram_link']
     
+    
+    
+class CustomHomeVievManager(BaseView):
+    @expose('/')    
+    def index(self, **kwargs):
+
+        return self.render('manager/manager_home.html')
+
+    
+    
 
 admin = Admin(
-    app,
+    bp_admin,
     name='Адміністратор',
     template_mode='bootstrap3',
-    index_view=CustomHomeView(),
-    url='/admin', 
-    endpoint='admin'   
+    index_view=CustomHomeView,
+    endpoint='admin',
+    url='/'
 )
 
-
-
-
+admin.init_app(bp_admin)
 
 
 
@@ -270,6 +295,42 @@ admin.add_view(HallView(Hall, db.session, name='Зали'))
 admin.add_view(FilmView(Film, db.session, name='Фільми'))
 admin.add_view(SessionView(Session, db.session, name='Сеанси'))
 admin.add_view(ImageView(Image, db.session, name='Зображення'))
+
+
+app.register_blueprint(bp_admin)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+manager = Admin(
+    app, 
+    name='Менеджер',
+    template_mode='bootstrap3',
+    index_view=CustomHomeVievManager(),
+    url='/manager', 
+    endpoint='manager'   
+)
+
+
+
+
+manager.add_view(CustomHomeVievManager(endpoint='prod', name='Продаж квитків'))
 
 #### ___________________________________admin______________________________________ ####
 
