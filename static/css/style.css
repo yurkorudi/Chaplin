@@ -1047,13 +1047,18 @@ li:active {
   align-items: center;
 }
 
+.selected-tickets{
+  width: 100%;
+}
+
 .selected-seats-info {
   margin-top: 12px;
-  width: 100%;
+  left: 0;
+  width: 70%;
   max-width: 460px;
   font-size: 14px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 6px;
 }
 
@@ -1063,6 +1068,7 @@ li:active {
   background: rgba(128, 0, 0, 1);
   border-radius: 3px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  padding-right: 30px;
 }
 .selected-seat-info p {
   margin: 2px 0;
