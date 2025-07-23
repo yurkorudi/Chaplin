@@ -28,7 +28,7 @@ from reportlab.lib.units import mm
 import os
 
 
-from flask import Blueprint
+from flask import Flask
 from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import SecureForm
@@ -82,13 +82,6 @@ db.init_app(app)
 
 #### ___________________________________admin______________________________________ ####
 
-
-bp_admin = Blueprint(
-    'bp_admin',
-    __name__,
-    template_folder='templates', 
-    url_prefix='/admin'
-)
 
 
 
@@ -267,27 +260,29 @@ class CinemaView(ModelView):
     
     
     
-class CustomHomeVievManager(BaseView):
+class CustomHomeVievManager(AdminIndexView):
     @expose('/')    
     def index(self, **kwargs):
 
         return self.render('manager/manager_home.html')
 
     
-    
+def create_admin(name, index_view, url, endpoint):
+    admin = Admin(
+        name=name,
+        index_view=index_view,
+        template_mode='bootstrap3',
+        url=url,
+        endpoint=endpoint
+    )
+    admin._views = []
+    return admin
 
-admin = Admin(
-    bp_admin,
-    name='Адміністратор',
-    template_mode='bootstrap3',
-    index_view=CustomHomeView,
-    endpoint='admin',
-    url='/'
-)
+admin = create_admin('admin', CustomHomeView(), '/admin', 'admin')
+admin.init_app(app)
 
-admin.init_app(bp_admin)
-
-
+manager = create_admin('manager', CustomHomeVievManager(), '/manager', 'manager')
+manager.init_app(app)
 
 admin.add_view(HollView(endpoint='holls', name='Геометрія залів'))
 admin.add_view(CinemaView(Cinema, db.session, name='Кінотеатри'))
@@ -297,40 +292,13 @@ admin.add_view(SessionView(Session, db.session, name='Сеанси'))
 admin.add_view(ImageView(Image, db.session, name='Зображення'))
 
 
-app.register_blueprint(bp_admin)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-manager = Admin(
-    app, 
-    name='Менеджер',
-    template_mode='bootstrap3',
-    index_view=CustomHomeVievManager(),
-    url='/manager', 
-    endpoint='manager'   
-)
-
 
 
 
 manager.add_view(CustomHomeVievManager(endpoint='prod', name='Продаж квитків'))
+# manager.add_view(FilmView(Film, db.session, name='Фільми'))
+# manager.add_view(SessionView(Session, db.session, name='Сеанси'))
+# manager.add_view(ImageView(Image, db.session, name='Зображення'))
 
 #### ___________________________________admin______________________________________ ####
 
