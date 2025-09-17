@@ -4,6 +4,7 @@
   font-family: "Helvetica", Helvetica;
   display: flex;
   flex-direction: column;
+
 }
 
 @keyframes fadeIn {
@@ -22,7 +23,8 @@ body {
   flex-direction: column;
   justify-content: center;
   width: 100vw;
-  background: linear-gradient(180deg, rgba(128, 0, 0, 1) 5%, rgba(0, 0, 0, 0) 100%);
+  height: auto;
+  background: linear-gradient(180deg, rgba(29, 29, 29, 0) 0%, rgb(255, 255, 255) 20%, rgba(29, 29, 29, 0) 100%);
   padding: 15px;
 }
 
@@ -304,6 +306,7 @@ body {
   margin-top: 30px;
   padding: 15px;
   height: 80vh;
+  color: black;
 }
 
 .homePage{
@@ -559,7 +562,7 @@ body {
   display: grid;
   column-gap: 20px;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  /* gap: 15px; */
+  gap: 15px;
   height: auto;
   margin-top: 0px;
 }
@@ -741,6 +744,7 @@ body {
   gap: 15px;
   margin-left: 0px;
   height: auto;
+  color: black;
 }
 
 .main.movie .left_menu {
@@ -802,7 +806,7 @@ body {
 
 .main.movie .left_menu .book_button button,
 .main.movie .base_info .book_button button {
-  color: white;
+  /* color: white; */
   font-size: 20px;
   background-color: transparent;
   border: rgba(128, 0, 0, 1) 3px solid;
@@ -823,7 +827,7 @@ body {
   display: grid;
   grid-template-columns: 30% 70%;
   gap: 5px;
-  color: white;
+  /* color: white; */
   width: 100%;
 }
 
@@ -834,7 +838,7 @@ body {
 .main.movie .base_info {
   height: auto;
   width: 60vw;
-  color: white;
+  /* color: white; */
   margin-bottom: 15px;
 }
 
@@ -865,7 +869,7 @@ body {
 }
 
 .main.movie .base_info .movie_description {
-  color: white;
+  /* color: white; */
 }
 
 .main.movie .base_info div p {
@@ -879,7 +883,7 @@ body {
 .main.movie .right_menu h1 {
   font-size: 20px;
   font-weight: 400;
-  color: white;
+  /* color: white; */
   width: 100%;
   padding-left: 25%;
   margin-bottom: 15px;
@@ -893,7 +897,7 @@ body {
 }
 
 .main.movie .right_menu .weekdays li {
-  color: white;
+  /* color: white; */
   background-color: transparent;
   border: none;
   box-shadow: none;
@@ -962,7 +966,7 @@ li:active {
 }
 
 .home.booking {
-  background: linear-gradient(180deg, rgb(97, 6, 6) 100px, rgba(0, 0, 0, 0) 150px);
+  background: linear-gradient(180deg, rgba(29, 29, 29, 0) 0%, rgb(255, 255, 255) 20%, rgba(29, 29, 29, 0) 100%);
 }
 
 .main.movie.booking .base_info button {
@@ -1069,6 +1073,8 @@ li:active {
   border-radius: 3px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
   padding-right: 30px;
+  min-height: 130px;
+  padding: 0 auto;
 }
 .selected-seat-info p {
   margin: 2px 0;
@@ -1249,7 +1255,7 @@ li:active {
 .seat .seats .place {
   width: 25px;
   height: 35px;
-  border: 2px solid gray;
+  border: 2px solid rgba(128, 0, 0, 0.5);
   margin: 0px !important;
   cursor: pointer;
   border-radius: 5px;
