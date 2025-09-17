@@ -36,15 +36,14 @@
       {% for movie in movies %}
         <div class="film-session">
           <div class="film-item">
-            <img src="{{ movie.img_src }}" alt="{{ movie.title }}">
             <div class="film-inf">
               <h1 style="font-size: 20px;">{{ movie.name }}</h1>
+              <p>{{ movie.age }}</p>
               <p>{{ movie.genre }}</p>
+              <p>{{ movie.description }}</p>
+              <button class="button">Переглянути</button>
             </div>
-            <div class="inf">
-              <div class="d">2D</div>
-              <div class="age">{{ movie.age }}</div>
-            </div>
+            <img src="{{ movie.img_src }}" alt="{{ movie.title }}">
           </div>
         </div>
       {% endfor %}
