@@ -28,6 +28,19 @@ body {
   padding: 15px;
 }
 
+.homePage h1{
+  text-align: center;
+  margin-bottom: 90px;
+  font-size: 25px;
+  font-weight: 600;
+  color: white;
+  text-shadow: 
+    2px 2px 0 black,
+   -2px -2px 0 black,
+    2px -2px 0 black,
+   -2px  2px 0 black;
+}
+
 
 
 
@@ -159,12 +172,19 @@ body {
   transform: scale(1.1);
 }
 
+.dropdown-content li button{
+  color: black !important;
+}
+
+.dropdown-content li button:hover{
+  color: white !important;
+}
 
 .session-row{
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10%;
+  margin-bottom: 30px;
 }
 
 .sessions{
@@ -200,7 +220,7 @@ body {
 
 .nearest button{
   background: transparent;
-  color: white;
+  /* color: white; */
   padding: 5px;
   border: 2px solid rgba(128, 0, 0, 1);
   border-radius: 5px;
@@ -296,7 +316,7 @@ body {
   width: 50px;
   height: 50px;
   transition: opacity;
-  background-image: url('/static/img/ico.svg');
+  background-image: url('/static/img/ico3.png');
   background-size: cover;
   transition: background-image 0.5s ease;
 }
@@ -1755,7 +1775,7 @@ li:active {
 }
 
 .city-btn:hover {
-    background: linear-gradient(135deg, #000000, #6d0101); 
+    background: linear-gradient(135deg, #000000, #777777); 
     transform: scale(1.1);
     border: white;
 }
@@ -1766,7 +1786,7 @@ li:active {
 
 .city-btn.active {
   background: #000000;
-  color: white;
+  color: white !important;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.908);
   transform: scale(1.1);
 }
