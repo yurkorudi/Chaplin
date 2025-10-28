@@ -193,15 +193,34 @@ body {
   align-items: center;
   width: fit-content;
   padding: 15px;
-  background: rgba(255, 255, 255, 0.5);
+  /* background: rgba(255, 255, 255, 0.5); */
+  width: 100vw;
+}
+
+.sessions p{
+  margin-bottom: 15px;
 }
 
 .nearest,
 .weekly{
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   margin-bottom: 25px;
 }
+
+.mst_sesion{
+  margin-right: 25px;
+}
+
+.mst_sesion a{
+  display: flex;
+  flex-direction: row;
+}
+
+.mst_sesion p{
+  margin: 0 5px;
+}
+
 
 .weekly{
   margin: 0;
@@ -401,13 +420,15 @@ body {
   align-items: center;
   height: 55vh;
   width: 100vw;
+  padding: 0 15px;
+  position: relative;
 }
 
-.slider {
+/* .slider {
   width: 30vw;
   margin: 15px auto;
   perspective: 1000px;
-}
+} */
 
 .slider-body {
   inset: 0;
@@ -579,6 +600,57 @@ body {
 
 .film-inf h1{
   margin-bottom: 10px;
+}
+
+
+
+/* =================================slideshow==================================== */
+
+.slideshow {
+  overflow: hidden;
+  width: 90%; /* container width */
+  border-radius: 10px;
+}
+
+.slide-track {
+  display: flex;
+  transition: transform 0.5s ease; /* smooth movement */
+}
+
+.slide {
+  width: 300px; /* slide width */
+  flex-shrink: 0;
+  margin-right: 10px;
+  height: 400px;
+}
+
+.slide img {
+  width: 100%;
+  display: block;
+  border-radius: 5px;
+  object-fit: fill;
+   object-position: center;
+}
+
+.slid-buttons{
+    position: absolute;
+    top: calc(50% - 25px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+.slid-buttons *{
+    background-color: transparent;
+    border: 3px solid #FFD700;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: #FFD700;
+    font-size: 30px;
+    font-weight: bolder;
+    cursor: pointer;
+    text-align: center;
 }
 
 /* end  home page's base 360 degris's slider*/

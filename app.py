@@ -289,33 +289,33 @@ class CustomHomeVievManager(AdminIndexView):
 #     admin._views = []
 #     return admin
 
-admin = Admin(
-    app,
-    name='My Admin',
-    index_view=CustomHomeView(url='/admin', endpoint='admin'),  # Set these correctly
-    template_mode='bootstrap3',
-    url='/admin',  # Optional: just sets the base URL
-)
+# admin = Admin(
+#     app,
+#     name='My Admin',
+#     index_view=CustomHomeView(url='/admin', endpoint='admin'),  # Set these correctly
+#     template_mode='bootstrap3',
+#     url='/admin',  # Optional: just sets the base URL
+# )
 
-manager = Admin(
-    app,
-    name='My Manager',
-    index_view=CustomHomeVievManager(url='/manager', endpoint='manager'),  # Set these correctly
-    template_mode='bootstrap3',
-    url='/manager',  # Optional: just sets the base URL
-)
+# manager = Admin(
+#     app,
+#     name='My Manager',
+#     index_view=CustomHomeVievManager(url='/manager', endpoint='manager'),  # Set these correctly
+#     template_mode='bootstrap3',
+#     url='/manager',  # Optional: just sets the base URL
+# )
 
 # admin.init_app(app)
 
 # manager = create_admin('manager', CustomHomeVievManager(), '/manager', 'manager')
 # manager.init_app(app)
 
-admin.add_view(HollView(endpoint='holls', name='Геометрія залів'))
-admin.add_view(CinemaView(Cinema, db.session, name='Кінотеатри'))
-admin.add_view(HallView(Hall, db.session, name='Зали'))
-admin.add_view(FilmView(Film, db.session, name='Фільми'))
-admin.add_view(SessionView(Session, db.session, name='Сеанси'))
-admin.add_view(ImageView(Image, db.session, name='Зображення'))
+# admin.add_view(HollView(endpoint='holls', name='Геометрія залів'))
+# admin.add_view(CinemaView(Cinema, db.session, name='Кінотеатри'))
+# admin.add_view(HallView(Hall, db.session, name='Зали'))
+# admin.add_view(FilmView(Film, db.session, name='Фільми'))
+# admin.add_view(SessionView(Session, db.session, name='Сеанси'))
+# admin.add_view(ImageView(Image, db.session, name='Зображення'))
 
 
 

@@ -18,17 +18,23 @@
   <main class="main homePage">
      <div class="session-row">
       <div class="sessions">
+        <p>🕒 Найближчі сеанси</p>
         <div class="nearest">
-          <p>🕒 Найближчі сеанси</p>
-
-          <a href="">🎬 Test</a>
-          <button class="book_button">🎫 Time</button>
+          {% for movie in movies[-2:] %}
+          <div class="mst_sesion">
+            <a href="">
+              <p>🎬 {{ movie.name }}</p>
+              <p>🎫 </p>
+            </a>
+          </div>
+          <!-- <button class="book_button">🎫 Time</button> -->
+          {% endfor %}
         </div>
-        <div class="weekly">
+        <!-- <div class="weekly">
           <p>🗓️ Прем'єри тижня</p>
 
           <a href="">🎬 Test</a>
-        </div>
+        </div> -->
       </div>
     </div>
     
@@ -54,7 +60,7 @@
     <!-- Home page's base 360 degris's slider -->
 
     <section class="slider row">
-      <div class="slider-body">
+      <!-- <div class="slider-body">
         {% for movie in movies[-8:] %}
         <div id="slideshow-form" class="slider-item" style="--j--:{{ loop.index }}">
           <input type="image" , src="{{ movie.img_src }}" width="250" height="350">
@@ -85,8 +91,40 @@
       <div class="button-wrapper">
         <button class="prev"> < </button>
             <button class="next">></button>
-      </div>
+      </div> -->
 
+      <div class="slideshow">
+            <div class="slide-track">
+              {% for movie in movies[-8:] %}
+              <div id="slide" class="slide">
+                <input type="image" , src="{{ movie.img_src }}" width="250" height="350">
+                <a href="{{ url_for('movie', movie_name='{{ movie.title }}')}}">
+                  <div class="slider-film-back">
+                    <div class="slider-film-button">
+                        <button>info</button>
+                      <button>trailer</button>
+                    </div>
+                    <div class="slider-film-info">
+                      <p>Назва: {{ movie.name }}</p>
+                      <p>Жанр: {{ movie.genre }}</p>
+                      <p>Тривалість: {{ movie.duration }}</p>
+                      <p>Вік: {{ movie.age }}</p>
+                    </div>
+                  </div>
+                  <div class="inf">
+                    <div class="d">2D</div>
+                    <div class="age">{{ movie.age }}</div>
+                  </div>
+                </a>
+                
+              </div>
+            {% endfor %}
+            </div>
+        </div>
+        <div class="slid-buttons">
+            <button id="prev"><</button>
+            <button id="next">></button>
+        </div>
     </section>
 
     <!-- end home page's base 360 degris's slider -->
@@ -96,54 +134,36 @@
   {% include('footer.html') %}
 
   <script>
-    const mediaQuery = window.matchMedia("(min-width: 460px)");
+    
+        // ===========================slideshow================================
+        const track = document.querySelector('.slide-track');
+        const slides = document.querySelectorAll('.slide');
+        const slideWidth = 300 + 7; // ширина + відступ
+        const slideCount = slides.length;
 
+        document.getElementById('next').addEventListener('click', () => {
+        track.style.transition = 'transform 0.5s ease';
+        track.style.transform = `translateX(${-slideWidth}px)`;
 
-    function toggleMenu() {
-      document.querySelector('.nav-menu').classList.toggle('active');
-    }
-    function toggleMenu() {
-      document.querySelector('.mobile-menu').classList.toggle('active');
-    }
-
-    if (mediaQuery.matches) {
-      var carousel = $(".slider-body"),
-        currdeg = 0,
-        autoplayInterval;
-
-      $(".next").on("click", { d: "n" }, rotate);
-      $(".prev").on("click", { d: "p" }, rotate);
-
-      function rotate(e) {
-        if (e.data.d == "n") {
-          currdeg = currdeg - 45;
-        }
-        if (e.data.d == "p") {
-          currdeg = currdeg + 45;
-        }
-        carousel.css({
-          "-webkit-transform": "rotateY(" + currdeg + "deg)",
-          "-moz-transform": "rotateY(" + currdeg + "deg)",
-          "-o-transform": "rotateY(" + currdeg + "deg)",
-          "transform": "rotateY(" + currdeg + "deg)"
+        // після закінчення анімації переміщаємо перший слайд в кінець
+        setTimeout(() => {
+            track.style.transition = 'none';
+            track.appendChild(track.firstElementChild);
+            track.style.transform = 'translateX(0)';
+        }, 500);
         });
-      }
 
-      // Autoplay function
-      function startAutoplay() {
-        autoplayInterval = setInterval(function () {
-          $(".next").trigger("click");
-        }, 3000);  // Change 2000 to the desired interval in milliseconds
-      }
+        document.getElementById('prev').addEventListener('click', () => {
+        // переміщаємо останній слайд в початок перед анімацією
+        track.insertBefore(track.lastElementChild, track.firstElementChild);
+        track.style.transition = 'none';
+        track.style.transform = `translateX(${-slideWidth}px)`;
 
-      startAutoplay();  // Start autoplay initially
-
-      // Stop autoplay on hover and resume on mouse leave
-      carousel.on("mouseenter", function () {
-        clearInterval(autoplayInterval);
-      }).on("mouseleave", startAutoplay);
-
-    }
+        setTimeout(() => {
+            track.style.transition = 'transform 0.5s ease';
+            track.style.transform = 'translateX(0)';
+        }, 20);
+        });
 
   </script>
 
