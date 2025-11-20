@@ -623,8 +623,8 @@ body {
   flex-shrink: 0;
   margin: 0;
   padding: 0;
-  width: 250px;
-  height: 300px;
+  width: 270px;
+  height: 400px;
   position: relative;
 }
 
@@ -675,6 +675,23 @@ body {
 
 .slide:hover .slider-film-back{
   opacity: 1;
+}
+
+.slide:hover .inf{
+  display: none;
+}
+
+.inf{
+  display: flex;
+  justify-content: end;
+  align-items: flex-end;
+  gap: 10px;
+  position: absolute;
+  bottom: 0;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.6);
+  width: 270px;
+  padding: 10px;
 }
 
 /* end  home page's base 360 degris's slider*/
