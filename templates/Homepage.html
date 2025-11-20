@@ -58,46 +58,11 @@
     {% else %}
     
     <!-- Home page's base 360 degris's slider -->
-
-    <section class="slider row">
-      <!-- <div class="slider-body">
-        {% for movie in movies[-8:] %}
-        <div id="slideshow-form" class="slider-item" style="--j--:{{ loop.index }}">
-          <input type="image" , src="{{ movie.img_src }}" width="250" height="350">
-          <a href="{{ url_for('movie', movie_name='{{ movie.title }}')}}">
-            <div class="slider-film-back">
-              <div class="slider-film-button">
-                  <button>info</button>
-                <button>trailer</button>
-              </div>
-              <div class="slider-film-info">
-                <p>Назва: {{ movie.name }}</p>
-                <p>Жанр: {{ movie.genre }}</p>
-                <p>Тривалість: {{ movie.duration }}</p>
-                <p>Вік: {{ movie.age }}</p>
-              </div>
-            </div>
-            <div class="inf">
-              <div class="d">2D</div>
-              <div class="age">{{ movie.age }}</div>
-            </div>
-          </a>
-          
-        </div>
-      {% endfor %}
-
-        
-      </div>
-      <div class="button-wrapper">
-        <button class="prev"> < </button>
-            <button class="next">></button>
-      </div> -->
-
       <div class="slideshow">
-            <div class="slide-track">
-              {% for movie in movies[-8:] %}
+        <div class="slide-track">
+              {% for movie in movies[-6:] %}
               <div id="slide" class="slide">
-                <input type="image" , src="{{ movie.img_src }}" width="250" height="350">
+                <input type="image" , src="{{ movie.img_src }}">
                 <a href="{{ url_for('movie', movie_name='{{ movie.title }}')}}">
                   <div class="slider-film-back">
                     <div class="slider-film-button">
@@ -119,13 +84,13 @@
                 
               </div>
             {% endfor %}
-            </div>
-        </div>
-        <div class="slid-buttons">
+          </div>
+          <div class="slid-buttons">
             <button id="prev"><</button>
             <button id="next">></button>
+          </div>
         </div>
-    </section>
+      
 
     <!-- end home page's base 360 degris's slider -->
     {% endif %}
@@ -138,7 +103,7 @@
         // ===========================slideshow================================
         const track = document.querySelector('.slide-track');
         const slides = document.querySelectorAll('.slide');
-        const slideWidth = 300; // ширина + відступ
+        const slideWidth = 250; // ширина + відступ
         const slideCount = slides.length;
 
         document.getElementById('next').addEventListener('click', () => {
