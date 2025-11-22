@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/admin-header.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/static/img/logo.svg" alt="">
+        </div>
+        {% if is_mobile %}
+        <div class="burger-menu" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        {% endif %}
+        <div class="menu">
+            <a href="/admin/kasa">Продаж</a>
+            <a href="{{ url_for('admin_tickets') }}">Продані квитки</a>
+            <a href="/admin/return">Повернення</a>
+            <a href="/admin/reports">Звіти</a>
+            <a href="/admin/full-report">Звіти на сьогодні</a>
+            {% if is_mobile %}
+            <div class="social-media">
+                <a href="">
+                    <img src="/static/img/insta.png" alt="">
+                </a>
+                <a href="">
+                    <img src="/static/img/fe_facebook.png" alt="">
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </header>
+    <script>
+        function toggleMenu() {
+            const menu = document.querySelector('.menu');
+            const burger = document.querySelector('.burger-menu');
+            const header = document.querySelector('header');
+            
+            if (window.getComputedStyle(menu).display !== 'none') {
+                menu.style.display = "none";
+                burger.classList.remove('active');
+                header.classList.remove('active');
+                document.body.style.overflow = '';
+            } else {
+                menu.style.display = "flex";
+                burger.classList.add('active');
+                header.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+        }
+    </script>
+</body>
+</html>

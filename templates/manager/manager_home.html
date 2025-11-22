@@ -1,14 +1,350 @@
-{% extends 'admin/master.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/kasa.css') }}">
+    <title>Робоча каса</title>
+</head>
+<body>
+     {% include 'manager/admin-header.html' %}
 
-{% block head %}
-  {{ super() }}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_home.css') }}">
-{% endblock %}
+     <main>
+        <div class="kasa-holl">
+            <section class="hall-wrapper">
+                <div class="hall">
+                <div class="screen">Екран</div>
+                <div id="price-display" class="price-display"></div>
+                <div id="seats"></div>
+                </div>
+            </section>
+        </div>
+        <div class="kasa-menu">          
+            <div class="kasa-shedule">
+                <input type="date" id="myDate" name="myDate">
+            </div>
+            <div class="kasa-session">
+                <div id="sessionList"></div>
+            </div>
+            <div class="kasa-action">
+              <button id="pay-cash">cash</button>
+              <button id="pay-card">card</button>
+              <button id="pay-return">return</button>
+            </div>
+            <div id='selected-seats-info'></div>
+            <div class="client-info">
+              <input type="text" id="client-firstname" placeholder="Ім'я клієнта">
+              <input type="text" id="client-lastname" placeholder="Прізвище клієнта">
+              <input type="email" id="client-email" placeholder="Email клієнта">
+            </div>
+          </div>
+     </main>
 
-{% block body %}
-  <div class="dashboard">
-    <h1>Панель адміністратора</h1>
+<script>
 
-   
-  </div>
-{% endblock %}
+  const bookedBySession = {};
+
+  async function loadAllTickets() {
+    try {
+      const res  = await fetch('/api/tickets');
+      const data = await res.json();
+      data.forEach(t => {
+        if (!bookedBySession[t.sessionId]) 
+          bookedBySession[t.sessionId] = [];
+        bookedBySession[t.sessionId].push({ row: t.row, seatNumber: t.seatNumber });
+      });
+    } catch (e) {
+      console.error('Не вдалося завантажити продані квитки', e);
+    }
+  }
+
+let occupiedBySession = [];
+
+
+
+window.addEventListener('DOMContentLoaded', async() => {
+
+  await loadAllTickets();
+  const priceMap = {
+  };
+    const hallStructure = [
+    [3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,0],
+    [3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,0],
+    [3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,0],
+    [3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,0],
+    [3,3,3,3,3,3,3,3,3,3,3,3,3,3,0,0],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+    [2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0],
+    [2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0],
+    [2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0],
+    ];
+  const selectedDate = new Date();
+  const dayOfWeek = selectedDate.getDay(); 
+  const dayName = getWeekdayName(dayOfWeek);
+  if (dayOfWeek === 6 || dayOfWeek === 0) {
+    priceMap[1] = 110;
+    priceMap[2] = 110;
+    priceMap[3] = 110;
+  } 
+  else if (dayOfWeek === 2) {
+    priceMap[1] = 80;
+    priceMap[2] = 80;
+    priceMap[3] = 80;
+  }
+  else {
+    priceMap[1] = 100;
+    priceMap[2] = 100;
+    priceMap[3] = 100;
+  }
+
+  let data_struct = []
+  const seatsEl      = document.getElementById('seats');
+  const priceDisplay = document.getElementById('price-display');
+
+
+
+
+
+    function drawHall() {
+      seatsEl.innerHTML = '';
+      priceDisplay.textContent = '';
+      const size = 32, gap = 2;
+      seatsEl.style.display = 'inline-grid';
+      seatsEl.style.gridAutoRows = `${size}px`;
+      seatsEl.style.gap = `${gap}px`;
+      seatsEl.style.gridTemplateColumns = `repeat(${Math.max(...hallStructure.map(r=>r.length))+1}, ${size}px)`;
+
+      hallStructure.forEach((row, r) => {
+        const p = document.createElement('p');
+        p.textContent = r + 1;
+        p.style.color = '#fff';
+        p.style.textAlign = 'center';
+        p.style.margin = '5px';
+        seatsEl.appendChild(p);
+        row.forEach((cell, c) => {
+          if (cell === 0) {
+            const spacer = document.createElement('div'); spacer.className = 'seat-gap';
+            seatsEl.appendChild(spacer);
+            return;
+          }
+          const div = document.createElement('div');
+          div.className = `place type-${cell}`;
+          div.dataset.row = r;
+          div.dataset.col = c;
+          div.dataset.price = priceMap[cell];
+          div.textContent = c + 1;
+          const occupied = occupiedBySession.some(o => o.row===r && o.seatNumber===c);
+          if (occupied) {
+            div.classList.add('occupied');
+          } else {
+            div.addEventListener('mouseover', ()=> priceDisplay.textContent=`${div.dataset.price} ₴`);
+            div.addEventListener('mouseout',  ()=> priceDisplay.textContent='');
+            div.addEventListener('click',    ()=>{ div.classList.toggle('selected'); updateSelectedSeats(); });
+          }
+          seatsEl.appendChild(div);
+        });
+      });
+    }
+
+  function updateSelectedSeats() {
+    const selected = Array.from(seatsEl.querySelectorAll('.place.selected'));
+    const arr = selected.map(el => ({
+      row: +el.dataset.row,
+      seatNumber: +el.dataset.col,
+      cost: +el.dataset.price
+    }));
+    const total = arr.reduce((sum, s) => sum + s.cost, 0);
+
+    const info = document.getElementById('selected-seats-info');
+    info.innerHTML = '';
+    const totalEl = document.createElement('p');
+    totalEl.className = 'total-sum';
+    totalEl.textContent = `Сума: ${total} ₴`;
+    info.appendChild(totalEl);
+
+
+
+
+    if (!window.currentSessionId) {
+    alert('Спочатку виберіть сеанс справа');
+    return;
+  }
+
+  firstName = document.getElementById('client-firstname').value;
+  console.log('Ім\'я клієнта:', firstName);
+
+
+
+    data_struct = arr.map(s => ({
+      row:        s.row + 1,
+      seatNumber: s.seatNumber + 1,
+      cost:       s.cost,
+      sessionId:  window.currentSessionId || null,
+    }));
+
+
+    data_struct.forEach((s, i) => {
+      const p = document.createElement('p');
+      p.innerHTML = `Квиток ${i+1}: Ряд ${s.row}, Місце ${s.seatNumber}, ${s.cost} ₴`;
+      info.appendChild(p);
+    });
+ 
+
+    window.selectedSeatsJson = JSON.stringify(data_struct);
+    console.log('data_struct:', data_struct);
+  }
+  const dateInput   = document.getElementById('myDate');
+
+  function getWeekdayName(day) {
+  return ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'Пʼятниця', 'Субота'][day];
+}
+  
+dateInput.addEventListener('change', () => {
+  const selectedDate = new Date(dateInput.value);
+  const dayOfWeek = selectedDate.getDay(); 
+  const dayName = getWeekdayName(dayOfWeek);
+  console.log(`Обраний день тижня: ${dayName}`);
+
+
+  if (dayOfWeek === 6 || dayOfWeek === 0) {
+    priceMap[1] = 110;
+    priceMap[2] = 110;
+    priceMap[3] = 110;
+  } 
+  else if (dayOfWeek === 2) {
+    priceMap[1] = 80;
+    priceMap[2] = 80;
+    priceMap[3] = 80;
+  }
+  else {
+    priceMap[1] = 100;
+    priceMap[2] = 100;
+    priceMap[3] = 100;
+  }
+});
+
+  drawHall();
+
+
+
+
+
+  const sessionList = document.getElementById('sessionList');
+
+  if (!dateInput || !sessionList) {
+    console.error('Не знайдено #myDate або #sessionList – перевір HTML');
+    return;
+  }
+
+
+
+  async function sendOrder(paymentMethod) {
+    if (!window.currentSessionId) {
+    alert('Спочатку виберіть сеанс справа');
+    return;
+  }
+
+  console.log('Відправка даних:', data_struct);
+  for (f in data_struct) {
+    data_struct[f]['firstName'] = document.getElementById('client-firstname').value;
+    data_struct[f]['lastName']  = document.getElementById('client-lastname').value;
+    data_struct[f]['email']     = document.getElementById('client-email').value;
+  }
+
+  const res = await fetch(`/prod_${paymentMethod}`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data_struct)
+  });
+
+  if (!res.ok) {
+    console.error('Server error:', await res.text());
+    alert('Помилка при відправці');
+    return;
+  }
+
+  const result = await res.json();
+  console.log('Sold:', result);
+  alert(`Успіх: продано ${result} квитків (${paymentMethod})`);
+  window.location.reload();
+}
+
+
+document.getElementById('pay-cash').addEventListener('click', () => {
+  sendOrder('cash');
+});
+document.getElementById('pay-card').addEventListener('click', () => {
+  sendOrder('card');
+});
+document.getElementById('pay-return').addEventListener('click', () => {
+  sendOrder('return');
+});
+
+  async function fetchSessions(date) {
+    console.log('Запит сесій на дату:', date);
+    try {
+      const res = await fetch(`/api/sessions?date=${date}`);
+      console.log('Статус відповіді:', res.status);
+      const data = await res.json();
+      console.log('Отримані сесії:', data);
+      renderSessions(data);
+    } catch (err) {
+      console.error('Помилка fetchSessions:', err);
+    }
+  }
+
+  function renderSessions(sessions) {
+  sessionList.innerHTML = '';
+  if (!sessions.length) {
+    sessionList.textContent = 'Немає сеансів на цей день';
+    return;
+  }
+  sessions.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'session-item';
+    let [hours, minutes] = s.time.split(":").map(Number);
+    hours = (hours + 2) % 24;
+    div.innerHTML = `
+      <strong>${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}</strong>
+      <span>${s.title}</span>
+      <em>(${s.duration} хв)</em>
+    `;
+
+    div.addEventListener('click', () => {
+
+      sessionList.querySelectorAll('.session-item.active').forEach(el => el.classList.remove('active'));
+      div.classList.add('active');
+
+
+      window.currentSessionId = s.id;
+
+
+      occupiedBySession = bookedBySession[s.id] || [];
+      console.log('Обрано сесію:', s.id, 'Зайняті місця:', occupiedBySession);
+      drawHall();
+    });
+
+    sessionList.appendChild(div);
+  });
+}
+
+
+
+
+  dateInput.addEventListener('change', () => {
+    fetchSessions(dateInput.value);
+  });
+
+
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.value = today;
+  fetchSessions(today);
+});
+</script>
+
+</body>
+</html>
