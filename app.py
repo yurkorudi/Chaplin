@@ -476,16 +476,7 @@ def location():
             city = cities[location]
     return 
 
-# @app.route("/api/films")
-# def get_films():
-#     cinema_id = request.args.get('cinema_id')
-#     films = Film.query.join(Hall).filter(Hall.cinema_id == cinema_id).all()
-#     return jsonify([{
-#         "id": f.id,
-#         "title": f.title,
-#         "hall_structure": f.hall.structure,
-  
-#     } for f in films])
+
 
 
 
