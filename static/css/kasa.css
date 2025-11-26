@@ -1,0 +1,117 @@
+main{
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    width: 100%;
+    padding: 15px;
+    justify-content: space-around;
+}
+
+#selected-seats-info {
+  border: 2px solid #fff;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.4);
+  max-width: 200px;
+  margin-top: 10px;
+}
+
+#selected-seats-info p {
+  margin: 4px 0;
+  font-weight: 500;
+}
+
+
+
+
+.kasa-menu{
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    gap: 15px;
+}
+
+.kasa-menu *{
+    font-size: 16px;
+}
+
+.sold-tickets a{
+  text-decoration: none;
+  color: white;
+  font-weight: 500;;
+}
+
+.sold-tickets a:hover{
+  color: goldenrod;
+}
+
+input[type="date"] {
+  padding: 8px;
+  font-size: 18px;
+  background: transparent;
+  border: none;
+  filter: brightness(0) invert(1);
+}
+
+.kasa-session select{
+    background: transparent;
+    border: none;
+    color: white;
+}
+
+.kasa-session select option{
+    background-color: #291666;
+    color: white;
+}
+
+.client-info{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.client-info input{
+  width: 130px;
+  background: transparent;
+  border: 2px solid white;
+  border-radius: 8px;
+  padding: 5px;
+  color: white;
+}
+
+.kasa-action{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.place.occupied {
+  background-color: #0a2240; /* темно‑синій фон */
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.session-item.active {
+  background-color: rgba(54, 10, 175, 0.2);
+  border-left: 4px solid gold;
+}
+
+.kasa-action button{
+    background: #E1CB84;
+    border: none;
+    color: #291666;
+    cursor: pointer;
+    padding: 10px;
+    min-width: 120px;
+}
+
+.kasa-action button:hover{
+    background: goldenrod;
+}
+
+.kasa-holl .hall-wrapper .hall{
+  width: min-content;
+}
