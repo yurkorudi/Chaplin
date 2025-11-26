@@ -39,6 +39,9 @@ from werkzeug.utils import secure_filename
 import hashlib
 
 
+from apis import *
+
+
 pdfmetrics.registerFont(
     TTFont('DejaVuSans', 'static/fonts/DejaVuSans.ttf'),
 )
