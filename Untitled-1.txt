@@ -1,0 +1,4 @@
+git stash push -u -m "pre-pull temp"
+git pull --rebase
+git stash drop 
+systemctl restart Chaplin 
