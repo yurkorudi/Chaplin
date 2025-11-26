@@ -40,22 +40,7 @@
     
     <h1>Прем'єри тижня</h1>
 
-    {% if mobile %}
-      {% for movie in movies %}
-        <div class="film-session">
-          <div class="film-item">
-            <div class="film-inf">
-              <h1 style="font-size: 20px;">{{ movie.name }}</h1>
-              <p>{{ movie.age }}</p>
-              <p>{{ movie.genre }}</p>
-              <!-- <p>{{ movie.description }}</p> -->
-              <button class="button">Переглянути</button>
-            </div>
-            <img src="{{ movie.img_src }}" alt="{{ movie.title }}">
-          </div>
-        </div>
-      {% endfor %}
-    {% else %}
+    
     
     <!-- Home page's base 360 degris's slider -->
       <div class="slideshow">
@@ -85,50 +70,94 @@
               </div>
             {% endfor %}
           </div>
-          <div class="slid-buttons">
-            <button id="prev"><</button>
-            <button id="next">></button>
-          </div>
+          
         </div>
       
 
     <!-- end home page's base 360 degris's slider -->
-    {% endif %}
+    
   </main>
 
   {% include('footer.html') %}
 
   <script>
     
-        // ===========================slideshow================================
-        const track = document.querySelector('.slide-track');
-        const slides = document.querySelectorAll('.slide');
-        const slideWidth = 250; // ширина + відступ
-        const slideCount = slides.length;
+    const track = document.querySelector('.slide-track');
+    const slides = document.querySelectorAll('.slide');
+    const slideWidth = 300;
 
-        document.getElementById('next').addEventListener('click', () => {
-        track.style.transition = 'transform 0.5s ease';
-        track.style.transform = `translateX(${-slideWidth}px)`;
+    let offset = 0;
+    let speed = 0;
+    const speedValue = 20;
 
-        // після закінчення анімації переміщаємо перший слайд в кінець
-        setTimeout(() => {
-            track.style.transition = 'none';
-            track.appendChild(track.firstElementChild);
-            track.style.transform = 'translateX(0)';
-        }, 500);
-        });
+    let lastX = null;
+    let isTouching = false;
 
-        document.getElementById('prev').addEventListener('click', () => {
-        // переміщаємо останній слайд в початок перед анімацією
-        track.insertBefore(track.lastElementChild, track.firstElementChild);
-        track.style.transition = 'none';
-        track.style.transform = `translateX(${-slideWidth}px)`;
+    // Дублюємо для циклу
+    track.innerHTML += track.innerHTML;
 
-        setTimeout(() => {
-            track.style.transition = 'transform 0.5s ease';
-            track.style.transform = 'translateX(0)';
-        }, 20);
-        });
+    // Анімація
+    function animate() {
+        offset -= speed;
+        track.style.transform = `translateX(${offset}px)`;
+
+        if (offset < -slideWidth * slides.length) offset += slideWidth * slides.length;
+        if (offset > 0) offset -= slideWidth * slides.length;
+
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // ----- ФУНКЦІЇ ДЛЯ МИШІ ТА ТАЧА -----
+
+    function handleMove(x) {
+        if (lastX === null) {
+            lastX = x;
+            return;
+        }
+
+        const dx = x - lastX;
+        lastX = x;
+
+        if (dx > 2) speed = -speedValue;   // свайп вправо → їдемо вліво
+        else if (dx < -2) speed = speedValue; // свайп вліво → їдемо вправо
+        else speed = 0;
+    }
+
+    // ----- МИША -----
+    track.addEventListener("mousemove", (e) => {
+        if (!isTouching) return; // тільки коли натиснуто
+        handleMove(e.clientX);
+    });
+
+    track.addEventListener("mousedown", (e) => {
+        isTouching = true;
+        lastX = e.clientX;
+    });
+
+    document.addEventListener("mouseup", () => {
+        isTouching = false;
+        lastX = null;
+        speed = 0;
+    });
+
+    // ----- ТЕЛЕФОН (ТАЧ) -----
+    track.addEventListener("touchstart", (e) => {
+        isTouching = true;
+        lastX = e.touches[0].clientX;
+    }, { passive: true });
+
+    track.addEventListener("touchmove", (e) => {
+        handleMove(e.touches[0].clientX);
+    }, { passive: true });
+
+    track.addEventListener("touchend", () => {
+        isTouching = false;
+        lastX = null;
+        speed = 0;
+    });
+
+
 
   </script>
 
