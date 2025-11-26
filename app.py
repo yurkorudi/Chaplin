@@ -38,10 +38,7 @@ from werkzeug.utils import secure_filename
 
 import hashlib
 
-
 from apis import *
-
-
 pdfmetrics.registerFont(
     TTFont('DejaVuSans', 'static/fonts/DejaVuSans.ttf'),
 )
@@ -78,6 +75,7 @@ app.config['UPLOAD_FOLDER'] = 'uploads/'
 app.config['JSON_AS_ASCII'] = False
 app.config['ADMIN_PASSWORD'] = os.environ.get('ADMIN_PASSWORD', 'supersecret123')
 app.config['MODERATOR_PASSWORD'] = os.environ.get('MODERATOR_PASSWORD', '1')
+
 GOOGLE_MAPS_API_KEY = 'AIzaSyCL1RYn2TgJBFu-7Vne8tdJBKc6v6GCzpM'
 
 db.init_app(app)
@@ -282,17 +280,64 @@ class CustomHomeVievManager(AdminIndexView):
         return redirect(url_for('admin_login'))
 
     
+# def create_admin(name, index_view, url, endpoint):
+#     admin = Admin(
+#         name=name,
+#         index_view=index_view,
+#         template_mode='bootstrap3',
+#         url=url,
+#         endpoint=endpoint
+#     )
+#     admin._views = []
+#     return admin
+
+# admin = Admin(
+#     app,
+#     name='My Admin',
+#     index_view=CustomHomeView(url='/admin', endpoint='admin'),  # Set these correctly
+#     template_mode='bootstrap3',
+#     url='/admin',  # Optional: just sets the base URL
+# )
+
+# manager = Admin(
+#     app,
+#     name='My Manager',
+#     index_view=CustomHomeVievManager(url='/manager', endpoint='manager'),  # Set these correctly
+#     template_mode='bootstrap3',
+#     url='/manager',  # Optional: just sets the base URL
+# )
+
+# admin.init_app(app)
+
+# manager = create_admin('manager', CustomHomeVievManager(), '/manager', 'manager')
+# manager.init_app(app)
+
+# admin.add_view(HollView(endpoint='holls', name='Геометрія залів'))
+# admin.add_view(CinemaView(Cinema, db.session, name='Кінотеатри'))
+# admin.add_view(HallView(Hall, db.session, name='Зали'))
+# admin.add_view(FilmView(Film, db.session, name='Фільми'))
+# admin.add_view(SessionView(Session, db.session, name='Сеанси'))
+# admin.add_view(ImageView(Image, db.session, name='Зображення'))
+
+
+
+
+
+# manager.add_view(CustomHomeVievManager(endpoint='prod', name='Продаж квитків'))
+# manager.add_view(FilmView(Film, db.session, name='Фільми'))
+# manager.add_view(SessionView(Session, db.session, name='Сеанси'))
+# manager.add_view(ImageView(Image, db.session, name='Зображення'))
+
+# print("____________!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!______________________")
+# for rule in app.url_map.iter_rules():
+#     print(f"{rule.endpoint:30s} => {rule.rule}")
 
 admin = Admin(
     app,
     name='My Admin',
     index_view=CustomHomeView(url='/admin', endpoint='admin'),
-    template_mode='bootstrap3',
     url='/admin', 
 )
-
-
-
 #### ___________________________________admin______________________________________ ####
 
 with app.app_context():
@@ -430,8 +475,6 @@ def admin_logout():
     flask_session.pop('is_admin', None)
     return redirect(url_for('admin_login'))
 
-
-
 @app.route('/moder', methods=['GET', 'POST'])
 def moder():
     if not flask_session.get('is_moderator'):
@@ -459,8 +502,6 @@ def manager_logout():
     return redirect(url_for('manager_login'))
 
 
-
-
 @app.route('/')
 def early_start ():
     global user_device
@@ -479,7 +520,16 @@ def location():
             city = cities[location]
     return 
 
-
+# @app.route("/api/films")
+# def get_films():
+#     cinema_id = request.args.get('cinema_id')
+#     films = Film.query.join(Hall).filter(Hall.cinema_id == cinema_id).all()
+#     return jsonify([{
+#         "id": f.id,
+#         "title": f.title,
+#         "hall_structure": f.hall.structure,
+  
+#     } for f in films])
 
 
 
