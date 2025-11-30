@@ -15,6 +15,7 @@ class Cinema(db.Model):
     contact_phone_number = db.Column(db.String(20))
     work_schedule        = db.Column(db.String(200))
     instagram_link       = db.Column(db.String(255))
+    city                 = db.Column(db.String(45))
 
 
     halls    = db.relationship('Hall',    back_populates='cinema', cascade='all, delete-orphan')

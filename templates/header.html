@@ -9,7 +9,7 @@
         </button>
     </form>
 
-    <!-- Основне меню (для ПК) -->
+
     <div class="header-menu">
         <div class="topbtn-s">
             <form action="{{ url_for('homepage')}}">
@@ -26,7 +26,7 @@
                     <li><div class="button"><a>Ваше місто: <span id="selected-city">Виберіть місто</span></a></div>
                     <div class="dropdown-content">
                         <ul>
-                            {% for l, c in cities.items() %}                        
+                            {% for c in cities %}                        
                             <li><button class="button city-btn" data-city='{{c}}'>{{c}}</button></li>
                             {% endfor %}
                         </ul>
@@ -36,14 +36,14 @@
             </div>
             <div class="button-wrapper user">
                 <form action="{{ url_for('user')}}">
-                    <div class="button"><button class="button" type="submit">Профіль</button></div>
+                    <div class="button"><button class="button" type="submit" id='profile', onclick='userclick()'>Профіль</button></div>
                 </form>
                 <div class="ico"></div>
             </div>
         </div>
     </div>
 
-    <!-- Бургер-меню (тільки для мобільних) -->
+
     <div class="burger-menu" onclick="toggleMenu()">
         <span></span>
         <span></span>
@@ -52,24 +52,18 @@
 
     <nav class="mobile-menu">
         <ul>
-            <li></li>
-            <li><div><a>Ваше місто: <span id="selected-city">Виберіть місто</span></a></div>
-            <li>
-                <button class="city-btn" data-city='Львів'>Львів</button>
-                <button class="city-btn" data-city='Моршин'>Моршин</button>
-                <button class="city-btn" data-city='Стрий 1'>Стрий 1</button>
+            <li><a href="{{ url_for('homepage') }}" style="font-size: 26px;">головна</a></li>
+            <li><a href="{{ url_for('user') }}">профіль</a></li>
+            <li><a href="{{ url_for('movies') }}">фільми</a></li>
+            <li><a href="{{ url_for('about') }}">про нас</a></li>
+            <li class="city-section">
+                <div>Ваше місто: <span id="mobile-selected-city">Виберіть місто</span></div>
+                <div class="city-buttons-mobile">
+                    {% for c in cities %}
+                    <button class="city-btn" data-city='{{c}}'>{{c}}</button>
+                    {% endfor %}
+                </div>
             </li>
-            <li>
-                <button class="city-btn" data-city='Стрий 2'>Стрий 2</button>
-                <button class="city-btn" data-city='Стрий 3'>Стрий 3</button>
-                <button class="city-btn" data-city='Долина'>Долина</button>
-            </li>
-            <div class="topbtn-s_mobile">
-                <li><a href="{{ url_for('homepage') }}" style="font-size: 26px;">головна</a></li>
-                <li><a href="{{ url_for('user') }}">профіль</a></li>
-                <li><a href="{{ url_for('movies') }}">фільми</a></li>
-                <li><a href="{{ url_for('about') }}">про нас</a></li>
-            </div>
         </ul>
     </nav>
 
@@ -77,14 +71,23 @@
         document.addEventListener("DOMContentLoaded", function () {
             const cityButtons = document.querySelectorAll(".city-btn");
             const selectedCitySpan = document.getElementById("selected-city");
+            const mobileSelectedCitySpan = document.getElementById("mobile-selected-city");
+            const profile = document.getElementById("profile");
 
             let savedCity = localStorage.getItem("selectedCity");
 
+            console.log("Profile from session:", "{{ profile }}");
+            if ("{{ profile }}") {
+                profile.textContent = "{{ profile }}";
+            }
+
             if (savedCity) {
                 selectedCitySpan.textContent = savedCity;
+                if (mobileSelectedCitySpan) {
+                    mobileSelectedCitySpan.textContent = savedCity;
+                }
                 highlightSelectedCity(savedCity);
                 
-                // Перевіряємо, чи місто в сесії вже відповідає збереженому, щоб уникнути зациклення
                 fetch('/get_city')
                     .then(response => response.json())
                     .then(data => {
@@ -98,14 +101,21 @@
                 button.addEventListener("click", function () {
                     let selectedCity = this.getAttribute("data-city");
 
-                    if (selectedCity !== savedCity) { // Перевіряємо, чи місто реально змінилося
+                    if (selectedCity !== savedCity) {
                         localStorage.setItem("selectedCity", selectedCity);
                         selectedCitySpan.textContent = selectedCity;
+                        if (mobileSelectedCitySpan) {
+                            mobileSelectedCitySpan.textContent = selectedCity;
+                        }
                         highlightSelectedCity(selectedCity);
                         sendCityToServer(selectedCity);
                     }
                 });
             });
+
+            function userclick(){
+                url_for('user');
+            }
 
             function sendCityToServer(city) {
                 fetch('/set_city', {
@@ -118,7 +128,6 @@
                     }
                 });
             }
-
                 
             function highlightSelectedCity(city) {
                 cityButtons.forEach(button => {
@@ -130,6 +139,35 @@
                 });
             }
         });     
-        </script>
-        
+
+        function toggleMenu() {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const burger = document.querySelector('.burger-menu');
+            
+            mobileMenu.classList.toggle('active');
+            burger.classList.toggle('active');
+            
+            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+        }
+
+
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                toggleMenu();
+            });
+        });
+
+
+        document.querySelectorAll('.mobile-menu .city-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                let selectedCity = this.getAttribute('data-city');
+                localStorage.setItem("selectedCity", selectedCity);
+                
+                document.getElementById('selected-city').textContent = selectedCity;
+                document.getElementById('mobile-selected-city').textContent = selectedCity;
+                
+                toggleMenu();
+            });
+        });
+    </script>
 </header>
