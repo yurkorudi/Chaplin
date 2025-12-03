@@ -1959,6 +1959,43 @@ li:active {
     margin-right: 5px;
   }
 
+  .nearest {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 25px;
+    overflow: hidden;
+    height: 400px;
+  }
+
+  .mst_sesion {
+    width: 100%;
+    height: auto;
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+  
+  .mst_sesion .slide {
+    width: 100%;
+    height: auto;
+  }
+  
+  .mst_sesion input[type="image"] {
+    width: 100%;
+    height: auto;
+  }
+  
+  .nearest {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+  
+  .mst_session .inf {
+    width: 100% !important;
+  }
+
+
+
   .home .button {
     margin-top: 1px;
     padding: 5px 5px;
