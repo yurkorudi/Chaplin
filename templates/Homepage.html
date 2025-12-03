@@ -24,7 +24,7 @@
           <div class="mst_sesion">
             <div id="slide" class="slide">
                 <input type="image" , src="{{ movie.img_src }}">
-                <a href="{{ url_for('movie', movie_name='{{ movie.title }}')}}">
+                <a href="{{ url_for('movie', movie_name=movie.name) }}">
                   <div class="slider-film-back">
                     <div class="slider-film-button">
                       <button>ℹ</button>
@@ -68,7 +68,7 @@
               {% for movie in movies[-6:] %}
               <div id="slide" class="slide">
                 <input type="image" , src="{{ movie.img_src }}">
-                <a href="{{ url_for('movie', movie_name='{{ movie.title }}')}}">
+                <a href="{{ url_for('movie', movie_name=movie.name) }}">
                   <div class="slider-film-back">
                     <div class="slider-film-button">
                       <button>ℹ</button>

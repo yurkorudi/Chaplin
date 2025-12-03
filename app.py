@@ -1026,6 +1026,16 @@ def set_city():
 
 
 
+@app.route('/market', methods=['POST', 'GET'])
+def market():
+    global user_location
+    global cities
+    global user_device
+    return render_template('Market.html', city = "", cities = cities)
+
+
+
+
 
 
 
@@ -1035,7 +1045,7 @@ if __name__ == "__main__":
         create_sample_data()
         db.create_all()
         
-    app.run(debug=True, host="192.168.0.59")
+    app.run(debug=True)
 
 
 
