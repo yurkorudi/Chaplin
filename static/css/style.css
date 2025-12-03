@@ -206,6 +206,8 @@ body {
   display: flex;
   flex-direction: row;
   margin-bottom: 25px;
+  overflow: hidden;
+  height: 400px;
 }
 
 .mst_sesion{
@@ -230,6 +232,7 @@ body {
 .weekly p{
   margin-bottom: 15px;
   text-align: center;
+  color: white;
 }
 
 .nearest button,
@@ -253,7 +256,7 @@ body {
 
 .nearest a,
 .weekly a{
-  color: #000000;
+  color: white;
   width: 100%;
   padding: 2px 0;
 }
