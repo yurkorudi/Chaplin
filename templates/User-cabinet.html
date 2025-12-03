@@ -31,7 +31,7 @@
           <p class="info"><strong>Квитків куплено:</strong> {{user.bought_tickets_summary}}</p>
           <p class="info"><strong>Улюблені жанри:</strong> {{user.visited_genres}}</p>
           <button class="edit-btn" onclick="editProfile()">Редагувати</button>
-          <button class="logout-btn">Вийти</button>
+          <button class="logout-btn" onclick='logOut()'>Вийти</button>
           <br>
         </div>
 
@@ -92,6 +92,10 @@
   </div>
 
   <script>
+
+    function logOut() {
+      window.location.href = "{{ url_for('logout') }}";
+    }
 
     function toggleMenu() {
       document.querySelector('.nav-menu').classList.toggle('active');

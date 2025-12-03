@@ -19,7 +19,6 @@ from werkzeug.utils import secure_filename
 from io import BytesIO
 from flask import send_file
 from io import BytesIO
-from flask import send_file, session as flask_session
 from reportlab.lib.pagesizes import A6
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
@@ -35,6 +34,8 @@ from flask_admin.form import SecureForm
 from flask_admin.form import FileUploadField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from werkzeug.utils import secure_filename
+
+
 
 import hashlib
 
@@ -75,6 +76,9 @@ app.config['UPLOAD_FOLDER'] = 'uploads/'
 app.config['JSON_AS_ASCII'] = False
 app.config['ADMIN_PASSWORD'] = os.environ.get('ADMIN_PASSWORD', 'supersecret123')
 app.config['MODERATOR_PASSWORD'] = os.environ.get('MODERATOR_PASSWORD', '1')
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+
 
 GOOGLE_MAPS_API_KEY = 'AIzaSyCL1RYn2TgJBFu-7Vne8tdJBKc6v6GCzpM'
 
@@ -280,64 +284,20 @@ class CustomHomeVievManager(AdminIndexView):
         return redirect(url_for('admin_login'))
 
     
-# def create_admin(name, index_view, url, endpoint):
-#     admin = Admin(
-#         name=name,
-#         index_view=index_view,
-#         template_mode='bootstrap3',
-#         url=url,
-#         endpoint=endpoint
-#     )
-#     admin._views = []
-#     return admin
-
-# admin = Admin(
-#     app,
-#     name='My Admin',
-#     index_view=CustomHomeView(url='/admin', endpoint='admin'),  # Set these correctly
-#     template_mode='bootstrap3',
-#     url='/admin',  # Optional: just sets the base URL
-# )
-
-# manager = Admin(
-#     app,
-#     name='My Manager',
-#     index_view=CustomHomeVievManager(url='/manager', endpoint='manager'),  # Set these correctly
-#     template_mode='bootstrap3',
-#     url='/manager',  # Optional: just sets the base URL
-# )
-
-# admin.init_app(app)
-
-# manager = create_admin('manager', CustomHomeVievManager(), '/manager', 'manager')
-# manager.init_app(app)
-
-# admin.add_view(HollView(endpoint='holls', name='Геометрія залів'))
-# admin.add_view(CinemaView(Cinema, db.session, name='Кінотеатри'))
-# admin.add_view(HallView(Hall, db.session, name='Зали'))
-# admin.add_view(FilmView(Film, db.session, name='Фільми'))
-# admin.add_view(SessionView(Session, db.session, name='Сеанси'))
-# admin.add_view(ImageView(Image, db.session, name='Зображення'))
-
-
-
-
-
-# manager.add_view(CustomHomeVievManager(endpoint='prod', name='Продаж квитків'))
-# manager.add_view(FilmView(Film, db.session, name='Фільми'))
-# manager.add_view(SessionView(Session, db.session, name='Сеанси'))
-# manager.add_view(ImageView(Image, db.session, name='Зображення'))
-
-# print("____________!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!______________________")
-# for rule in app.url_map.iter_rules():
-#     print(f"{rule.endpoint:30s} => {rule.rule}")
-
 admin = Admin(
     app,
     name='My Admin',
     index_view=CustomHomeView(url='/admin', endpoint='admin'),
     url='/admin', 
 )
+
+admin.add_view(HollView(endpoint='holls', name='Геометрія залів'))
+admin.add_view(CinemaView(Cinema, db.session, name='Кінотеатри'))
+admin.add_view(HallView(Hall, db.session, name='Зали'))
+admin.add_view(FilmView(Film, db.session, name='Фільми'))
+admin.add_view(SessionView(Session, db.session, name='Сеанси'))
+admin.add_view(ImageView(Image, db.session, name='Зображення'))
+
 #### ___________________________________admin______________________________________ ####
 
 with app.app_context():
@@ -441,17 +401,13 @@ def create_sample_data():
 
 
 
+
+
 with app.app_context():
-    print(get_seats())
-
-
-cities = {
-    "Lviv":"Львів",
-    "Strui_1":"Стрий 1",
-    "Strui_2":"Стрий 2",
-    "Strui_3":"Стрий 3",
-    "Dolyna":"Долина",
-}
+    cities = Cinema.query.with_entities(Cinema.city).all()
+    cities = [city[0] for city in cities if city[0] is not None]
+print('____________________________________________________________________ \n \n \n')
+print("Cities from DB:", cities)
 user_location = []
 user_device = 'None'
 
@@ -615,12 +571,16 @@ def homepage():
 
     all_movies = get_films()
     all_images = get_images()
+    city = session.get('city', "")
+    profile = session.get('user', "")
+    print("__________________________________________ profile __________________________________________")
+    print("User profile in session:", profile)
     for a in all_movies:
         for i in all_images:
             if a['image_id'] == i['id']:
                 a.update({'img_src': i['path']})
 
-    return render_template('Homepage.html', city = "", cities = cities, mobile = is_mobile, movies = all_movies)
+    return render_template('Homepage.html', city = city, cities = cities, mobile = is_mobile, movies = all_movies, profile = profile)
 
 
 
@@ -699,6 +659,8 @@ def movie():
 
 
         
+
+
 
 
 @app.route('/about')
@@ -956,12 +918,10 @@ def user():
     global user_location
     global cities
     global user_device
-    try:
-        user_info = request.json
-        print("User:", user_info)
-    except:
-        pass
-    return render_template('User.html', city = "", cities = cities)
+    profile = session.get('user', "")
+    if profile != "":
+        return redirect(url_for('profile'))
+    return render_template('User.html', city = "", cities = cities, profile = profile)
 
 
 @app.route('/singup', methods=['GET', 'POST'])
@@ -992,6 +952,13 @@ def singup():
     except Exception as e:
         print(e)
         return jsonify({"success": False, "error": "Щось пішло не так!"}), 400
+
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('user'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -1058,10 +1025,7 @@ def set_city():
     return '', 204
 
 
-@app.route('/get_city')
-def get_city():
-    print(session.get('city', ''))
-    return jsonify({'city': session.get('city', '')})
+
 
 
 
