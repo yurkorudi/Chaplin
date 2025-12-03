@@ -1026,6 +1026,16 @@ def set_city():
 
 
 
+@app.route('/market', methods=['POST', 'GET'])
+def market():
+    global user_location
+    global cities
+    global user_device
+    return render_template('Market.html', city = "", cities = cities)
+
+
+
+
 
 
 

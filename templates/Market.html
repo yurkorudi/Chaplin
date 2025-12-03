@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chaplin cinema</title>
+  <link rel="stylesheet" href="/static/css/globals.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body class="fade-in">
+  <div class="home">
+    {% include('header.html') %}
+      
+      
+  <main class="main homePage">
+     
+    <div class="shop-container">
+    <h1>Магазин товарів</h1>
+
+    <div class="products" id="products-block">
+      {% for i in range(16) %}
+        <div class="product-card">
+          <img src="https://picsum.photos/300/250?random={{ i }}" />
+          <p class="product-title">Круасан шоколадний</p>
+          <p class="product-price">45 грн</p>
+          <button class='product-card-button'>Додати в кошик</button>
+        </div>
+      {% endfor %}
+    </div>
+
+    <button class="load-more" id="loadMore">Дивитись ще</button>
+  </div>
+    
+  </main>
+<script>
+    let counter = 16;
+
+    document.getElementById("loadMore").addEventListener("click", () => {
+      const block = document.getElementById("products-block");
+
+      for (let i = 0; i < 8; i++) {
+        counter++;
+        const div = document.createElement("div");
+        div.className = "product-card";
+        div.innerHTML = `
+            <img src="https://picsum.photos/300/250?random=${counter}" />
+            <p class="product-title">Круасан шоколадний</p>
+            <p class="product-price">45 грн</p>
+            <button>Додати в кошик</button>
+        `;
+        block.appendChild(div);
+      }
+    });
+  </script>
+</body>
+
+</html>
