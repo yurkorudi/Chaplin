@@ -24,7 +24,7 @@ body {
   justify-content: center;
   width: 100vw;
   height: auto;
-  background: linear-gradient(180deg, rgba(29, 29, 29, 0) 0%, rgb(255, 255, 255) 20%, rgba(29, 29, 29, 0) 100%);
+  background: linear-gradient(180deg, rgba(29, 29, 29, 0) 0%, rgb(192, 192, 192) 50%, rgba(29, 29, 29, 0) 100%);
   padding: 0;
 }
 
@@ -511,6 +511,26 @@ body {
   background-color: rgba(0, 0, 0, 0.6);
   width: 270px;
   padding: 10px;
+}
+
+.slider-film-button{
+  display: flex;
+  justify-content: space-between;
+}
+
+.slider-film-button p{
+  font-size: 12px;
+  padding-top: 5px;
+}
+
+.slider-film-button button{
+  background-color: rgba(156, 156, 156, 0.4);
+  border: none;
+  padding: 10px;
+  min-height: 37px;
+  min-width: 37px;
+  border-radius: 5px;
+  /* cursor: pointer; */
 }
 
 /* end  home page's base 360 degris's slider*/
@@ -1724,6 +1744,23 @@ li:active {
 }
 
 @media (max-width: 768px) {
+
+
+  .slide-track {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .slide {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: auto;
+    position: relative;
+    user-select: none;
+  }
   
   .profile-container {
     max-width: 100%;
@@ -2296,7 +2333,7 @@ li:active {
   }
 
   .inf{
-  top: 95%;
-  left: 70%;
+  top: 90%;
+  width: 100%;
 }
 }  

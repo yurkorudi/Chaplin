@@ -22,10 +22,30 @@
         <div class="nearest">
           {% for movie in movies[-2:] %}
           <div class="mst_sesion">
-            <a href="">
-              <p>🎬 {{ movie.name }}</p>
-              <p>🎫 </p>
-            </a>
+            <div id="slide" class="slide">
+                <input type="image" , src="{{ movie.img_src }}">
+                <a href="{{ url_for('movie', movie_name='{{ movie.title }}')}}">
+                  <div class="slider-film-back">
+                    <div class="slider-film-button">
+                      <button>ℹ</button>
+                      <p>Інформація про фільм</p>
+                      <button>▶</button>
+                      <p>Переглянут трейлер</p>
+                    </div>
+                    <div class="slider-film-info">
+                      <p>Назва: {{ movie.name }}</p>
+                      <p>Жанр: {{ movie.genre }}</p>
+                      <p>Тривалість: {{ movie.duration }}</p>
+                      <p>Вік: {{ movie.age }}</p>
+                    </div>
+                  </div>
+                  <div class="inf">
+                    <div class="d">2D</div>
+                    <div class="age">{{ movie.age }}</div>
+                  </div>
+                </a>
+                
+              </div>
           </div>
           <!-- <button class="book_button">🎫 Time</button> -->
           {% endfor %}
@@ -51,8 +71,10 @@
                 <a href="{{ url_for('movie', movie_name='{{ movie.title }}')}}">
                   <div class="slider-film-back">
                     <div class="slider-film-button">
-                        <button>info</button>
-                      <button>trailer</button>
+                      <button>ℹ</button>
+                      <p>Інформація про фільм</p>
+                      <button>▶</button>
+                      <p>Переглянут трейлер</p>
                     </div>
                     <div class="slider-film-info">
                       <p>Назва: {{ movie.name }}</p>
@@ -79,7 +101,7 @@
   </main>
 
   {% include('footer.html') %}
-
+{% if not mobile %}
   <script>
     
     const track = document.querySelector('.slide-track');
@@ -87,80 +109,55 @@
     const slideWidth = 300;
 
     let offset = 0;
-    let speed = 0;
-    const speedValue = 20;
+    let lastX = 0;
+    let isDragging = false;
 
-    let lastX = null;
-    let isTouching = false;
-
-    // Дублюємо для циклу
+    // дублюємо для циклу
     track.innerHTML += track.innerHTML;
 
-    // Анімація
-    function animate() {
-        offset -= speed;
+    // рендер з нескінченним циклом
+    function render() {
+        const fullWidth = slideWidth  * slides.length * slides.length;
+
+        if (offset < -fullWidth) offset += fullWidth;
+        if (offset > 0) offset -= fullWidth;
+
         track.style.transform = `translateX(${offset}px)`;
-
-        if (offset < -slideWidth * slides.length) offset += slideWidth * slides.length;
-        if (offset > 0) offset -= slideWidth * slides.length;
-
-        requestAnimationFrame(animate);
+        requestAnimationFrame(render);
     }
-    animate();
+    render();
 
-    // ----- ФУНКЦІЇ ДЛЯ МИШІ ТА ТАЧА -----
-
-    function handleMove(x) {
-        if (lastX === null) {
-            lastX = x;
-            return;
-        }
+    // Рух
+    function dragMove(x) {
+        if (!isMouseDown) return; // ❗ без цього НІЧОГО не рухаємо
 
         const dx = x - lastX;
         lastX = x;
 
-        if (dx > 2) speed = -speedValue;   // свайп вправо → їдемо вліво
-        else if (dx < -2) speed = speedValue; // свайп вліво → їдемо вправо
-        else speed = 0;
+        offset += dx;
     }
 
-    // ----- МИША -----
-    track.addEventListener("mousemove", (e) => {
-        if (!isTouching) return; // тільки коли натиснуто
-        handleMove(e.clientX);
-    });
+    let isMouseDown = false;
 
     track.addEventListener("mousedown", (e) => {
-        isTouching = true;
-        lastX = e.clientX;
+      isMouseDown = true;
+      lastX = e.clientX;
+      console.log("Кнопка миші затиснута, button:", e.button);
     });
 
-    document.addEventListener("mouseup", () => {
-        isTouching = false;
-        lastX = null;
-        speed = 0;
+    track.addEventListener("mouseup", (e) => {
+      isMouseDown = false;
+      console.log("Кнопка миші відпущена, button:", e.button);
     });
 
-    // ----- ТЕЛЕФОН (ТАЧ) -----
-    track.addEventListener("touchstart", (e) => {
-        isTouching = true;
-        lastX = e.touches[0].clientX;
-    }, { passive: true });
-
-    track.addEventListener("touchmove", (e) => {
-        handleMove(e.touches[0].clientX);
-    }, { passive: true });
-
-    track.addEventListener("touchend", () => {
-        isTouching = false;
-        lastX = null;
-        speed = 0;
+    track.addEventListener("mousemove", (e) => {
+      if (isMouseDown) {
+        console.log("Тримаємо кнопку і рухаємо мишу. x:", e.clientX, "y:", e.clientY);
+        dragMove(e.clientX);
+      }
     });
-
-
-
   </script>
-
+{% endif %}
 </body>
 
 </html>
