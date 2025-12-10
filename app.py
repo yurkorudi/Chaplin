@@ -435,7 +435,13 @@ def admin_logout():
 def moder():
     if not flask_session.get('is_moderator'):
         return redirect(url_for('manager_login'))
-    return render_template('manager/manager_home.html')
+    if session['city']:
+        try:
+            cinema = Cinema.query.filter_by(city=session['city']).first()
+            hall_structure = Hall.query.filter_by(cinema_id=cinema.id).first()
+            return render_template('manager/manager_home.html', structure=hall_structure)
+        except Exception as e:
+            return render_template('manager/manager_home.html')
 
 @app.route('/admin_tickets', methods=['GET', 'POST'])
 def admin_tickets():
@@ -1046,10 +1052,3 @@ if __name__ == "__main__":
         db.create_all()
         
     app.run(debug=True)
-
-
-
-
-
-
-

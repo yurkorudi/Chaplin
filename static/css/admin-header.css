@@ -3,7 +3,7 @@ header{
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(90deg, #000000, rgb(35, 34, 62) 77.6%, #2b1d70 89.06%, #291666);
+    background: linear-gradient(90deg, #000000, rgb(0, 0, 0) 77.6%, #000000 89.06%, #000000);
     margin: 0;
     padding: 17px 60px;
 }
