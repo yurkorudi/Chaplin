@@ -2351,7 +2351,7 @@ li:active {
     left: 0;
     width: 100%;
     height: auto; 
-    background: rgba(53, 6, 6, 0.879);
+    background: rgba(29, 29, 29, 0.879);
     display: flex;
     flex-direction: column;
     justify-content: center;
