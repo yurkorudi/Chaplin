@@ -64,6 +64,7 @@
     
     <!-- Home page's base 360 degris's slider -->
       <div class="slideshow">
+        <div class="slides-viewport">
         <div class="slide-track">
               {% for movie in movies[-6:] %}
               <div id="slide" class="slide">
@@ -92,7 +93,11 @@
               </div>
             {% endfor %}
           </div>
-          
+          </div>
+          <div class="slid-buttons">
+            <button id="prev"><</button>
+            <button id="next">></button>
+        </div>
         </div>
       
 
@@ -102,60 +107,51 @@
 
   {% include('footer.html') %}
 {% if not mobile %}
+</div>
   <script>
-    
-    const track = document.querySelector('.slide-track');
-    const slides = document.querySelectorAll('.slide');
-    const slideWidth = 300;
+    // ===========================slideshow================================
+        const viewport = document.querySelector('.slides-viewport');
+        const track = document.querySelector('.slide-track');
+        let slides = Array.from(track.children);
 
-    let offset = 0;
-    let lastX = 0;
-    let isDragging = false;
+        const slideWidth = slides[0].offsetWidth;
+        const viewportWidth = viewport.offsetWidth;
 
-    // дублюємо для циклу
-    track.innerHTML += track.innerHTML;
+        // how many slides are needed to fill screen
+        const slidesNeeded = Math.ceil(viewportWidth / slideWidth);
 
-    // рендер з нескінченним циклом
-    function render() {
-        const fullWidth = slideWidth  * slides.length * slides.length;
+        // clone slides until we have enough
+        while (slides.length < slidesNeeded * 2) {
+          slides.forEach(slide => {
+            const clone = slide.cloneNode(true);
+            track.appendChild(clone);
+          });
+          slides = Array.from(track.children);
+        }
 
-        if (offset < -fullWidth) offset += fullWidth;
-        if (offset > 0) offset -= fullWidth;
+        document.getElementById('next').addEventListener('click', () => {
+        track.style.transition = 'transform 0.5s ease';
+        track.style.transform = `translateX(${-slideWidth}px)`;
 
-        track.style.transform = `translateX(${offset}px)`;
-        requestAnimationFrame(render);
-    }
-    render();
+        // після закінчення анімації переміщаємо перший слайд в кінець
+        setTimeout(() => {
+            track.style.transition = 'none';
+            track.appendChild(track.firstElementChild);
+            track.style.transform = 'translateX(0)';
+        }, 500);
+        });
 
-    // Рух
-    function dragMove(x) {
-        if (!isMouseDown) return; // ❗ без цього НІЧОГО не рухаємо
+        document.getElementById('prev').addEventListener('click', () => {
+        // переміщаємо останній слайд в початок перед анімацією
+        track.insertBefore(track.lastElementChild, track.firstElementChild);
+        track.style.transition = 'none';
+        track.style.transform = `translateX(${-slideWidth}px)`;
 
-        const dx = x - lastX;
-        lastX = x;
-
-        offset += dx;
-    }
-
-    let isMouseDown = false;
-
-    track.addEventListener("mousedown", (e) => {
-      isMouseDown = true;
-      lastX = e.clientX;
-      console.log("Кнопка миші затиснута, button:", e.button);
-    });
-
-    track.addEventListener("mouseup", (e) => {
-      isMouseDown = false;
-      console.log("Кнопка миші відпущена, button:", e.button);
-    });
-
-    track.addEventListener("mousemove", (e) => {
-      if (isMouseDown) {
-        console.log("Тримаємо кнопку і рухаємо мишу. x:", e.clientX, "y:", e.clientY);
-        dragMove(e.clientX);
-      }
-    });
+        setTimeout(() => {
+            track.style.transition = 'transform 0.5s ease';
+            track.style.transform = 'translateX(0)';
+        }, 20);
+        });
   </script>
 {% endif %}
 </body>
