@@ -20,7 +20,7 @@
       <div class="sessions">
         <h1 > Найближчі сеанси</h1>
         <div class="nearest">
-          {% for movie in movies[-2:] %}
+          {% for movie, s in nearest %}
           <div class="mst_sesion">
             <div id="slide" class="slide">
                 <input type="image" , src="{{ movie.img_src }}">
@@ -40,6 +40,7 @@
                     </div>
                   </div>
                   <div class="inf">
+                    <div class="time">{{ s.session_datetime.strftime("%H:%M") }}</div>
                     <div class="d">2D</div>
                     <div class="age">{{ movie.age }}</div>
                   </div>
