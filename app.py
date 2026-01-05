@@ -58,6 +58,7 @@ pdfmetrics.registerFont(
 
 from extensions import db
 from models import Image, User, Cinema, Session, Film, Seat, Ticket, Hall
+from sqlalchemy import func
 
 
 from funcs import *
@@ -588,9 +589,10 @@ def homepage():
         .join(Session, Session.film_id == Film.film_id)
         .join(Cinema, Session.cinema_id == Cinema.cinema_id)
         .filter(
-            cast(Session.session_datetime, DateTime) > datetime.now(),
+            func.date(Session.session_datetime) == datetime.now().date(),            
             Cinema.city == selected_city
         )
+        .limit(2)
         .all()
     )
     for a, s in films:
