@@ -139,7 +139,7 @@
     <!-- end home page's base 360 degris's slider -->
 
 
-    
+    {% if mobile %}
       <div class="navbar">
           <div class="effect"></div>
           <button class="active">
@@ -158,6 +158,7 @@
               <i class="bx bx-chat"></i>
           </button>
       </div>
+      {% endif %}
 
 
 
@@ -231,12 +232,11 @@
 
 
     
-    const track = document.querySelector('.slide-track');
-    const slides = document.querySelectorAll('.slide');
+    
     const effect = document.querySelector('.effect');
     const buttons = document.querySelectorAll('.navbar button:not(.plus)');
 
-    const slideWidth = 300;
+    //const slideWidth = 300;
 
     let offset = 0;
     let lastX = 0;
