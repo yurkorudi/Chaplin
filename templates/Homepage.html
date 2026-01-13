@@ -13,6 +13,23 @@
 <body class="fade-in">
   <div class="home">
     {% include('header.html') %}
+
+    <div class="extra">
+      <div class="dropdown">
+        <div class="bckap">
+          <div class="button-wrapper">
+            <li><div class="button"><a>Ваше місто: <span id="selected-city" class="selected-city">Виберіть місто</span></a></div>
+              <div class="dropdown-content">
+                <ul>
+                  {% for c in cities %}                        
+                  <li><button class="button city-btn" data-city='{{c}}'>{{c}}</button></li>
+                  {% endfor %}
+                </ul>                        
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
       
       
   <main class="main homePage">
@@ -120,7 +137,6 @@
     <!-- end home page's base 360 degris's slider -->
     
   </main>
-  {% include('sticky_menu.html') %}
 
   {% include('footer.html') %}
 {% if not mobile %}
@@ -169,6 +185,20 @@
             track.style.transform = 'translateX(0)';
         }, 20);
         });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const savedCityblock = document.querySelector('.extra');
+        const selectedCityblock = document.querySelector('.selected-city');
+        let savedCity = localStorage.getItem("selectedCity");        
+        if(savedCity == null){
+          savedCityblock.style.display = "flex"; //TODO: Save chosen city and hide this block
+        }
+        else{
+          savedCityblock.style.display = "none";
+        }
+      });
+
+  
   </script>
 {% endif %}
 </body>

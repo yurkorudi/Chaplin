@@ -681,8 +681,47 @@ def movie():
 
 
         
+@app.route('/schedule')
+def schedule():
+    global user_location
+    global cities
+    global user_device
+    return render_template('schedule.html', cities = cities)
 
+@app.route("/available-sessions", methods=["POST"])
+def available_sessions():
+    data = request.get_json()
+    date_str = data["date"]
 
+    sessions = (
+        db.session.query(Session, Film, Image.path)
+        .join(Film, Film.film_id == Session.film_id)
+        .join(Image, Image.image_id == Film.image_id)
+        .filter(
+            func.date(Session.session_datetime) == date_str
+        )
+        .all()
+    )
+
+    films_dict = {}
+
+    for session, film, image_path in sessions:
+        film_id = film.film_id
+
+        if film_id not in films_dict:
+            films_dict[film_id] = {
+                "film_id": film_id,
+                "film": film.name,
+                "image": image_path,
+                "date": session.session_datetime.strftime("%Y-%m-%d"),
+                "times": []
+            }
+
+        films_dict[film_id]["times"].append(
+            session.session_datetime.strftime("%H:%M")
+        )
+
+    return jsonify(list(films_dict.values()))
 
 
 @app.route('/about')

@@ -1,0 +1,86 @@
+.schedule{
+    margin: 15px;
+}
+
+.week{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: thin;
+}
+
+.day{
+    display: flex;
+    flex-direction: column;
+    border: 2px solid white;
+    padding: 10px;
+    border-radius: 10px;
+    width: 150px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.day.active{
+    background-color: rgba(255, 136, 0, 0.3);
+}
+
+.sessions,
+.session-conteiner,
+.time{
+    display: flex;
+    flex-direction: row;
+}
+
+.sessions{
+    justify-content: start;
+    align-items: center;
+    gap: 40px;
+}
+
+.session-conteiner{
+    gap: 10px;
+    cursor: pointer;
+}
+
+.session-conteiner img{
+    width: 200px;
+}
+
+.session-info{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: start;
+    gap: 15px;
+}
+
+.session-info p{
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 2px solid white;
+    border-radius: 5px;
+    margin: 0;
+}
+
+.session-info h1{
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.time{
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .sessions{
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .session-conteiner img{
+        width: 150px;
+    }
+}

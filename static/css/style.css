@@ -288,6 +288,43 @@ body {
   margin-bottom: 15px;
 }
 
+
+.extra{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  position: absolute;
+  z-index: 2000;
+  top: 0;
+  left: 0;  
+}
+
+.extra .button-wrapper button{
+    color: white !important;
+  }
+
+.extra .dropdown .button-wrapper{
+  background: rgba(0, 0, 0, 0.5);
+  width: max-content;
+  height: max-content;
+}
+
+.extra .dropdown .button-wrapper li{
+  list-style: none;
+}
+
+.extra .dropdown .button-wrapper li .dropdown-content ul li .button.active{
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.extra .dropdown .button-wrapper li .dropdown-content ul li .button:hover{
+    background: rgba(0, 0, 0, 0.5);
+}
+
 .nearest,
 .weekly{
   display: flex;
@@ -2060,6 +2097,41 @@ li:active {
     transition-delay: var(--delay);
   }
 
+  .extra{
+    top: -15%;
+    height: calc(100vh + 15%);
+  }
+
+  .extra .bckap{
+    width: 70vw;
+    height: 70vh;
+    position: absolute;
+    top: 30%;
+    left: 15%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    border-radius: 25px;
+  }
+
+  .extra *,
+  .extra .button-wrapper button{
+    font-size: 15px;
+  }
+
+  .extra .bckap .button-wrapper{
+    margin-top: 70px;
+  }
+
+  .extra .dropdown:hover .dropdown-content,
+  .extra .dropdown:hover .dropdown-content ul{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 90%;
+  }
+  
   .slider {
     width: 100vw;
     perspective: 0;
