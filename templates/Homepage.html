@@ -15,6 +15,23 @@
 <body class="fade-in">
   <div class="home">
     {% include('header.html') %}
+
+    <div class="extra">
+      <div class="dropdown">
+        <div class="bckap">
+          <div class="button-wrapper">
+            <li><div class="button"><a>Ваше місто: <span id="selected-city" class="selected-city">Виберіть місто</span></a></div>
+              <div class="dropdown-content">
+                <ul>
+                  {% for c in cities %}                        
+                  <li><button class="button city-btn" data-city='{{c}}'>{{c}}</button></li>
+                  {% endfor %}
+                </ul>                        
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
       
       
   <main class="main homePage">
@@ -23,32 +40,38 @@
         <h1 > Найближчі сеанси</h1>
         <div class="nearest">
           {% for movie, s in nearest %}
-          <div class="mst_sesion">
             <div id="slide" class="slide">
-                <input type="image" , src="{{ movie.img_src }}">
                 <a href="{{ url_for('movie', movie_name=movie.name) }}">
-                  <div class="slider-film-back">
-                    <div class="slider-film-button">
-                      <button>ℹ</button>
-                      <p>Інформація про фільм</p>
-                      <button>▶</button>
-                      <p>Переглянут трейлер</p>
+                <div class="visual_slide">
+                  <img src="{{ movie.img_src }}" alt="">
+                    <div class="slider-film-back">
+                      <div class="slider-film-button">
+                        <button>ℹ</button>
+                        <p>Інформація про фільм</p>
+                        <button>▶</button>
+                        <p>Переглянут трейлер</p>
+                      </div>
+                      <div class="slider-film-info">
+                        <p>Назва: {{ movie.name }}</p>
+                        <p>Жанр: {{ movie.genre }}</p>
+                        <p>Тривалість: {{ movie.duration }}</p>
+                        <p>Вік: {{ movie.age }}</p>
+                      </div>
                     </div>
-                    <div class="slider-film-info">
-                      <p>Назва: {{ movie.name }}</p>
-                      <p>Жанр: {{ movie.genre }}</p>
-                      <p>Тривалість: {{ movie.duration }}</p>
-                      <p>Вік: {{ movie.age }}</p>
+                    <div class="inf">
+                      <div class="time">{{ s.session_datetime.strftime("%H:%M") }}</div>
+                      <div class="d">2D</div>
+                      <div class="age">{{ movie.age }}</div>
                     </div>
-                  </div>
-                  <div class="inf">
-                    <div class="time">{{ s.session_datetime.strftime("%H:%M") }}</div>
-                    <div class="d">2D</div>
-                    <div class="age">{{ movie.age }}</div>
-                  </div>
-                </a>
-                
+                </div>
+                {% if mobile %}
+                <div class="short_data">
+                  <p id="movie_tittle">{{ movie.name }}</p>
+                  <p id="movie_gange">{{ movie.genre }}</p>
               </div>
+              {% endif %}
+              </a>
+                
           </div>
           <!-- <button class="book_button">🎫 Time</button> -->
           {% endfor %}
@@ -71,29 +94,38 @@
         <div class="slide-track">
               {% for movie in movies[-6:] %}
               <div id="slide" class="slide">
-                <input type="image" , src="{{ movie.img_src }}">
                 <a href="{{ url_for('movie', movie_name=movie.name) }}">
-                  <div class="slider-film-back">
-                    <div class="slider-film-button">
-                      <button>ℹ</button>
-                      <p>Інформація про фільм</p>
-                      <button>▶</button>
-                      <p>Переглянут трейлер</p>
+                <div class="visual_slide">
+                  <img src="{{ movie.img_src }}" alt="">
+                    <div class="slider-film-back">
+                      <div class="slider-film-button">
+                        <button>ℹ</button>
+                        <p>Інформація про фільм</p>
+                        <button>▶</button>
+                        <p>Переглянут трейлер</p>
+                      </div>
+                      <div class="slider-film-info">
+                        <p>Назва: {{ movie.name }}</p>
+                        <p>Жанр: {{ movie.genre }}</p>
+                        <p>Тривалість: {{ movie.duration }}</p>
+                        <p>Вік: {{ movie.age }}</p>
+                      </div>
                     </div>
-                    <div class="slider-film-info">
-                      <p>Назва: {{ movie.name }}</p>
-                      <p>Жанр: {{ movie.genre }}</p>
-                      <p>Тривалість: {{ movie.duration }}</p>
-                      <p>Вік: {{ movie.age }}</p>
+                    <div class="inf">
+                      <div class="d">2D</div>
+                      <div class="age">{{ movie.age }}</div>
                     </div>
-                  </div>
-                  <div class="inf">
-                    <div class="d">2D</div>
-                    <div class="age">{{ movie.age }}</div>
-                  </div>
-                </a>
+                </div>
+                {% if mobile %}
+                <div class="short_data">
+                  <p id="movie_tittle">{{ movie.name }}</p>
+                  <p id="movie_gange">{{ movie.genre }}</p>
+              </div>
+              {% endif %}
+              </a>
                 
               </div>
+              
             {% endfor %}
           </div>
           </div>
@@ -139,6 +171,64 @@
 {% if not mobile %}
 </div>
   <script>
+    // ===========================slideshow================================
+        const viewport = document.querySelector('.slides-viewport');
+        const track = document.querySelector('.slide-track');
+        let slides = Array.from(track.children);
+
+        const slideWidth = slides[0].offsetWidth;
+        const viewportWidth = viewport.offsetWidth;
+
+        // how many slides are needed to fill screen
+        const slidesNeeded = Math.ceil(viewportWidth / slideWidth);
+
+        // clone slides until we have enough
+        while (slides.length < slidesNeeded * 2) {
+          slides.forEach(slide => {
+            const clone = slide.cloneNode(true);
+            track.appendChild(clone);
+          });
+          slides = Array.from(track.children);
+        }
+
+        document.getElementById('next').addEventListener('click', () => {
+        track.style.transition = 'transform 0.5s ease';
+        track.style.transform = `translateX(${-slideWidth}px)`;
+
+        // після закінчення анімації переміщаємо перший слайд в кінець
+        setTimeout(() => {
+            track.style.transition = 'none';
+            track.appendChild(track.firstElementChild);
+            track.style.transform = 'translateX(0)';
+        }, 500);
+        });
+
+        document.getElementById('prev').addEventListener('click', () => {
+        // переміщаємо останній слайд в початок перед анімацією
+        track.insertBefore(track.lastElementChild, track.firstElementChild);
+        track.style.transition = 'none';
+        track.style.transform = `translateX(${-slideWidth}px)`;
+
+        setTimeout(() => {
+            track.style.transition = 'transform 0.5s ease';
+            track.style.transform = 'translateX(0)';
+        }, 20);
+        });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const savedCityblock = document.querySelector('.extra');
+        const selectedCityblock = document.querySelector('.selected-city');
+        let savedCity = localStorage.getItem("selectedCity");        
+        if(savedCity == null){
+          savedCityblock.style.display = "flex"; //TODO: Save chosen city and hide this block
+        }
+        else{
+          savedCityblock.style.display = "none";
+        }
+      });
+
+  
+
 
     
     const track = document.querySelector('.slide-track');
@@ -220,53 +310,6 @@
     })
 
 })
-
-
-
-// ===========================slideshow================================
-  const viewport = document.querySelector('.slides-viewport');
-  const track = document.querySelector('.slide-track');
-  let slides = Array.from(track.children);
-
-  const slideWidth = slides[0].offsetWidth;
-  const viewportWidth = viewport.offsetWidth;
-
-  // how many slides are needed to fill screen
-  const slidesNeeded = Math.ceil(viewportWidth / slideWidth);
-
-  // clone slides until we have enough
-  while (slides.length < slidesNeeded * 2) {
-    slides.forEach(slide => {
-      const clone = slide.cloneNode(true);
-      track.appendChild(clone);
-    });
-    slides = Array.from(track.children);
-  }
-
-  document.getElementById('next').addEventListener('click', () => {
-  track.style.transition = 'transform 0.5s ease';
-  track.style.transform = `translateX(${-slideWidth}px)`;
-
-  // після закінчення анімації переміщаємо перший слайд в кінець
-  setTimeout(() => {
-      track.style.transition = 'none';
-      track.appendChild(track.firstElementChild);
-      track.style.transform = 'translateX(0)';
-  }, 500);
-  });
-
-  document.getElementById('prev').addEventListener('click', () => {
-  // переміщаємо останній слайд в початок перед анімацією
-  track.insertBefore(track.lastElementChild, track.firstElementChild);
-  track.style.transition = 'none';
-  track.style.transform = `translateX(${-slideWidth}px)`;
-
-  setTimeout(() => {
-      track.style.transition = 'transform 0.5s ease';
-      track.style.transform = 'translateX(0)';
-  }, 20);
-  });
-
   </script>
 {% endif %}
 </body>

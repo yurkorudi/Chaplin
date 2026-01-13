@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/globals.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/schedule.css">
+    <title>Розклад</title>
+</head>
+<body class="fade-in">
+    <div class="home">
+    {% include('header.html') %}
+
+    <main class="schedule">
+        <div class="week"></div>
+
+        <div class="sessions"></div>
+    </main>
+
+    {% include('footer.html') %}
+    </div>
+    <script>
+        const week_block = document.querySelector(".week");
+        const session_block = document.querySelector(".sessions");
+        const dates = new Date();
+        const today = new Date();
+
+        function getDateName(date, needOut, language, genitive = 0){            
+            let dateName
+            if(genitive == 0){  
+                dateName = date.toLocaleDateString([language], {
+                    [needOut]: "long"
+                });
+            }
+            else{
+                dateName = date.toLocaleDateString([language], {
+                    day: "numeric",
+                    [needOut]: "long"
+                });
+            }
+
+            return dateName;
+        }
+
+        function createDayObject(element, textContentValue, fatheBlock){
+            let dates;
+            if(element == "div"){
+                dates = Object.assign(document.createElement(element), {
+                    className: textContentValue
+                });
+            }
+            else{
+                dates = Object.assign(document.createElement(element), {
+                    textContent: textContentValue
+                });
+            }
+            
+            fatheBlock.appendChild(dates);
+            return dates;
+        }
+
+        let dayName;
+        let contein;
+        do{
+            dayName = getDateName(dates, "weekday", "uk-UA");
+
+            
+            contein = createDayObject("div", "day", week_block);
+            contein.dataset.date = dates.toISOString().slice(0, 10);
+
+            createDayObject(
+                "h1", 
+                getDateName(dates, "month", "uk-UA", 1),
+                contein
+            );            
+            
+            if(dates.getDate() == today.getDate()){
+                createDayObject("p", "cьогодні", contein);
+            }
+            else{
+                createDayObject("p", dayName, contein);
+            }
+
+            dates.setDate(dates.getDate() + 1)
+
+        }while (dayName !== "середа");
+
+        document.querySelectorAll(".day").forEach(el => {
+            el.addEventListener("click", async () => {
+                const date = el.dataset.date;
+                
+                document.querySelectorAll(".day").forEach(d => {
+                    d.classList.remove("active");
+                });
+                el.classList.add("active");
+
+                try {
+                    const response = await fetch("/available-sessions", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ date })
+                    });
+
+                    const sessions = await response.json();
+                    console.log("Server response:", sessions);
+
+                    session_block.innerHTML = ""; // clear previous sessions
+
+                    sessions.forEach(s => {
+                        const div = document.createElement("div");
+                        div.classList.add("session-conteiner");
+
+                        div.innerHTML = `
+                            <img src="${s.image}" alt="${s.film}">
+                            <div class="session-info">
+                                <h1>${s.film}</h1>
+                                <h3>2D</h3>
+                                <div class="time"></div>
+                            </div>
+                        `;
+
+                        session_block.appendChild(div);
+
+                        const infoDiv = div.querySelector(".time");
+
+                        s.times.forEach(time => {
+                            const p = document.createElement("p");
+                            p.textContent = time;
+                            infoDiv.appendChild(p);
+                        });
+
+                    });
+
+                } catch (err) {
+                    console.error("Failed to load sessions:", err);
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
