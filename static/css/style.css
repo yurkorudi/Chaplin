@@ -31,6 +31,7 @@ body {
 .navbar {
     position: fixed;
     bottom: 0;
+    left: 0;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -39,6 +40,8 @@ body {
     background: #fff;
     border-radius: 30px 30px 0 0;
     box-shadow: 0 0 30px 0 rgba(0, 0, 0, .05);
+    z-index: 200;
+    margin-left: 0;
 }
 
 .navbar button {
@@ -48,6 +51,7 @@ body {
     border-radius: 20px;
     background: transparent;
     transition: all .25s ease;
+    z-index: 200;
 }
 
 .navbar button:active:not(.plus) {
@@ -1966,6 +1970,9 @@ li:active {
 
 @media (max-width: 768px) {
 
+  .slideshow{
+    margin-bottom: 100px;
+  }
 
   .slide-track,
   .nearest {
@@ -1980,7 +1987,7 @@ li:active {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: auto;
+    height: 270px !important;
     position: relative;
     user-select: none;
   }
@@ -2195,6 +2202,10 @@ li:active {
     width: 100vw;
     perspective: 0;
     margin: -8vw;
+  }
+
+  .slid-buttons{
+    display: none;
   }
 
   .row {

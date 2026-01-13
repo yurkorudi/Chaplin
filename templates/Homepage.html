@@ -168,8 +168,9 @@
 
   </main>
 
-  {% include('footer.html') %}
 {% if not mobile %}
+  {% include('footer.html') %}
+
 </div>
   <script>
     // ===========================slideshow================================
@@ -216,17 +217,7 @@
         }, 20);
         });
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const savedCityblock = document.querySelector('.extra');
-        const selectedCityblock = document.querySelector('.selected-city');
-        let savedCity = localStorage.getItem("selectedCity");        
-        if(savedCity == null){
-          savedCityblock.style.display = "flex"; //TODO: Save chosen city and hide this block
-        }
-        else{
-          savedCityblock.style.display = "none";
-        }
-      });
+      
 
   
 
@@ -312,6 +303,20 @@
 })
   </script>
 {% endif %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+        const savedCityblock = document.querySelector('.extra');
+        const selectedCityblock = document.querySelector('.selected-city');
+        let savedCity = localStorage.getItem("selectedCity");        
+        if(savedCity == null){
+          savedCityblock.style.display = "flex"; //TODO: Save chosen city and hide this block
+        }
+        else{
+          savedCityblock.style.display = "none";
+        }
+      });
+</script>
 </body>
 
 </html>
