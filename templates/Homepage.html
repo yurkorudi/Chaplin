@@ -22,7 +22,7 @@
       <div class="sessions">
         <h1 > Найближчі сеанси</h1>
         <div class="nearest">
-          {% for movie in movies[-2:] %}
+          {% for movie, s in nearest %}
           <div class="mst_sesion">
             <div id="slide" class="slide">
                 <input type="image" , src="{{ movie.img_src }}">
@@ -42,6 +42,7 @@
                     </div>
                   </div>
                   <div class="inf">
+                    <div class="time">{{ s.session_datetime.strftime("%H:%M") }}</div>
                     <div class="d">2D</div>
                     <div class="age">{{ movie.age }}</div>
                   </div>
@@ -66,6 +67,7 @@
     
     <!-- Home page's base 360 degris's slider -->
       <div class="slideshow">
+        <div class="slides-viewport">
         <div class="slide-track">
               {% for movie in movies[-6:] %}
               <div id="slide" class="slide">
@@ -94,7 +96,11 @@
               </div>
             {% endfor %}
           </div>
-          
+          </div>
+          <div class="slid-buttons">
+            <button id="prev"><</button>
+            <button id="next">></button>
+        </div>
         </div>
       
 
@@ -131,7 +137,9 @@
 
   {% include('footer.html') %}
 {% if not mobile %}
+</div>
   <script>
+
     
     const track = document.querySelector('.slide-track');
     const slides = document.querySelectorAll('.slide');
@@ -213,6 +221,51 @@
 
 })
 
+
+
+// ===========================slideshow================================
+  const viewport = document.querySelector('.slides-viewport');
+  const track = document.querySelector('.slide-track');
+  let slides = Array.from(track.children);
+
+  const slideWidth = slides[0].offsetWidth;
+  const viewportWidth = viewport.offsetWidth;
+
+  // how many slides are needed to fill screen
+  const slidesNeeded = Math.ceil(viewportWidth / slideWidth);
+
+  // clone slides until we have enough
+  while (slides.length < slidesNeeded * 2) {
+    slides.forEach(slide => {
+      const clone = slide.cloneNode(true);
+      track.appendChild(clone);
+    });
+    slides = Array.from(track.children);
+  }
+
+  document.getElementById('next').addEventListener('click', () => {
+  track.style.transition = 'transform 0.5s ease';
+  track.style.transform = `translateX(${-slideWidth}px)`;
+
+  // після закінчення анімації переміщаємо перший слайд в кінець
+  setTimeout(() => {
+      track.style.transition = 'none';
+      track.appendChild(track.firstElementChild);
+      track.style.transform = 'translateX(0)';
+  }, 500);
+  });
+
+  document.getElementById('prev').addEventListener('click', () => {
+  // переміщаємо останній слайд в початок перед анімацією
+  track.insertBefore(track.lastElementChild, track.firstElementChild);
+  track.style.transition = 'none';
+  track.style.transform = `translateX(${-slideWidth}px)`;
+
+  setTimeout(() => {
+      track.style.transition = 'transform 0.5s ease';
+      track.style.transform = 'translateX(0)';
+  }, 20);
+  });
 
   </script>
 {% endif %}

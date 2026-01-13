@@ -103,7 +103,7 @@ def get_cinemas():
     cinemas = Cinema.query.all()
     return [{"cinema_id": c.cinema_id, "name": c.name, "location": c.location,
              "contact_phone_number": c.contact_phone_number, "work_schedule": c.work_schedule,
-             "instagram_link": c.instagram_link} for c in cinemas]
+             "instagram_link": c.instagram_link, "city": c.city} for c in cinemas]
 
 
 def add_session(film_id, cinema_id, session_datetime, session_duration):
@@ -276,5 +276,9 @@ def get_tickets():
     return [{"ticket_id": t.ticket_id, "user_phone_number": t.user_phone_number,
              "seat_id": t.seat_id, "session_id": t.session_id, "user_id": t.user_id,
              "date_of_purchase": t.date_of_purchase} for t in tickets]
+
+def get_holls():
+    holls = Hall.query.all()
+    return [{"holl_id": h.id, "cinema_id": h.cinema_id} for h in holls]
 
 

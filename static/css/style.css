@@ -261,6 +261,10 @@ body {
   /* right: 20px; */
 }
 
+.header .dropdown .button-wrapper li{
+  color: white;
+}
+
 .home .dropbtn {
   background-color: #04AA6D;
   color: white;
@@ -494,8 +498,9 @@ body {
 }
 
 .homePage{
-  margin: 0 0 25% 0;
   padding: 0;
+  display: block;
+  flex: 1;
 }
 
 .footer {
@@ -566,6 +571,11 @@ body {
   position: relative;
 }
 
+.slides-viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
 .slide-track {
   display: flex;
   justify-content: flex-start;
@@ -593,22 +603,23 @@ body {
 .slid-buttons{
     position: absolute;
     top: 50%;
-    left: calc(50% - 40px);
+    width: calc(100vw - 15px);
+    display: flex;
+    justify-content: space-between;
     transform: translateY(-50%);
-    background: rgba(0,0,0,0.4);
     border: none;
     padding: 10px;
     color: white;
     font-size: 20px;
-    cursor: pointer;
-    opacity: 0;
+    opacity: 100;
     transition: .3s;
+    z-index: 20;
 }
 
 #prev { left: 10px; }
 #next { right: 10px; }
 
-/* .slid-buttons *{
+.slid-buttons *{
     background-color: transparent;
     border: 3px solid #FFD700;
     border-radius: 50%;
@@ -619,7 +630,8 @@ body {
     font-weight: bolder;
     cursor: pointer;
     text-align: center;
-} */
+    cursor: pointer;
+}
 
 .slider-film-back{
   display: flex;
@@ -1857,8 +1869,8 @@ li:active {
 /* end user page */
 
 .city-btn {
-  background: linear-gradient(135deg, #410000, #470b01); /* Градієнтний фон */
-  color: white;
+  background: linear-gradient(135deg, #888888, #ffffff); /* Градієнтний фон */
+  color: black;
   border: wheat;
   padding: 12px 24px;
   font-size: 12px;
@@ -2410,7 +2422,7 @@ li:active {
     left: 0;
     width: 100%;
     height: auto; 
-    background: rgba(53, 6, 6, 0.879);
+    background: rgba(29, 29, 29, 0.879);
     display: flex;
     flex-direction: column;
     justify-content: center;

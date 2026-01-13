@@ -580,7 +580,27 @@ def homepage():
             if a['image_id'] == i['id']:
                 a.update({'img_src': i['path']})
 
-    return render_template('Homepage.html', city = city, cities = cities, mobile = is_mobile, movies = all_movies, profile = profile)
+    from sqlalchemy import cast, DateTime
+    selected_city = "Київ"
+
+    films = (
+        db.session.query(Film, Session)
+        .join(Session, Session.film_id == Film.film_id)
+        .join(Cinema, Session.cinema_id == Cinema.cinema_id)
+        .filter(
+            cast(Session.session_datetime, DateTime) > datetime.now(),
+            Cinema.city == selected_city
+        )
+        .all()
+    )
+    for a, s in films:
+        for i in all_images:
+            if a.image_id == i['id']:
+                a.img_src = i['path']
+        print(a)
+            
+
+    return render_template('Homepage.html', city = city, cities = cities, mobile = is_mobile, movies = all_movies, profile = profile, nearest = films)
 
 
 
