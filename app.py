@@ -686,7 +686,64 @@ def schedule():
     global user_location
     global cities
     global user_device
-    return render_template('schedule.html', cities = cities)
+
+    today = date.today()
+    dates_selected = []
+    current_start = today
+    days_limit = 31
+
+    while len(dates_selected) < 10:
+        limit_date = current_start + timedelta(days=days_limit)
+        
+        nearest = (
+            db.session.query(func.date(Session.session_datetime))
+            .filter(
+                Session.session_datetime >= current_start,
+                Session.session_datetime <= limit_date
+            )
+            .order_by(Session.session_datetime.asc())
+            .first()
+        )
+        
+        if not nearest:
+            break
+        
+        next_date = nearest[0]
+        dates_selected.append(next_date)
+        
+        current_start = next_date + timedelta(days=1)
+
+    if not dates_selected:
+        return render_template('schedule.html', cities = cities)
+    else:
+        sessions = (
+            db.session.query(Session, Film, Image.path)
+            .join(Film, Film.film_id == Session.film_id)
+            .join(Image, Image.image_id == Film.image_id)
+            .filter(func.date(Session.session_datetime).in_(dates_selected))
+            .order_by(Session.session_datetime.asc())
+            .all()
+        )
+        
+        films_dict = {}
+
+        for session, film, image_path in sessions:
+            film_id = film.film_id
+            date_key = session.session_datetime.strftime("%Y-%m-%d")
+            time_value = session.session_datetime.strftime("%H:%M")
+
+            if film_id not in films_dict:
+                films_dict[film_id] = {
+                    "film_id": film_id,
+                    "film": film.name,
+                    "image": image_path,
+                    "sessions": {}
+                }
+
+            films_dict[film_id]["sessions"].setdefault(date_key, []).append(time_value)
+
+        return render_template('schedule.html', cities = cities, session = films_dict)
+
 
 @app.route("/available-sessions", methods=["POST"])
 def available_sessions():
