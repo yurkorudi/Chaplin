@@ -44,3 +44,15 @@ Werkzeug==3.1.2
 WTForms==3.1.2
 WTForms-SQLAlchemy==0.4.2
 reportlab==4.2.2
+user_agents
+Flask
+pymysql
+flask_sqlalchemy
+flask_admin
+wtforms_sqlalchemy
+reportlab
+flask_migrate
+
+
+
+
