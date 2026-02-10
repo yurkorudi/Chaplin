@@ -944,11 +944,11 @@ body {
 
 .main.movie {
   display: flex;
-  justify-content: space-between;
   gap: 15px;
   margin-left: 0px;
   height: auto;
   color: black;
+  margin-right: 25px;
 }
 
 .main.movie .left_menu {
@@ -957,6 +957,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  margin-right: 25px;
 }
 
 
@@ -978,6 +979,92 @@ body {
   height: auto;
   width: 100%;
   position: relative;
+}
+
+.triller-button-logo{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  z-index: 100;
+  flex: 1;
+}
+
+#play {
+width: 160px;
+height: 160px;
+cursor: pointer;
+}
+
+#play .icon-stroke {
+fill: none;
+stroke-width: 4;
+}
+
+#play .circle-part,
+#play .circle-full {
+stroke: #A5CB43;
+}
+
+#play .play-triangle {
+stroke: #A3CD3A;
+}
+
+#play:hover .circle-part,
+#play:hover .circle-full,
+#play:hover .play-triangle {
+stroke: #8fbf2f;
+}
+
+.days{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  text-align: center;
+  gap: 10px;
+  margin-bottom: 15px;
+
+}
+
+.schedul_day{
+  border: 2px solid white;
+  border-radius: 25px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.days .schedul_day h1{
+  margin-bottom: 5px;
+}
+
+[class^="sched_"] {
+  display: none;
+  margin: 20px 0;
+}
+
+[class^="sched_"] h1{
+  font-size: 25px !important;
+  margin-bottom: 10px !important;
+}
+
+[class^="sched_"].active{
+  display: block;
+}
+
+.session_sched{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  margin: 0 0 15px 15px;
+}
+
+.session_sched p{
+ font-size: 20px !important;
+ cursor: pointer;
 }
 
 .session-buttons {
@@ -1008,6 +1095,10 @@ body {
   align-items: start;
 }
 
+.base_info h1{
+  margin-bottom: 25px;
+}
+
 .main.movie .left_menu .book_button button,
 .main.movie .base_info .book_button button {
   /* color: white; */
@@ -1027,7 +1118,8 @@ body {
   transform: scale(105%);
 }
 
-.main.movie .base_info .movie_short_info {
+.main.movie .base_info .movie_short_info,
+.more-info {
   display: grid;
   grid-template-columns: 30% 70%;
   gap: 5px;
@@ -1035,7 +1127,8 @@ body {
   width: 100%;
 }
 
-.main.movie .base_info .movie_short_info p {
+.main.movie .base_info .movie_short_info p,
+.more-info p {
   margin-bottom: 5px;
 }
 
@@ -1047,7 +1140,7 @@ body {
 }
 
 .main.movie .base_info div {
-  margin-bottom: 50px;
+  /* margin-bottom: 50px; */
   line-height: 25px;
 }
 
@@ -1055,9 +1148,16 @@ body {
   font-size: 30px;
 }
 
-.main.movie .base_info .movie_description h1,
+.main.movie .base_info .more-description .movie_description h1,
 .main.movie .base_info .movie_shelder h1 {
   margin-bottom: 15px;
+}
+
+.more-description-button,
+.less-description-button{
+  margin: 25px 25%;
+  color: #410000;
+  cursor: pointer;
 }
 
 .main.movie .base_info .treiler {
@@ -1072,8 +1172,12 @@ body {
   width: 30vw;
 }
 
-.main.movie .base_info .movie_description {
-  /* color: white; */
+.more-description div{
+  margin-bottom: 50px;
+}
+
+.more-description{
+  display: none;
 }
 
 .main.movie .base_info div p {
@@ -2319,11 +2423,12 @@ li:active {
     line-height: 15px;
   }
 
-  .main.movie .base_info .movie_short_info {
+  .main.movie .base_info .movie_short_info,
+  .more-info {
     width: 95%;
   }
 
-  .main.movie .base_info .movie_description {
+  .main.movie .base_info .more-description .movie_description {
     width: 95%;
   }
 
@@ -2347,7 +2452,8 @@ li:active {
     flex-direction: column;
   }
 
-  .main.movie.booking .movie_short_info {
+  .main.movie.booking .movie_short_info,
+  .more-info {
     order: 1;
   }
 

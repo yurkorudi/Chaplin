@@ -641,12 +641,14 @@ def movie():
         if not s.hall:
             continue
         hall_obj = Hall.query.get(s.hall.id)
+        cinema_obj = Cinema.query.get(s.cinema.cinema_id)
         sessions.append({
             'session_id':       s.session_id,
             'datetime':         s.session_datetime.isoformat(),
             'hall_id':          s.hall.id,
             'hall_name':        s.hall.name,
-            'hall_structure':   hall_obj.structure
+            'hall_structure':   hall_obj.structure,
+            'city': cinema_obj.city
         })
         print("____________________________________________________________________________________")
         print("Session ID:", s.session_id)
@@ -676,7 +678,7 @@ def movie():
     }
 
     return render_template('Movie.html',
-                           movie_info=movie_info,
+                           movie_info=movie_info, sessions = sessions,
                            city="" , cities=cities)
 
 

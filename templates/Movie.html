@@ -1,5 +1,5 @@
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -13,60 +13,96 @@
 <body class="fade-in">
     <div class="home">
 
-        
+
         {% include('header.html') %}
 
-    <main class="main movie">
-        <div class="left_menu">
-            <div class="movie_logo">
-                <img src="{{movie_info['img_src']}}" alt="{{movie_info['src']}}">
-            </div>
-            <form action="{{ url_for('book', movie_name=movie_info['name'])}}" method="post">
-                <div class="book_button"><button>Придбати квиток</button></div>
-            </form>
-        </div>
-
-        <div class="base_info">
-            <div class="movie_name">
-                <h1>{{movie_info['name']}}</h1>
-            </div>
-
-            <div class="movie_short_info">
-
-                <p class="category">Вік:</p>
-                <p class="value">3+</p>
-
-                <p class="category">Режисер</p>
-                <p class="value">{{movie_info['director']}}</p>
-
-                <p class="category">Рік</p>
-                <p class="value">2000</p>
-
-                <p class="category">Період прокату</p>
-                <p class="value">{{movie_info['release_start_date']}}  -  {{movie_info['release_end_date']}}</p>
-
-                <p class="category">Жанр</p>
-                <p class="value">{{movie_info['genre']}}</p>
-
-                <p class="category">Тривалість</p>
-                <p class="value">{{movie_info['duration']}}</p>
-
-                <p class="category">Актори</p>
-                <p class="value">{{movie_info['actors']}}</p>
-
+        <main class="main movie">
+            <div class="left_menu">
+                <div class="movie_logo">
+                    <img src="{{movie_info['img_src']}}" alt="{{movie_info['src']}}">
+                    <div class="triller-button-logo">
+                        <svg id="play" viewBox="0 0 163 163" xmlns="http://www.w3.org/2000/svg">
+                            <g class="icon-stroke">
+                                <path id="lineOne" class="circle-part"
+                                    d="M10,80 C10,118.107648 40.8923523,149 79,149 C117.107648,149 148,118.107648 148,80 C148,41.8923523 117.107648,11 79,11" />
+                                <path id="triangle" class="play-triangle"
+                                    d="M105.9,74.4158594 L67.2,44.2158594 C63.5,41.3158594 58,43.9158594 58,48.7158594 L58,109.015859 C58,113.7158594 63.4,116.4158594 67.2,113.5158594 L105.9,83.3158594 C108.8,81.1158594 108.8,76.6158594 105.9,74.4158594 Z" />
+                                <path id="lineTwo" class="circle-full"
+                                    d="M159,79.5 C159,35.5933624 123.406638,0 79.5,0 C35.5933624,0 0,35.5933624 0,79.5 C0,123.406638 35.5933624,159 79.5,159" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+                <form action="{{ url_for('book', movie_name=movie_info['name'])}}" method="post">
+                    <div class="book_button"><button>Придбати квиток</button></div>
+                </form>
             </div>
 
-            <div class="movie_description">
-                <h1>Опис Фільму:</h1>
-                <p>{{movie_info['description']}}</p>
-            </div>
-            <div class="treiler">
+            <div class="base_info">
+                <div class="movie_name">
+                    <h1>{{movie_info['name']}}</h1>
+                </div>
+
+                <div class="movie_short_info">
+
+                    <p class="category">Вік:</p>
+                    <p class="value">3+</p>
+
+                    <p class="category">Жанр</p>
+                    <p class="value">{{movie_info['genre']}}</p>
+
+                    <p class="category">Тривалість</p>
+                    <p class="value">{{movie_info['duration']}}</p>
+
+                </div>
+
+                <div class="more-description-button">
+                    <p>Детальніший опис...</p>
+                </div>
+
+                <div class="more-description">
+                    <div class="more-info">
+                        <p class="category">Режисер</p>
+                        <p class="value">{{movie_info['director']}}</p>
+
+                        <p class="category">Рік</p>
+                        <p class="value">2000</p>
+
+                        <p class="category">Період прокату</p>
+                        <p class="value">{{movie_info['release_start_date']}} - {{movie_info['release_end_date']}}</p>
+
+                        <p class="category">Актори</p>
+                        <p class="value">{{movie_info['actors']}}</p>
+                    </div>
+
+                    <div class="movie_description">
+                        <h1>Опис Фільму:</h1>
+                        <p>{{movie_info['description']}}</p>
+                    </div>
+
+                    <div class="less-description-button">
+                        <p>Короткий опис...</p>
+                    </div>
+                </div>
+
+                <div class="days"></div>
+                <div class="buying"></div>
+
+                <div class="seat-row">
+                    <div class="seat">
+                        <div class="monitor"><p>Екран</p></div>
+                        <div class="seats" id="seats"></div>
+                        <div class="tickets" id="tickets"></div>
+                    </div>
+                </div>
+
+                <!-- <div class="treiler">
                 <iframe style="width: 100%; height: 60%;"  frameborder="0" allowfullscreen
                 src="https://www.youtube.com/embed/tgbNymZ7vqY">
                 </iframe>
+            </div> -->
             </div>
-        </div>
-        <div class="right_menu">
+            <!-- <div class="right_menu">
             <h1>Розклад Сеансів</h1>
             <ul class="weekdays">
                 <li>Sun</li>
@@ -79,143 +115,302 @@
             </ul>
             <ul class="schedule" id="schedule"></ul>
             
-        </div>
-    </main>
+        </div> -->
+        </main>
 
-    {% include('footer.html') %}
-    
-
-
-
-    
-    <script>
-
-    function toggleMenu() {
-      document.querySelector('.nav-menu').classList.toggle('active');
-    }
-    function toggleMenu() {
-      document.querySelector('.mobile-menu').classList.toggle('active');
-    }
-
-
-        const mediaQuery = window.matchMedia("(min-width: 460px)");
-        if (!mediaQuery.matches) {
-            const base = document.querySelector('.base_info');
-            const right = document.querySelector('.right_menu');
-            base.prepend(right);
-        }
-        const scheduleContainer = document.getElementById("schedule");
-        const today = new Date();
-        const currentYear = today.getFullYear();
-        const currentMonth = today.getMonth();
-        const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
-        const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-
-
-        var sessionDateTime = "{{ movie_info['date_time'] }}"
-            .slice(1, -1)
-            .replace(/&#39;/g, " ")
-            .split(" , ");
-
-        let hoursForDays = [];
-        let specificHour = [];
-
-        sessionDateTime.forEach((dt) => {
-            hoursForDays.push(new Date(dt).getDate())
-            minutes = new Date(dt).getMinutes();
-            if (minutes < 10) {
-                specificHour.push(new Date(dt).getHours() + ":" + minutes + "0")
-            }
-            else {
-                specificHour.push(new Date(dt).getHours() + ":" + minutes)
-            }
-        });
-
-
-        const selectedDate = document.querySelector('.value_date');
-        const selectedTime = document.querySelector('.value_time');
-        const selectedSeat = document.querySelector('.value_seat');
-        const selectedRow = document.querySelector('.value_row');
-        const selectedCost = document.querySelector('.value_cost');
-
-        for (let i = 0; i < firstDayOfMonth; i++) {
-            const emptyItem = document.createElement("li");
-            emptyItem.classList.add("empty");
-            scheduleContainer.appendChild(emptyItem);
-        }
-
-
-        let lastClickedItem = null;
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(currentYear, currentMonth, day);
-            const formattedDate = date.toISOString().split("T")[0];
-
-            const listItem = document.createElement("li");
-            const timeElement = document.createElement("time");
-            timeElement.setAttribute("datetime", formattedDate);
-            timeElement.textContent = day;
-
-            listItem.style.backgroundColor = "";
-
-            if (day === today.getDate()) {
-                listItem.classList.add("today");
-            }
-
-            listItem.appendChild(timeElement);
-
-            if (hoursForDays.includes(day)) {
-                index = hoursForDays.indexOf(day);
-                listItem.innerHTML += ` ${specificHour[index]}`;
-
-                if(day === today.getDate()){
-                    selectedDate.textContent = day;
-                    selectedTime.textContent = specificHour[index];
-                }
-            }
-
-            listItem.addEventListener("click", function () {
-                if (lastClickedItem) {
-                    lastClickedItem.style.backgroundColor = "";
-                }
-
-                listItem.style.backgroundColor = "gray";
-
-                lastClickedItem = listItem;
-                removeAllSeats();
-                bookSeat(day);
-
-                const selectedHour = listItem.textContent.split(' ');
-                minValue = document.querySelector('.value_date');
-                minValue = minValue.textContent.split(' ');
-
-
-                if (day < today.getDate()) {
-                    selectedDate.textContent = today.getDate();
-                    if (minValue[1] == null) {
-                        minValue[1] = 'no seans for this day';
-                    }
-                    selectedTime.textContent = minValue[1];
-                }
-                else {
-                    selectedDate.textContent = timeElement.textContent;
-
-                    if (selectedHour[1] == null) {
-                        selectedTime.textContent = 'no seans for this day';
-                    }
-                    else {
-                        selectedTime.textContent = selectedHour[1];
-                    }
-                }
+        {% include('footer.html') %}
 
 
 
+
+
+        <script>
+
+            const more_description_button = document.querySelector('.more-description-button');
+            const more_description = document.querySelector('.more-description');
+            const less_description_button = document.querySelector('.less-description-button');
+
+            more_description_button.addEventListener("click", function () {
+                more_description.style.display = "block";
+                more_description_button.style.display = "none";
             });
 
-            scheduleContainer.appendChild(listItem);
+            less_description_button.addEventListener("click", function () {
+                more_description.style.display = "none";
+                more_description_button.style.display = "block";
+            });
 
-        }
-    </script>
+
+            const schedule_block = document.querySelector('.buying');
+            const days_block = document.querySelector('.days');
+
+            let savedCity = localStorage.getItem("selectedCity");
+
+            const sessions = {{ sessions | tojson }}; //TODO get less date from server: this way can be trafix jar in feacher
+            const todayFull = new Date();
+            const today = todayFull.toISOString().slice(0, 10);
+
+            sessions.sort((a, b) => {
+                return new Date(a.datetime) - new Date(b.datetime);
+            });
+
+            let controlDate = new Date(
+                new Date(todayFull).setDate(todayFull.getDate() - 1)
+            ).toISOString().slice(0, 10);
+
+            let counter = 1;
+            let hollNameControl = [];
+            let holls = {};
+            const maxSessions = 10;
+
+            sessions.forEach(s => {
+                if (!holls[s.hall_name]) {
+                    holls[s.hall_name] = s.hall_structure;
+                }
+            });
+
+            sessions.forEach(dateStr => {
+                if (savedCity == dateStr.city) {
+                    let date = dateStr.datetime.split("T");
+
+                    let day = new Date(date[0]);
+
+                    let dayName;
+                    if (day.getDate() == todayFull.getDate() &&
+                        day.getMonth() == todayFull.getMonth() &&
+                        day.getFullYear() == todayFull.getFullYear()) {
+                        dayName = "Сьогодні"
+                    }
+                    else {
+                        dayName = day.toLocaleDateString("uk-UA", { weekday: "long" });
+                    }
+
+                    let monthName = day.toLocaleDateString("uk-UA", { month: "long", day: "numeric" });
+
+                    if (date[0] >= today && counter <= maxSessions) {
+                        if (date[0] != controlDate) {
+                            days_block.innerHTML += `
+                            <div class="schedul_day">
+                                <h1>${monthName}</h1>
+                                <p>${dayName}</p>
+                            </div>
+                        `;
+                            if (counter == 1) {
+                                schedule_block.innerHTML += `
+                                <div class="sched_${counter} active">
+                                    <h1>${dateStr.hall_name}</h1>
+                                    <div class="session_sched" data-hall="${dateStr.hall_name}">
+                                        <p data-session="${dateStr.session_id}">${date[1].slice(0, 5)}</p>
+                                    </div>
+                                    </div>
+                                </div>
+                            `;
+                            }
+                            else {
+                                schedule_block.innerHTML += `
+                                <div class="sched_${counter}">
+                                    <h1>${dateStr.hall_name}</h1>
+                                    <div class="session_sched" data-hall="${dateStr.hall_name}">
+                                        <p data-session="${dateStr.session_id}">${date[1].slice(0, 5)}</p>
+                                    </div>
+                                </div>
+                            `;
+                            }
+
+                            counter++;
+                            if (!hollNameControl.includes(dateStr.hall_name)) {
+                                hollNameControl.push(dateStr.hall_name);
+                            }
+                        }
+                        else {
+                            if (hollNameControl.includes(dateStr.hall_name)) {//TODO smart checking: if we already have this holl add to it
+                                const div = document.querySelector(`.sched_${counter - 1} .session_sched[data-hall="${dateStr.hall_name}"]`);
+                                div.innerHTML += `                            
+                                    <p data-session="${dateStr.session_id}">${date[1].slice(0, 5)}</p>
+                                `;
+                            }
+                            else {
+                                const div = document.querySelector(`.sched_${counter - 1}`);
+                                div.innerHTML += `   
+                                    <h1>${dateStr.hall_name}</h1>
+                                    <div class="session_sched" data-hall="${dateStr.hall_name}">
+                                        <p data-session="${dateStr.session_id}">${date[1].slice(0, 5)}</p>
+                                        </div>
+                                    `;
+                                if (!hollNameControl.includes(dateStr.hall_name)) {
+                                    hollNameControl.push(dateStr.hall_name);
+                                }
+                            }
+                        }
+
+                        controlDate = date[0];
+                    }
+                }
+            });
+
+
+            const days = document.querySelectorAll(".schedul_day");
+            const schedules = document.querySelectorAll('[class^="sched_"]');
+
+            days.forEach((day, index) => {
+                day.addEventListener("click", () => {
+                    // remove active from all schedule blocks
+                    schedules.forEach(s => s.classList.remove("active"));
+
+                    // add active to matching sched block
+                    const target = document.querySelector(`.sched_${index + 1}`);
+                    if (target) {
+                        target.classList.add("active");
+                    }
+                });
+            });
+
+
+            document.querySelectorAll(".session_sched").forEach(div => {                
+                const ps = div.querySelectorAll("p");
+                ps.forEach(p => {
+                        p.addEventListener("click", () => {
+                            const sessionId = p.dataset.session;
+                            const holl = div.dataset.hall;
+                            document.querySelectorAll(".session_sched p.active").forEach(p => p.classList.remove("active"));
+                            p.classList.add("active");
+                            console.log("holl's data: " + holl + ", "+ sessionId);
+                            if(Object.hasOwn(holls, holl)){
+                                console.log(holls[holl]);
+                            }
+                            else{
+                                console.log(`structure ${holl} doesn't exist`);
+                            }
+                    });
+                });
+            });
+
+            // function toggleMenu() {
+            //   document.querySelector('.nav-menu').classList.toggle('active');
+            // }
+            // function toggleMenu() {
+            //   document.querySelector('.mobile-menu').classList.toggle('active');
+            // }
+
+
+            //     const mediaQuery = window.matchMedia("(min-width: 460px)");
+            //     if (!mediaQuery.matches) {
+            //         const base = document.querySelector('.base_info');
+            //         const right = document.querySelector('.right_menu');
+            //         base.prepend(right);
+            //     }
+            //     const scheduleContainer = document.getElementById("schedule");
+            //     const today = new Date();
+            //     const currentYear = today.getFullYear();
+            //     const currentMonth = today.getMonth();
+            //     const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+            //     const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+
+
+            //     var sessionDateTime = "{{ movie_info['date_time'] }}"
+            //         .slice(1, -1)
+            //         .replace(/&#39;/g, " ")
+            //         .split(" , ");
+
+            //     let hoursForDays = [];
+            //     let specificHour = [];
+
+            //     sessionDateTime.forEach((dt) => {
+            //         hoursForDays.push(new Date(dt).getDate())
+            //         minutes = new Date(dt).getMinutes();
+            //         if (minutes < 10) {
+            //             specificHour.push(new Date(dt).getHours() + ":" + minutes + "0")
+            //         }
+            //         else {
+            //             specificHour.push(new Date(dt).getHours() + ":" + minutes)
+            //         }
+            //     });
+
+
+            //     const selectedDate = document.querySelector('.value_date');
+            //     const selectedTime = document.querySelector('.value_time');
+            //     const selectedSeat = document.querySelector('.value_seat');
+            //     const selectedRow = document.querySelector('.value_row');
+            //     const selectedCost = document.querySelector('.value_cost');
+
+            //     for (let i = 0; i < firstDayOfMonth; i++) {
+            //         const emptyItem = document.createElement("li");
+            //         emptyItem.classList.add("empty");
+            //         scheduleContainer.appendChild(emptyItem);
+            //     }
+
+
+            //     let lastClickedItem = null;
+
+            //     for (let day = 1; day <= daysInMonth; day++) {
+            //         const date = new Date(currentYear, currentMonth, day);
+            //         const formattedDate = date.toISOString().split("T")[0];
+
+            //         const listItem = document.createElement("li");
+            //         const timeElement = document.createElement("time");
+            //         timeElement.setAttribute("datetime", formattedDate);
+            //         timeElement.textContent = day;
+
+            //         listItem.style.backgroundColor = "";
+
+            //         if (day === today.getDate()) {
+            //             listItem.classList.add("today");
+            //         }
+
+            //         listItem.appendChild(timeElement);
+
+            //         if (hoursForDays.includes(day)) {
+            //             index = hoursForDays.indexOf(day);
+            //             listItem.innerHTML += ` ${specificHour[index]}`;
+
+            //             if(day === today.getDate()){
+            //                 selectedDate.textContent = day;
+            //                 selectedTime.textContent = specificHour[index];
+            //             }
+            //         }
+
+            //         listItem.addEventListener("click", function () {
+            //             if (lastClickedItem) {
+            //                 lastClickedItem.style.backgroundColor = "";
+            //             }
+
+            //             listItem.style.backgroundColor = "gray";
+
+            //             lastClickedItem = listItem;
+            //             removeAllSeats();
+            //             bookSeat(day);
+
+            //             const selectedHour = listItem.textContent.split(' ');
+            //             minValue = document.querySelector('.value_date');
+            //             minValue = minValue.textContent.split(' ');
+
+
+            //             if (day < today.getDate()) {
+            //                 selectedDate.textContent = today.getDate();
+            //                 if (minValue[1] == null) {
+            //                     minValue[1] = 'no seans for this day';
+            //                 }
+            //                 selectedTime.textContent = minValue[1];
+            //             }
+            //             else {
+            //                 selectedDate.textContent = timeElement.textContent;
+
+            //                 if (selectedHour[1] == null) {
+            //                     selectedTime.textContent = 'no seans for this day';
+            //                 }
+            //                 else {
+            //                     selectedTime.textContent = selectedHour[1];
+            //                 }
+            //             }
+
+
+
+            //         });
+
+            //         scheduleContainer.appendChild(listItem);
+
+            //     }
+        </script>
 
 </body>
 
