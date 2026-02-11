@@ -139,26 +139,7 @@
     <!-- end home page's base 360 degris's slider -->
 
 
-    {% if mobile %}
-      <div class="navbar">
-          <div class="effect"></div>
-          <button class="active">
-              <i class="bx bx-home"></i>
-          </button>
-          <button>
-              <i class="bx bx-user"></i>
-          </button>
-          <button class="plus">
-              <i class="bx bx-plus"></i>
-          </button>
-          <button>
-              <i class="bx bx-shopping-bag"></i>
-          </button>
-          <button>
-              <i class="bx bx-chat"></i>
-          </button>
-      </div>
-      {% endif %}
+    {% include('navbar.html') %}
 
 
 
@@ -277,6 +258,8 @@
         dragMove(e.clientX);
       }
     });
+
+
 
 
     buttons.forEach(button => {

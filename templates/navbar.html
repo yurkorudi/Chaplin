@@ -1,0 +1,29 @@
+{% if mobile %}
+<div class="navbar">
+    <div class="effect"></div>
+
+    <a href="{{ url_for('homepage') }}">
+        <button class="{% if request.endpoint == 'homepage' %}active{% endif %}">
+            <i class="bx bx-home"></i>
+        </button>
+    </a>
+
+    <a href="{{ url_for('market') }}">
+        <button class="{% if request.endpoint == 'market' %}active{% endif %}">
+            <i class="bx bx-shopping-bag"></i>
+        </button>
+    </a>
+
+    <a href="{{ url_for('schedule') }}">
+        <button class="{% if request.endpoint == 'schedule' %}active{% endif %}">
+            <i class="bx bx-calendar"></i>
+        </button>
+    </a>
+
+    <a href="{{ url_for('user') }}">
+        <button class="{% if request.endpoint in ['user', 'profile'] %}active{% endif %}">
+            <i class="bx bx-user"></i>
+        </button>
+    </a>
+</div>
+{% endif %}
