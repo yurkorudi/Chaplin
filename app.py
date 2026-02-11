@@ -639,7 +639,11 @@ def movie():
     sessions = []
     tickets_by_session = {}
 
+    today = datetime.now().date()
+
     for s in film.sessions:
+        if s.session_datetime.date() < today:
+            continue
         if not s.hall:
             continue
         hall_obj = Hall.query.get(s.hall.id)
@@ -1173,7 +1177,7 @@ if __name__ == "__main__":
         create_sample_data()
         db.create_all()
         
-    app.run(debug=True, host='10.44.11.220')
+    app.run(debug=True)
 
 
 
