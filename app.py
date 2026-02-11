@@ -639,7 +639,11 @@ def movie():
     sessions = []
     tickets_by_session = {}
 
+    today = datetime.now().date()
+
     for s in film.sessions:
+        if s.session_datetime.date() < today:
+            continue
         if not s.hall:
             continue
         hall_obj = Hall.query.get(s.hall.id)

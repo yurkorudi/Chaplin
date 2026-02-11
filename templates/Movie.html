@@ -148,6 +148,13 @@
 
             const sessions = {{ sessions | tojson }}; //TODO get less date from server: this way can be trafix jar in feacher
             const tickets_by_session = {{ tickets_by_session | tojson }};
+
+            Object.entries(tickets_by_session)
+                .forEach(([sessionId, tickets]) => {
+                    console.log("Session:", sessionId);
+                    console.log("Tickets:", tickets);
+                });
+
             
             const sessionsMap = Object.fromEntries(
                 sessions.map(s => [s.session_id, s])
