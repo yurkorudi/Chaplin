@@ -637,11 +637,13 @@ def movie():
     film = Film.query.filter_by(name=film_name).first()
     
     sessions = []
+    tickets_by_session = {}
+
     for s in film.sessions:
         if not s.hall:
             continue
         hall_obj = Hall.query.get(s.hall.id)
-        cinema_obj = Cinema.query.get(s.cinema.cinema_id)
+        cinema_obj = Cinema.query.get(s.cinema.cinema_id)        
         sessions.append({
             'session_id':       s.session_id,
             'datetime':         s.session_datetime.isoformat(),
@@ -657,7 +659,13 @@ def movie():
         print("Hall name:", s.hall.name)
         print("Hall structure:", hall_obj.structure)
         print("____________________________________________________________________________________")
-        
+
+        tickets = Ticket.query.filter_by(
+            session_id=s.session_id
+        ).all()        
+        ticket_list = [[t.row_index, t.column_index] for t in tickets]
+        tickets_by_session[s.session_id] = ticket_list
+
     print("Sessions for film:", film_name, "are", sessions)
         
         
@@ -678,7 +686,7 @@ def movie():
     }
 
     return render_template('Movie.html',
-                           movie_info=movie_info, sessions = sessions,
+                           movie_info=movie_info, sessions = sessions, tickets_by_session = tickets_by_session,
                            city="" , cities=cities)
 
 

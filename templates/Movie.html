@@ -147,6 +147,12 @@
             let savedCity = localStorage.getItem("selectedCity");
 
             const sessions = {{ sessions | tojson }}; //TODO get less date from server: this way can be trafix jar in feacher
+            const tickets_by_session = {{ tickets_by_session | tojson }};
+
+            const sessionsMap = Object.fromEntries(
+                sessions.map(s => [s.session_id, s])
+            );
+            
             const todayFull = new Date();
             const today = todayFull.toISOString().slice(0, 10);
 
@@ -274,6 +280,11 @@
                             const holl = div.dataset.hall;
                             document.querySelectorAll(".session_sched p.active").forEach(p => p.classList.remove("active"));
                             p.classList.add("active");
+                            
+                            hollStr = sessionsMap[sessionId].hall_structure;
+                            const tickets = tickets_by_session[sessionId] || [];
+                            drawHall(hollStr, tickets, 100);
+
                             console.log("holl's data: " + holl + ", "+ sessionId);
                             if(Object.hasOwn(holls, holl)){
                                 console.log(holls[holl]);
@@ -284,6 +295,41 @@
                     });
                 });
             });
+
+
+            const seatsEl = document.getElementById('seats');
+
+            function drawHall(hallStructure, occupiedSeats, price) {
+                seatsEl.innerHTML = '';
+                if (!hallStructure.length) return;
+                seatsEl.style.display = 'grid';
+                seatsEl.style.gridTemplateColumns = `repeat(${Math.max(...hallStructure.map(r=>r.length))},1fr)`;
+                hallStructure.forEach((rowArr, rIdx) => {
+                    rowArr.forEach((cell, cIdx) => {
+                        const div = document.createElement('div');
+                        div.dataset.row = rIdx;
+                        div.dataset.col = cIdx;
+                        if (cell === 0) {
+                            div.className = 'empty';
+                        } else {
+                            const isOcc = occupiedSeats.some(([row, seat]) => row === rIdx && seat === cIdx);
+                            if (isOcc) {
+                                div.className = 'place occupied';
+                            } else {
+                                div.className = 'place';
+                                div.dataset.price = price;
+                                div.addEventListener('click', () => {
+                                div.classList.toggle('selected');
+                                valRow.textContent = rIdx + 1;
+                                valSeat.textContent = cIdx + 1;
+                                updateSelectedSeats();
+                                });
+                            }
+                        }
+                        seatsEl.appendChild(div);
+                    });
+                });
+            } 
 
             // function toggleMenu() {
             //   document.querySelector('.nav-menu').classList.toggle('active');
