@@ -687,6 +687,7 @@ def movie():
         'age':                 film.age,
         'img_src':             film.image.path if film.image else None,
         'sessions':            sessions,
+        'trailer':             film.trailer,
     }
 
     return render_template('Movie.html',
