@@ -22,11 +22,9 @@
           <div class="button-wrapper">
             <li><div class="button"><a>Ваше місто: <span id="selected-city" class="selected-city">Виберіть місто</span></a></div>
               <div class="dropdown-content">
-                <ul>
                   {% for c in cities %}                        
                   <li><button class="button city-btn" data-city='{{c}}'>{{c}}</button></li>
-                  {% endfor %}
-                </ul>                        
+                  {% endfor %}             
             </div>
           </div>
         </div>

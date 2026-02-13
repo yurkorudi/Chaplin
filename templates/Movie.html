@@ -337,6 +337,14 @@
                 });
             } 
 
+
+            const trailer_url = "{{ movie_info['trailer'] }}";
+            const trailer_button = document.querySelector('.triller-button-logo');
+            trailer_button.addEventListener("click", () => {
+                window.location.href = trailer_url;
+            });
+            
+
             // function toggleMenu() {
             //   document.querySelector('.nav-menu').classList.toggle('active');
             // }

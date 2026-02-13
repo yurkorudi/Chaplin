@@ -51,6 +51,8 @@ class Film(db.Model):
     duration           = db.Column(db.Integer, nullable=False)
     age                = db.Column(db.String(100))
     image_id           = db.Column(db.Integer, db.ForeignKey('images.image_id'), nullable=True)
+    trailer            = db.Column(db.String(500))
+
     
     def __str__(self):
         return self.name

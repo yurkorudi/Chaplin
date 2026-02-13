@@ -687,6 +687,7 @@ def movie():
         'age':                 film.age,
         'img_src':             film.image.path if film.image else None,
         'sessions':            sessions,
+        'trailer':             film.trailer,
     }
 
     return render_template('Movie.html',
@@ -1177,7 +1178,7 @@ if __name__ == "__main__":
         create_sample_data()
         db.create_all()
         
-    app.run(debug=True)
+    app.run(debug=True, host="192.168.0.103")
 
 
 
