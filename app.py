@@ -1178,7 +1178,7 @@ if __name__ == "__main__":
         create_sample_data()
         db.create_all()
         
-    app.run(debug=True, host="192.168.0.103")
+    app.run(debug=True)
 
 
 

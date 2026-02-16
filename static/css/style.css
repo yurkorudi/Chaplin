@@ -23,8 +23,8 @@ body {
   flex-direction: column;
   justify-content: center;
   width: 100vw;
-  height: 100vh;
-  background: linear-gradient(180deg, rgba(29, 29, 29, 0.5) 0%, rgb(192, 192, 192) 50%, rgba(29, 29, 29, 0.5) 100%);
+  height: auto;
+  background: linear-gradient(180deg, rgba(29, 29, 29, 0) 0%, rgb(192, 192, 192) 50%, rgba(29, 29, 29, 0) 100%);
   padding: 0;
 }
 
