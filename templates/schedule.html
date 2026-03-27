@@ -120,13 +120,18 @@
                                 div.classList.add("session-conteiner");
 
                                 div.innerHTML = `
-                                    <img src="${film.image}" alt="${film.film}">
+                                    <img src="${film.image}" alt="${film.film}" class="film-schedule-img">
                                     <div class="session-info">
                                         <h1>${film.film}</h1>
                                         <h3>2D</h3>
                                         <div class="time"></div>
                                     </div>
                                 `;
+                               
+                                div.querySelector('.film-schedule-img').addEventListener('click', () => {
+                                    const movieUrl = `/movie?movie_name=${encodeURIComponent(film.film)}`;
+                                    window.location.href = movieUrl;
+                                });
 
                                 session_block.appendChild(div);
 
