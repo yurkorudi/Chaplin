@@ -671,8 +671,37 @@ def movie():
         tickets_by_session[s.session_id] = ticket_list
 
     print("Sessions for film:", film_name, "are", sessions)
-        
-        
+
+    today = datetime.now().date()
+
+    daysUA = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
+    monthsUA = [
+        'січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 
+        'жовтня', 'листопада', 'грудня'
+    ]
+
+    unique_dates = sorted({
+        datetime.fromisoformat(s['datetime']).date()
+        for s in sessions
+        if datetime.fromisoformat(s['datetime']).date() >= today
+    })    
+
+    dates_for_dropdown = []
+
+    for i, d in enumerate(unique_dates):
+        day_abbr = daysUA[d.weekday()+1]
+        month_name = monthsUA[d.month - 1]
+        label = f"{day_abbr}, {d.day} {month_name}"
+
+        if d == today:
+            label += " — сьогодні"
+        elif d == today + timedelta(days=1):
+            label += " — завтра"
+
+        dates_for_dropdown.append({
+            'value': d.isoformat(),  # YYYY-MM-DD для value
+            'label': label           # текст для dropdown
+        })
         
     movie_info = {
         'film_id':             film.film_id,
@@ -692,7 +721,7 @@ def movie():
 
     return render_template('Movie.html',
                            movie_info=movie_info, sessions = sessions, tickets_by_session = tickets_by_session,
-                           city="" , cities=cities)
+                           city="" , cities=cities, today=datetime.now(), timedelta=timedelta, dates=dates_for_dropdown)
 
 
         
