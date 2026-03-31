@@ -34,6 +34,8 @@
                     </div>
                 </div>
                 <form action="{{ url_for('book', movie_name=movie_info['name'])}}" method="post">
+                    <input type="hidden" name="selected_seats" id="selectedSeatsInput">
+                    <input type="hidden" name="session_id" id="sessionIdInput">
                     <div class="book_button"><button>Придбати квиток</button></div>
                 </form>
             </div>
@@ -107,7 +109,11 @@
                         <div id="session_holl"></div>
                     </div>
                 </div>
-                <div class="buying"></div>
+                <div id="buying"></div>
+
+                <div class="total">
+                    Загальна сума: <span id="total-price">0</span> грн
+                </div>
 
                 <div class="seat-row">
                     <div class="seat">
@@ -172,6 +178,9 @@
 
             const selectedCity = localStorage.getItem("selectedCity");
 
+            let selectedSeats = [];
+            let currentSessionId = null;
+
             // --------------------
             // 1. ГЕНЕРАЦІЯ ДАТ
             // --------------------
@@ -233,6 +242,11 @@
                     return;
                 }
 
+                if (!selectedCity) {
+                    container.innerHTML = "<p>Оберіть місто</p>";
+                    return;
+                }
+
                 for (const hall in grouped) {
                     const hallDiv = document.createElement('div');
                     hallDiv.innerHTML = `<h2>${hall}</h2>`;
@@ -253,6 +267,10 @@
                                 .forEach(e => e.classList.remove('active'));
 
                             el.classList.add('active');
+
+                            currentSessionId = s.session_id;
+                            selectedSeats = [];
+                            updateBuying();
 
                             const hallStructure = s.hall_structure;
                             const tickets = tickets_by_session[s.session_id] || [];
@@ -298,6 +316,23 @@
 
                                 div.addEventListener('click', () => {
                                     div.classList.toggle('selected');
+
+                                    const index = selectedSeats.findIndex(
+                                        s => s.row === rIdx && s.col === cIdx
+                                    );
+
+                                    if (index > -1) {
+                                        selectedSeats.splice(index, 1);
+                                    } else {
+                                        selectedSeats.push({
+                                            row: rIdx,
+                                            col: cIdx,
+                                            price: price,
+                                            session_id: currentSessionId
+                                        });
+                                    }
+
+                                    updateBuying();
                                 });
                             }
                         }
@@ -305,6 +340,43 @@
                         seatsEl.appendChild(div);
                     });
                 });
+            }
+
+            // -------------------
+            // ВИБІР МІСЦЬ
+            // -------------------
+            function updateBuying() {
+                const buying = document.getElementById('buying');
+                const totalEl = document.getElementById('total-price');
+                const input = document.getElementById('selectedSeatsInput');
+                const sessionInput = document.getElementById('sessionIdInput');
+
+                if (!buying || !totalEl || !input) return;
+
+                buying.innerHTML = '';
+
+                let total = 0;
+
+                selectedSeats.forEach((seat, index) => {
+                    total += seat.price;
+
+                    const ticket = document.createElement('div');
+                    ticket.className = 'ticket';
+
+                    ticket.innerHTML = `
+                        <p>Квиток ${index + 1}</p>
+                        <p>Ряд: ${seat.row + 1}</p>
+                        <p>Місце: ${seat.col + 1}</p>
+                        <p>Ціна: ${seat.price} грн</p>
+                    `;
+
+                    buying.appendChild(ticket);
+                });
+
+                totalEl.textContent = total;
+
+                input.value = JSON.stringify(selectedSeats);
+                sessionInput.value = currentSessionId;
             }
 
             // --------------------
