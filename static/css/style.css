@@ -1345,6 +1345,29 @@ li:active {
   cursor: pointer;
 }
 
+.tickets_fit{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 35px;
+}
+
+#buying{
+  padding: 10px;
+}
+
+.total{
+  display: none;
+  color: white;
+  font-size: 18px;
+}
+
+.total span{
+  font-size: 20px;
+  font-weight: 600;
+}
+
 .admin_body {
   background-color: #000000;
 }
@@ -1686,10 +1709,21 @@ li:active {
 
 .ticket {
   display: flex;
+  flex-direction: row;
   justify-content: space-around;
   flex-direction: row;
   margin-bottom: 10px !important;
   background-color: white;
+  gap: 10px;
+  padding: 10px;
+}
+
+.show-all-tickets{
+  padding: 10px;
+  color: white;
+  background: transparent;
+  border: 2px solid white;
+  border-radius: 25px;
 }
 
 .ticket div {

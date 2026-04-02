@@ -109,11 +109,6 @@
                         <div id="session_holl"></div>
                     </div>
                 </div>
-                <div id="buying"></div>
-
-                <div class="total">
-                    Загальна сума: <span id="total-price">0</span> грн
-                </div>
 
                 <div class="seat-row">
                     <div class="seat">
@@ -125,26 +120,22 @@
                     </div>
                 </div>
 
+                <div class="tickets_fit">
+                    <div id="buying"></div>
+
+                    <div class="total">
+                        Загальна сума: <span id="total-price">0</span> грн
+                    </div>
+                </div>
+
+
                 <!-- <div class="treiler">
                 <iframe style="width: 100%; height: 60%;"  frameborder="0" allowfullscreen
                 src="https://www.youtube.com/embed/tgbNymZ7vqY">
                 </iframe>
             </div> -->
             </div>
-            <!-- <div class="right_menu">
-            <h1>Розклад Сеансів</h1>
-            <ul class="weekdays">
-                <li>Sun</li>
-                <li>Mon</li>
-                <li>Tue</li>
-                <li>Wed</li>
-                <li>Thu</li>
-                <li>Fri</li>
-                <li>Sat</li>
-            </ul>
-            <ul class="schedule" id="schedule"></ul>
-            
-        </div> -->
+
         </main>
 
         {% include('footer.html') %}
@@ -351,11 +342,14 @@
                 const input = document.getElementById('selectedSeatsInput');
                 const sessionInput = document.getElementById('sessionIdInput');
 
+                const totalBlock = totalEl.parentElement;
+
                 if (!buying || !totalEl || !input) return;
 
                 buying.innerHTML = '';
 
                 let total = 0;
+                const maxVisibleTickets = 5;
 
                 selectedSeats.forEach((seat, index) => {
                     total += seat.price;
@@ -370,9 +364,27 @@
                         <p>Ціна: ${seat.price} грн</p>
                     `;
 
+                    if (index >= maxVisibleTickets) {
+                        ticket.style.display = 'none';
+                        ticket.classList.add('hidden-ticket');
+                    }
+
                     buying.appendChild(ticket);
                 });
 
+                const hiddenTickets = buying.querySelectorAll('.hidden-ticket');
+                if (hiddenTickets.length > 0) {
+                    const btn = document.createElement('button');
+                    btn.textContent = `Переглянути всі (${hiddenTickets.length})`;
+                    btn.className = 'show-all-tickets';
+                    btn.addEventListener('click', () => {
+                        hiddenTickets.forEach(t => t.style.display = 'flex');
+                        btn.style.display = 'none';
+                    });
+                    buying.appendChild(btn);
+                }
+
+                totalBlock.style.display = "block";
                 totalEl.textContent = total;
 
                 input.value = JSON.stringify(selectedSeats);
