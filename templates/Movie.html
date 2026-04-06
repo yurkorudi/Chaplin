@@ -36,7 +36,7 @@
                 <form action="{{ url_for('book', movie_name=movie_info['name'])}}" method="post">
                     <input type="hidden" name="selected_seats" id="selectedSeatsInput">
                     <input type="hidden" name="session_id" id="sessionIdInput">
-                    <div class="book_button"><button>Придбати квиток</button></div>
+                    <div class="book_button"><button id="buy-btn">Придбати квиток</button></div>
                 </form>
             </div>
 
@@ -336,6 +336,8 @@
             // -------------------
             // ВИБІР МІСЦЬ
             // -------------------
+            const buyBtn = document.getElementById('buy-btn');
+
             function updateBuying() {
                 const buying = document.getElementById('buying');
                 const totalEl = document.getElementById('total-price');
@@ -343,6 +345,7 @@
                 const sessionInput = document.getElementById('sessionIdInput');
 
                 const totalBlock = totalEl.parentElement;
+                
 
                 if (!buying || !totalEl || !input) return;
 
@@ -389,6 +392,16 @@
 
                 input.value = JSON.stringify(selectedSeats);
                 sessionInput.value = currentSessionId;
+
+                if (selectedSeats.length === 0) {
+                    buyBtn.disabled = true;
+                    buyBtn.style.opacity = "0.5";
+                    buyBtn.style.cursor = "not-allowed";
+                } else {
+                    buyBtn.disabled = false;
+                    buyBtn.style.opacity = "1";
+                    buyBtn.style.cursor = "pointer";
+                }
             }
 
             // --------------------
@@ -401,6 +414,25 @@
 
             // зміна дати
             dateSelect.addEventListener('change', renderSessions);
+
+            const left_menu = document.querySelector('.left_menu')
+            const input = document.getElementById('selectedSeatsInput');
+            const totalEl = document.getElementById('total-price');
+            const totalBlock = totalEl.parentElement;
+            const form = input.closest('form');
+
+            function moveButton() {
+                if (window.innerWidth <= 768) {
+                    totalBlock.appendChild(form);
+                } else {
+                    left_menu.appendChild(form);
+                }
+            }
+
+            moveButton();
+
+            // при зміні розміру
+            window.addEventListener('resize', moveButton);
         </script>
 
 </body>

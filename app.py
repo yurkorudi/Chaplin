@@ -689,7 +689,7 @@ def movie():
     dates_for_dropdown = []
 
     for i, d in enumerate(unique_dates):
-        day_abbr = daysUA[d.weekday()+1]
+        day_abbr = daysUA[d.weekday()]
         month_name = monthsUA[d.month - 1]
         label = f"{day_abbr}, {d.day} {month_name}"
 
@@ -1207,7 +1207,7 @@ if __name__ == "__main__":
         create_sample_data()
         db.create_all()
         
-    app.run(debug=True, host="192.168.0.101")
+    app.run(debug=True, host="192.168.0.103")
 
 
 

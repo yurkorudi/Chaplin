@@ -2751,6 +2751,14 @@ li:active {
     height: 50px;
   }
 
+  .total form{
+    margin-top: 20px;
+  }
+
+  .total button{
+    color: white;
+  }
+
 }
 
 
