@@ -719,9 +719,14 @@ def movie():
         'trailer':             film.trailer,
     }
 
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
+
     return render_template('Movie.html',
                            movie_info=movie_info, sessions = sessions, tickets_by_session = tickets_by_session,
-                           city="" , cities=cities, today=datetime.now(), timedelta=timedelta, dates=dates_for_dropdown)
+                           city="" , cities=cities, today=datetime.now(), timedelta=timedelta, dates=dates_for_dropdown, 
+                           mobile = is_mobile)
 
 
         
@@ -786,7 +791,11 @@ def schedule():
 
             films_dict[film_id]["sessions"].setdefault(date_key, []).append(time_value)
 
-        return render_template('schedule.html', cities = cities, session = films_dict)
+        ua_string = request.headers.get("User-Agent", "")
+        user_agent = parse(ua_string)    
+        is_mobile = user_agent.is_mobile
+
+        return render_template('schedule.html', cities = cities, session = films_dict, mobile = is_mobile)
 
 
 @app.route("/available-sessions", methods=["POST"])
@@ -830,7 +839,11 @@ def about():
     global user_location
     global cities
     global user_device
-    return render_template('About.html', city = "", cities = cities)
+
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
+    return render_template('About.html', city = "", cities = cities, mobile = is_mobile)
 
 
 @app.route('/book', methods=['GET', 'POST'])
@@ -1083,7 +1096,10 @@ def user():
     profile = session.get('user', "")
     if profile != "":
         return redirect(url_for('profile'))
-    return render_template('User.html', city = "", cities = cities, profile = profile)
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
+    return render_template('User.html', city = "", cities = cities, profile = profile, mobile = is_mobile)
 
 
 @app.route('/singup', methods=['GET', 'POST'])
@@ -1176,7 +1192,11 @@ def profile():
     except Exception as e:
         print("No history")
         print(e)
-    return render_template('User-cabinet.html', city = "", cities = cities, user=user_, films=films)
+    
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
+    return render_template('User-cabinet.html', city = "", cities = cities, user=user_, films=films, mobile = is_mobile)
 
 
 
@@ -1193,7 +1213,11 @@ def market():
     global user_location
     global cities
     global user_device
-    return render_template('Market.html', city = "", cities = cities)
+
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
+    return render_template('Market.html', city = "", cities = cities, mobile = is_mobile)
 
 
 

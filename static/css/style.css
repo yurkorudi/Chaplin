@@ -44,7 +44,7 @@ body {
   margin-left: 0;
 }
 
-.bx {
+button i.bx {
   color: white;
 }
 
@@ -1001,7 +1001,7 @@ body {
   width: 100%;
   position: absolute;
   top: 0;
-  z-index: 100;
+  z-index: 1;
   flex: 1;
 }
 
