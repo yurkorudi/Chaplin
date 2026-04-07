@@ -33,68 +33,101 @@
                         </svg>
                     </div>
                 </div>
-                <form action="{{ url_for('book', movie_name=movie_info['name'])}}" method="post">
-                    <div class="book_button"><button>Придбати квиток</button></div>
+                <form action="{{ url_for('buy_ticket', movie_name=movie_info['name'])}}" method="post">
+                    <input type="hidden" name="selected_seats" id="selectedSeatsInput">
+                    <input type="hidden" name="session_id" id="sessionIdInput">
+                    <div class="book_button"><button id="buy-btn">Придбати квиток</button></div>
                 </form>
             </div>
 
+
             <div class="base_info">
+
                 <div class="movie_name">
                     <h1>{{movie_info['name']}}</h1>
                 </div>
 
-                <div class="movie_short_info">
+                <div class="base_present">
 
-                    <p class="category">Вік:</p>
-                    <p class="value">3+</p>
+                    <div class="info_film">
+                        <div class="movie_short_info">
 
-                    <p class="category">Жанр</p>
-                    <p class="value">{{movie_info['genre']}}</p>
+                            <p class="category">Вік:</p>
+                            <p class="value">3+</p>
 
-                    <p class="category">Тривалість</p>
-                    <p class="value">{{movie_info['duration']}}</p>
+                            <p class="category">Жанр</p>
+                            <p class="value">{{movie_info['genre']}}</p>
 
-                </div>
+                            <p class="category">Тривалість</p>
+                            <p class="value">{{movie_info['duration']}}</p>
 
-                <div class="more-description-button">
-                    <p>Детальніший опис...</p>
-                </div>
+                        </div>
 
-                <div class="more-description">
-                    <div class="more-info">
-                        <p class="category">Режисер</p>
-                        <p class="value">{{movie_info['director']}}</p>
+                        <div class="more-description-button">
+                            <p>Детальніший опис...</p>
+                        </div>
 
-                        <p class="category">Рік</p>
-                        <p class="value">2000</p>
+                        <div class="more-description">
+                            <div class="more-info">
+                                <p class="category">Режисер</p>
+                                <p class="value">{{movie_info['director']}}</p>
 
-                        <p class="category">Період прокату</p>
-                        <p class="value">{{movie_info['release_start_date']}} - {{movie_info['release_end_date']}}</p>
+                                <p class="category">Рік</p>
+                                <p class="value">2000</p>
 
-                        <p class="category">Актори</p>
-                        <p class="value">{{movie_info['actors']}}</p>
+                                <p class="category">Період прокату</p>
+                                <p class="value">{{movie_info['release_start_date']}} -
+                                    {{movie_info['release_end_date']}}
+                                </p>
+
+                                <p class="category">Актори</p>
+                                <p class="value">{{movie_info['actors']}}</p>
+                            </div>
+
+                            <div class="movie_description">
+                                <h1>Опис Фільму:</h1>
+                                <p>{{movie_info['description']}}</p>
+                            </div>
+
+                            <div class="less-description-button">
+                                <p>Короткий опис...</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="movie_description">
-                        <h1>Опис Фільму:</h1>
-                        <p>{{movie_info['description']}}</p>
-                    </div>
 
-                    <div class="less-description-button">
-                        <p>Короткий опис...</p>
+
+                    <div class="days">
+                        <h2>Розклад сеансів</h2>
+
+                        <select id="date-select" name="date">
+                            {% for d in dates %}
+                            <option value="{{ d.value }}">{{ d.label }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <div id="session_holl"></div>
                     </div>
                 </div>
-
-                <div class="days"></div>
-                <div class="buying"></div>
 
                 <div class="seat-row">
                     <div class="seat">
-                        <div class="monitor"><p>Екран</p></div>
+                        <div class="monitor">
+                            <p>Екран</p>
+                        </div>
                         <div class="seats" id="seats"></div>
                         <div class="tickets" id="tickets"></div>
                     </div>
                 </div>
+
+                <div class="tickets_fit">
+                    <div id="buying"></div>
+
+                    <div class="total">
+                        Загальна сума: <span id="total-price">0</span> грн
+                    </div>
+                </div>
+
 
                 <!-- <div class="treiler">
                 <iframe style="width: 100%; height: 60%;"  frameborder="0" allowfullscreen
@@ -102,22 +135,8 @@
                 </iframe>
             </div> -->
             </div>
-            <!-- <div class="right_menu">
-            <h1>Розклад Сеансів</h1>
-            <ul class="weekdays">
-                <li>Sun</li>
-                <li>Mon</li>
-                <li>Tue</li>
-                <li>Wed</li>
-                <li>Thu</li>
-                <li>Fri</li>
-                <li>Sat</li>
-            </ul>
-            <ul class="schedule" id="schedule"></ul>
-            
-        </div> -->
+            <!-- {% include('navbar.html') %} -->
         </main>
-
         {% include('footer.html') %}
 
 
@@ -140,336 +159,279 @@
                 more_description_button.style.display = "block";
             });
 
-
-            const schedule_block = document.querySelector('.buying');
-            const days_block = document.querySelector('.days');
-
-            let savedCity = localStorage.getItem("selectedCity");
-
-            const sessions = {{ sessions | tojson }}; //TODO get less date from server: this way can be trafix jar in feacher
+            const sessions = {{ sessions | tojson }};
             const tickets_by_session = {{ tickets_by_session | tojson }};
 
-            Object.entries(tickets_by_session)
-                .forEach(([sessionId, tickets]) => {
-                    console.log("Session:", sessionId);
-                    console.log("Tickets:", tickets);
-                });
-
-            
-            const sessionsMap = Object.fromEntries(
-                sessions.map(s => [s.session_id, s])
-            );
-            
-            const todayFull = new Date();
-            const today = todayFull.toISOString().slice(0, 10);
-
-            sessions.sort((a, b) => {
-                return new Date(a.datetime) - new Date(b.datetime);
-            });
-
-            let controlDate = new Date(
-                new Date(todayFull).setDate(todayFull.getDate() - 1)
-            ).toISOString().slice(0, 10);
-
-            let counter = 1;
-            let hollNameControl = [];
-            let holls = {};
-            const maxSessions = 10;
-
-            sessions.forEach(s => {
-                if (!holls[s.hall_name]) {
-                    holls[s.hall_name] = s.hall_structure;
-                }
-            });
-
-            sessions.forEach(dateStr => {
-                if (savedCity == dateStr.city) {
-                    let date = dateStr.datetime.split("T");
-
-                    let day = new Date(date[0]);
-
-                    let dayName;
-                    if (day.getDate() == todayFull.getDate() &&
-                        day.getMonth() == todayFull.getMonth() &&
-                        day.getFullYear() == todayFull.getFullYear()) {
-                        dayName = "Сьогодні"
-                    }
-                    else {
-                        dayName = day.toLocaleDateString("uk-UA", { weekday: "long" });
-                    }
-
-                    let monthName = day.toLocaleDateString("uk-UA", { month: "long", day: "numeric" });
-
-                    if (date[0] >= today && counter <= maxSessions) {
-                        if (date[0] != controlDate) {
-                            days_block.innerHTML += `
-                            <div class="schedul_day">
-                                <h1>${monthName}</h1>
-                                <p>${dayName}</p>
-                            </div>
-                        `;
-                            if (counter == 1) {
-                                schedule_block.innerHTML += `
-                                <div class="sched_${counter} active">
-                                    <h1>${dateStr.hall_name}</h1>
-                                    <div class="session_sched" data-hall="${dateStr.hall_name}">
-                                        <p data-session="${dateStr.session_id}">${date[1].slice(0, 5)}</p>
-                                    </div>
-                                    </div>
-                                </div>
-                            `;
-                            }
-                            else {
-                                schedule_block.innerHTML += `
-                                <div class="sched_${counter}">
-                                    <h1>${dateStr.hall_name}</h1>
-                                    <div class="session_sched" data-hall="${dateStr.hall_name}">
-                                        <p data-session="${dateStr.session_id}">${date[1].slice(0, 5)}</p>
-                                    </div>
-                                </div>
-                            `;
-                            }
-
-                            counter++;
-                            if (!hollNameControl.includes(dateStr.hall_name)) {
-                                hollNameControl.push(dateStr.hall_name);
-                            }
-                        }
-                        else {
-                            if (hollNameControl.includes(dateStr.hall_name)) {//TODO smart checking: if we already have this holl add to it
-                                const div = document.querySelector(`.sched_${counter - 1} .session_sched[data-hall="${dateStr.hall_name}"]`);
-                                div.innerHTML += `                            
-                                    <p data-session="${dateStr.session_id}">${date[1].slice(0, 5)}</p>
-                                `;
-                            }
-                            else {
-                                const div = document.querySelector(`.sched_${counter - 1}`);
-                                div.innerHTML += `   
-                                    <h1>${dateStr.hall_name}</h1>
-                                    <div class="session_sched" data-hall="${dateStr.hall_name}">
-                                        <p data-session="${dateStr.session_id}">${date[1].slice(0, 5)}</p>
-                                        </div>
-                                    `;
-                                if (!hollNameControl.includes(dateStr.hall_name)) {
-                                    hollNameControl.push(dateStr.hall_name);
-                                }
-                            }
-                        }
-                        controlDate = date[0];
-                    }
-                }
-            });
-
-
-            const days = document.querySelectorAll(".schedul_day");
-            const schedules = document.querySelectorAll('[class^="sched_"]');
-
-            days.forEach((day, index) => {
-                day.addEventListener("click", () => {
-                    // remove active from all schedule blocks
-                    schedules.forEach(s => s.classList.remove("active"));
-
-                    // add active to matching sched block
-                    const target = document.querySelector(`.sched_${index + 1}`);
-                    if (target) {
-                        target.classList.add("active");
-                    }
-                });
-            });
-
-
-            document.querySelectorAll(".session_sched").forEach(div => {                
-                const ps = div.querySelectorAll("p");
-                ps.forEach(p => {
-                        p.addEventListener("click", () => {
-                            const sessionId = p.dataset.session;
-                            const holl = div.dataset.hall;
-                            document.querySelectorAll(".session_sched p.active").forEach(p => p.classList.remove("active"));
-                            p.classList.add("active");
-                            
-                            hollStr = sessionsMap[sessionId].hall_structure;
-                            const tickets = tickets_by_session[sessionId] || [];
-                            drawHall(hollStr, tickets, 100);
-
-                            console.log("holl's data: " + holl + ", "+ sessionId);
-                            if(Object.hasOwn(holls, holl)){
-                                console.log(holls[holl]);
-                            }
-                            else{
-                                console.log(`structure ${holl} doesn't exist`);
-                            }
-                    });
-                });
-            });
-
-
+            const dateSelect = document.getElementById('date-select');
+            const container = document.getElementById('session_holl');
             const seatsEl = document.getElementById('seats');
 
+            const selectedCity = localStorage.getItem("selectedCity");
+
+            let selectedSeats = [];
+            let currentSessionId = null;
+
+            // --------------------
+            // 1. ГЕНЕРАЦІЯ ДАТ
+            // --------------------
+            function updateDates() {
+                const uniqueDates = [...new Set(
+                    sessions
+                        .filter(s => s.city === selectedCity)
+                        .map(s => s.datetime.split('T')[0])
+                )].sort();
+
+                dateSelect.innerHTML = '';
+
+                uniqueDates.forEach(date => {
+                    const d = new Date(date);
+
+                    const day = d.toLocaleDateString("uk-UA", { weekday: "short" });
+                    const full = d.toLocaleDateString("uk-UA", { day: "numeric", month: "long" });
+
+                    let label = `${day}, ${full}`;
+
+                    const today = new Date().toISOString().split('T')[0];
+                    const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+
+                    if (date === today) label += " — сьогодні";
+                    if (date === tomorrow) label += " — завтра";
+
+                    const option = document.createElement('option');
+                    option.value = date;
+                    option.textContent = label;
+
+                    dateSelect.appendChild(option);
+                });
+            }
+
+            // --------------------
+            // 2. РЕНДЕР СЕСІЙ
+            // --------------------
+            function renderSessions() {
+                const selectedDate = dateSelect.value;
+
+                const filtered = sessions.filter(s => {
+                    const date = s.datetime.split('T')[0];
+                    return date === selectedDate && s.city === selectedCity;
+                });
+
+                const grouped = {};
+
+                filtered.forEach(s => {
+                    if (!grouped[s.hall_name]) {
+                        grouped[s.hall_name] = [];
+                    }
+                    grouped[s.hall_name].push(s);
+                });
+
+                container.innerHTML = '';
+
+                if (Object.keys(grouped).length === 0) {
+                    container.innerHTML = "<p>Немає сеансів</p>";
+                    return;
+                }
+
+                if (!selectedCity) {
+                    container.innerHTML = "<p>Оберіть місто</p>";
+                    return;
+                }
+
+                for (const hall in grouped) {
+                    const hallDiv = document.createElement('div');
+                    hallDiv.innerHTML = `<h2>${hall}</h2>`;
+
+                    const sessionsDiv = document.createElement('div');
+                    sessionsDiv.classList.add('session-time-conteiner');
+
+                    grouped[hall].forEach(s => {
+                        const time = s.datetime.split('T')[1].slice(0, 5);
+
+                        const el = document.createElement('span');
+                        el.textContent = time;
+                        el.classList.add('session-time');
+
+                        // КЛІК ПО СЕСІЇ
+                        el.addEventListener('click', () => {
+                            document.querySelectorAll('.session-time.active')
+                                .forEach(e => e.classList.remove('active'));
+
+                            el.classList.add('active');
+
+                            currentSessionId = s.session_id;
+                            selectedSeats = [];
+                            updateBuying();
+
+                            const hallStructure = s.hall_structure;
+                            const tickets = tickets_by_session[s.session_id] || [];
+
+                            drawHall(hallStructure, tickets, 100);
+                        });
+
+                        sessionsDiv.appendChild(el);
+                    });
+
+                    hallDiv.appendChild(sessionsDiv);
+                    container.appendChild(hallDiv);
+                }
+            }
+
+            // --------------------
+            // 3. МАЛЮВАННЯ ЗАЛУ
+            // --------------------
             function drawHall(hallStructure, occupiedSeats, price) {
                 seatsEl.innerHTML = '';
-                if (!hallStructure.length) return;
+
+                if (!hallStructure || !hallStructure.length) return;
+
                 seatsEl.style.display = 'grid';
-                seatsEl.style.gridTemplateColumns = `repeat(${Math.max(...hallStructure.map(r=>r.length))},1fr)`;
+                seatsEl.style.gridTemplateColumns =
+                    `repeat(${Math.max(...hallStructure.map(r => r.length))}, 1fr)`;
+
                 hallStructure.forEach((rowArr, rIdx) => {
                     rowArr.forEach((cell, cIdx) => {
                         const div = document.createElement('div');
-                        div.dataset.row = rIdx;
-                        div.dataset.col = cIdx;
+
                         if (cell === 0) {
                             div.className = 'empty';
                         } else {
-                            const isOcc = occupiedSeats.some(([row, seat]) => row === rIdx && seat === cIdx);
-                            if (isOcc) {
+                            const isOccupied = occupiedSeats.some(
+                                ([r, c]) => r === rIdx && c === cIdx
+                            );
+
+                            if (isOccupied) {
                                 div.className = 'place occupied';
                             } else {
                                 div.className = 'place';
-                                div.dataset.price = price;
+
                                 div.addEventListener('click', () => {
-                                div.classList.toggle('selected');
-                                valRow.textContent = rIdx + 1;
-                                valSeat.textContent = cIdx + 1;
-                                updateSelectedSeats();
+                                    div.classList.toggle('selected');
+
+                                    const index = selectedSeats.findIndex(
+                                        s => s.row === rIdx && s.col === cIdx
+                                    );
+
+                                    if (index > -1) {
+                                        selectedSeats.splice(index, 1);
+                                    } else {
+                                        selectedSeats.push({
+                                            row: rIdx,
+                                            col: cIdx,
+                                            price: price,
+                                            session_id: currentSessionId
+                                        });
+                                    }
+
+                                    updateBuying();
                                 });
                             }
                         }
+
                         seatsEl.appendChild(div);
                     });
                 });
-            } 
+            }
 
+            // -------------------
+            // ВИБІР МІСЦЬ
+            // -------------------
+            const buyBtn = document.getElementById('buy-btn');
 
-            const trailer_url = "{{ movie_info['trailer'] }}";
-            const trailer_button = document.querySelector('.triller-button-logo');
-            trailer_button.addEventListener("click", () => {
-                window.location.href = trailer_url;
+            function updateBuying() {
+                const buying = document.getElementById('buying');
+                const totalEl = document.getElementById('total-price');
+                const input = document.getElementById('selectedSeatsInput');
+                const sessionInput = document.getElementById('sessionIdInput');
+
+                const totalBlock = totalEl.parentElement;
+                
+
+                if (!buying || !totalEl || !input) return;
+
+                buying.innerHTML = '';
+
+                let total = 0;
+                const maxVisibleTickets = 5;
+
+                selectedSeats.forEach((seat, index) => {
+                    total += seat.price;
+
+                    const ticket = document.createElement('div');
+                    ticket.className = 'ticket';
+
+                    ticket.innerHTML = `
+                        <p>Квиток ${index + 1}</p>
+                        <p>Ряд: ${seat.row + 1}</p>
+                        <p>Місце: ${seat.col + 1}</p>
+                        <p>Ціна: ${seat.price} грн</p>
+                    `;
+
+                    if (index >= maxVisibleTickets) {
+                        ticket.style.display = 'none';
+                        ticket.classList.add('hidden-ticket');
+                    }
+
+                    buying.appendChild(ticket);
+                });
+
+                const hiddenTickets = buying.querySelectorAll('.hidden-ticket');
+                if (hiddenTickets.length > 0) {
+                    const btn = document.createElement('button');
+                    btn.textContent = `Переглянути всі (${hiddenTickets.length})`;
+                    btn.className = 'show-all-tickets';
+                    btn.addEventListener('click', () => {
+                        hiddenTickets.forEach(t => t.style.display = 'flex');
+                        btn.style.display = 'none';
+                    });
+                    buying.appendChild(btn);
+                }
+
+                totalBlock.style.display = "block";
+                totalEl.textContent = total;
+
+                input.value = JSON.stringify(selectedSeats);
+                sessionInput.value = currentSessionId;
+
+                if (selectedSeats.length === 0) {
+                    buyBtn.disabled = true;
+                    buyBtn.style.opacity = "0.5";
+                    buyBtn.style.cursor = "not-allowed";
+                } else {
+                    buyBtn.disabled = false;
+                    buyBtn.style.opacity = "1";
+                    buyBtn.style.cursor = "pointer";
+                }
+            }
+
+            // --------------------
+            // 4. ІНІЦІАЛІЗАЦІЯ
+            // --------------------
+            window.addEventListener('DOMContentLoaded', () => {
+                updateDates();
+                renderSessions();
             });
-            
 
-            // function toggleMenu() {
-            //   document.querySelector('.nav-menu').classList.toggle('active');
-            // }
-            // function toggleMenu() {
-            //   document.querySelector('.mobile-menu').classList.toggle('active');
-            // }
+            // зміна дати
+            dateSelect.addEventListener('change', renderSessions);
 
+            const left_menu = document.querySelector('.left_menu')
+            const input = document.getElementById('selectedSeatsInput');
+            const totalEl = document.getElementById('total-price');
+            const totalBlock = totalEl.parentElement;
+            const form = input.closest('form');
 
-            //     const mediaQuery = window.matchMedia("(min-width: 460px)");
-            //     if (!mediaQuery.matches) {
-            //         const base = document.querySelector('.base_info');
-            //         const right = document.querySelector('.right_menu');
-            //         base.prepend(right);
-            //     }
-            //     const scheduleContainer = document.getElementById("schedule");
-            //     const today = new Date();
-            //     const currentYear = today.getFullYear();
-            //     const currentMonth = today.getMonth();
-            //     const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
-            //     const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+            function moveButton() {
+                if (window.innerWidth <= 768) {
+                    totalBlock.appendChild(form);
+                } else {
+                    left_menu.appendChild(form);
+                }
+            }
 
+            moveButton();
 
-            //     var sessionDateTime = "{{ movie_info['date_time'] }}"
-            //         .slice(1, -1)
-            //         .replace(/&#39;/g, " ")
-            //         .split(" , ");
-
-            //     let hoursForDays = [];
-            //     let specificHour = [];
-
-            //     sessionDateTime.forEach((dt) => {
-            //         hoursForDays.push(new Date(dt).getDate())
-            //         minutes = new Date(dt).getMinutes();
-            //         if (minutes < 10) {
-            //             specificHour.push(new Date(dt).getHours() + ":" + minutes + "0")
-            //         }
-            //         else {
-            //             specificHour.push(new Date(dt).getHours() + ":" + minutes)
-            //         }
-            //     });
-
-
-            //     const selectedDate = document.querySelector('.value_date');
-            //     const selectedTime = document.querySelector('.value_time');
-            //     const selectedSeat = document.querySelector('.value_seat');
-            //     const selectedRow = document.querySelector('.value_row');
-            //     const selectedCost = document.querySelector('.value_cost');
-
-            //     for (let i = 0; i < firstDayOfMonth; i++) {
-            //         const emptyItem = document.createElement("li");
-            //         emptyItem.classList.add("empty");
-            //         scheduleContainer.appendChild(emptyItem);
-            //     }
-
-
-            //     let lastClickedItem = null;
-
-            //     for (let day = 1; day <= daysInMonth; day++) {
-            //         const date = new Date(currentYear, currentMonth, day);
-            //         const formattedDate = date.toISOString().split("T")[0];
-
-            //         const listItem = document.createElement("li");
-            //         const timeElement = document.createElement("time");
-            //         timeElement.setAttribute("datetime", formattedDate);
-            //         timeElement.textContent = day;
-
-            //         listItem.style.backgroundColor = "";
-
-            //         if (day === today.getDate()) {
-            //             listItem.classList.add("today");
-            //         }
-
-            //         listItem.appendChild(timeElement);
-
-            //         if (hoursForDays.includes(day)) {
-            //             index = hoursForDays.indexOf(day);
-            //             listItem.innerHTML += ` ${specificHour[index]}`;
-
-            //             if(day === today.getDate()){
-            //                 selectedDate.textContent = day;
-            //                 selectedTime.textContent = specificHour[index];
-            //             }
-            //         }
-
-            //         listItem.addEventListener("click", function () {
-            //             if (lastClickedItem) {
-            //                 lastClickedItem.style.backgroundColor = "";
-            //             }
-
-            //             listItem.style.backgroundColor = "gray";
-
-            //             lastClickedItem = listItem;
-            //             removeAllSeats();
-            //             bookSeat(day);
-
-            //             const selectedHour = listItem.textContent.split(' ');
-            //             minValue = document.querySelector('.value_date');
-            //             minValue = minValue.textContent.split(' ');
-
-
-            //             if (day < today.getDate()) {
-            //                 selectedDate.textContent = today.getDate();
-            //                 if (minValue[1] == null) {
-            //                     minValue[1] = 'no seans for this day';
-            //                 }
-            //                 selectedTime.textContent = minValue[1];
-            //             }
-            //             else {
-            //                 selectedDate.textContent = timeElement.textContent;
-
-            //                 if (selectedHour[1] == null) {
-            //                     selectedTime.textContent = 'no seans for this day';
-            //                 }
-            //                 else {
-            //                     selectedTime.textContent = selectedHour[1];
-            //                 }
-            //             }
-
-
-
-            //         });
-
-            //         scheduleContainer.appendChild(listItem);
-
-            //     }
+            // при зміні розміру
+            window.addEventListener('resize', moveButton);
         </script>
 
 </body>

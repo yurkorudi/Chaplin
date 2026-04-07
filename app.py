@@ -64,6 +64,12 @@ from sqlalchemy import func
 from funcs import *
 from modls import *
 
+# import json
+# import qrcode
+# from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+# from reportlab.lib.styles import getSampleStyleSheet
+# from reportlab.platypus import Table, TableStyle
+# from reportlab.lib import colors
 
 
 app = Flask(__name__)
@@ -671,8 +677,37 @@ def movie():
         tickets_by_session[s.session_id] = ticket_list
 
     print("Sessions for film:", film_name, "are", sessions)
-        
-        
+
+    today = datetime.now().date()
+
+    daysUA = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
+    monthsUA = [
+        'січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 
+        'жовтня', 'листопада', 'грудня'
+    ]
+
+    unique_dates = sorted({
+        datetime.fromisoformat(s['datetime']).date()
+        for s in sessions
+        if datetime.fromisoformat(s['datetime']).date() >= today
+    })    
+
+    dates_for_dropdown = []
+
+    for i, d in enumerate(unique_dates):
+        day_abbr = daysUA[d.weekday()]
+        month_name = monthsUA[d.month - 1]
+        label = f"{day_abbr}, {d.day} {month_name}"
+
+        if d == today:
+            label += " — сьогодні"
+        elif d == today + timedelta(days=1):
+            label += " — завтра"
+
+        dates_for_dropdown.append({
+            'value': d.isoformat(),  # YYYY-MM-DD для value
+            'label': label           # текст для dropdown
+        })
         
     movie_info = {
         'film_id':             film.film_id,
@@ -690,9 +725,14 @@ def movie():
         'trailer':             film.trailer,
     }
 
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
+
     return render_template('Movie.html',
                            movie_info=movie_info, sessions = sessions, tickets_by_session = tickets_by_session,
-                           city="" , cities=cities)
+                           city="" , cities=cities, today=datetime.now(), timedelta=timedelta, dates=dates_for_dropdown, 
+                           mobile = is_mobile)
 
 
         
@@ -757,7 +797,11 @@ def schedule():
 
             films_dict[film_id]["sessions"].setdefault(date_key, []).append(time_value)
 
-        return render_template('schedule.html', cities = cities, session = films_dict)
+        ua_string = request.headers.get("User-Agent", "")
+        user_agent = parse(ua_string)    
+        is_mobile = user_agent.is_mobile
+
+        return render_template('schedule.html', cities = cities, session = films_dict, mobile = is_mobile)
 
 
 @app.route("/available-sessions", methods=["POST"])
@@ -801,7 +845,11 @@ def about():
     global user_location
     global cities
     global user_device
-    return render_template('About.html', city = "", cities = cities)
+
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
+    return render_template('About.html', city = "", cities = cities, mobile = is_mobile)
 
 
 @app.route('/book', methods=['GET', 'POST'])
@@ -878,21 +926,22 @@ def buy_ticket():
         
         print("Raw Request Data:", request.data)
         
-        data = request.get_json()
+        selected_seats = json.loads(request.form.get('selected_seats', '[]'))
+        session_id = request.form.get('session_id')
+        film_name = request.args.get('movie_name')
         
-        if not data:
+        if not selected_seats:
             return jsonify({"error": "Empty or invalid JSON received EMPTYYYYYYYYY"}), 400
         
-        print("Request JSON (parsed):", data)
-        session_id = data.get('session_id')
-        tickets = data.get('tickets')
+        print("Request JSON (parsed):", selected_seats)
+        tickets = selected_seats
         info = []
         if not session_id or not tickets:
             return jsonify({"error": "Session ID and tickets are required"}), 400
         
         
         if flask_session.get('user') is None:
-            redirect_url = url_for('login')
+            return redirect(url_for('login'))
             
 
         
@@ -902,11 +951,11 @@ def buy_ticket():
                 seat_id = 1,
                 session_id = session_id,
                 user_id = User.query.filter_by(login=flask_session['user']).first().id, 
-                cost = i['cost'],
+                cost = i['price'],
                 sell_type = 'online',
                 cinema_id = session.cinema_id,
                 row_index = i['row'],
-                column_index = i['seatNumber']
+                column_index = i['col']
             )
             db.session.add(new_ticket)
         
@@ -942,8 +991,11 @@ def ticket_confirmation():
     data = flask_session.get('confirmation_data', None)
     
     print("Raw Request Data:", data)
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
     
-    return render_template('TicketConfirmation.html',)
+    return render_template('TicketConfirmation.html', mobile = is_mobile)
 
 
 
@@ -955,81 +1007,212 @@ def ticket_pdf():
     from reportlab.lib.pagesizes import A6
     from reportlab.pdfgen import canvas
     from reportlab.lib.units import mm
+    from reportlab.graphics.barcode import code128
+
     from models import Session as DBSess, Film as DBFilm, User as DBUser
 
+    # -------------------
+    # 🔴 перенос тексту
+    # -------------------
+    def draw_multiline_text(p, text, x, y, max_width, line_height):
+        words = text.split()
+        lines = []
+        current_line = ""
 
+        for word in words:
+            test_line = current_line + " " + word if current_line else word
+            if p.stringWidth(test_line, "DejaVuSans", 6) < max_width:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+
+        if current_line:
+            lines.append(current_line)
+
+        for line in lines[:5]:
+            p.drawString(x, y, line)
+            y -= line_height
+
+        if len(lines) > 5:
+            p.drawString(x, y, "...")
+
+        return y
+
+    # -------------------
+    # 🔴 дані
+    # -------------------
     data = flask_session.get('confirmation_data')
     if not data:
         return "Немає даних квитка", 400
-
 
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=A6)
     width, height = A6
 
+    margin_x = 6 * mm
 
+    # чорний текст
+    p.setFillColorRGB(0, 0, 0)
+
+    # -------------------
+    # 🔴 верхня смуга
+    # -------------------
     banner_h = 8 * mm
-    p.setFillColorRGB(129, 0, 0)
+    p.setFillColorRGB(0.5, 0, 0)
     p.rect(0, height - banner_h, width, banner_h, fill=1, stroke=0)
 
-    margin_x = 6 * mm
-    header_bottom = height - banner_h - 2 * mm
+    p.setFillColorRGB(0, 0, 0)
 
+    # -------------------
+    # 🔴 НАЗВА КІНОТЕАТРУ
+    # -------------------
+    title_y = height - banner_h - 6 * mm
 
+    p.setFont("DejaVuSans-Bold", 10)
+    p.drawString(margin_x, title_y, "C H A P L I N")
+
+    title_y -= 4 * mm
+    p.setFont("DejaVuSans", 7)
+    p.drawString(margin_x, title_y, "cinema")
+
+    # -------------------
+    # 🔴 ПОСТЕР + ПРАВИЙ БЛОК (ВИРІВНЯНІ)
+    # -------------------
     film = DBFilm.query.filter_by(name=data['movie_name']).first()
-    poster_path = film.image.path if film and film.image else 'static/img/default_poster.png'
+
     poster_w = 30 * mm
     poster_h = 40 * mm
+
+    # 🔥 ГОЛОВНЕ: однакова верхня точка
+    top_y = title_y - 6 * mm
+
+    poster_y = top_y - poster_h
+
+    poster_path = film.image.path if film and film.image else 'static/img/default_poster.png'
+
     p.drawImage(
         poster_path,
         margin_x,
-        header_bottom - poster_h,
+        poster_y,
         width=poster_w,
         height=poster_h,
         mask='auto'
     )
 
+    # --- права частина ---
+    info_x = margin_x + poster_w + 5 * mm
+    info_y = top_y - 3 * mm   # 🔥 ВИРІВНЮВАННЯ ПО ВЕРХУ
 
-    title_x = margin_x + poster_w + 3 * mm
-    title_y = header_bottom - 3 * mm
-    p.setFillColorRGB(0, 0, 0)
+    # Назва фільму
     p.setFont("DejaVuSans-Bold", 10)
-    p.drawString(title_x, title_y, data['movie_name'])
+    p.drawString(info_x, info_y, data['movie_name'])
 
-    y = header_bottom - poster_h - 6 * mm
-    p.setFont("DejaVuSans", 6)
-    p.drawString(margin_x, y, f"Куплено користувачем: {DBUser.query.filter_by(login=data.get('user', '')).first().first_name} {DBUser.query.filter_by(login=data.get('user', '')).first().last_name}")
-    y -= 6 * mm
+    info_y -= 5 * mm
+    p.setFont("DejaVuSans", 7)
 
+    if film:
+        p.drawString(info_x, info_y, f"Вік: {film.age}+")
+        info_y -= 4 * mm
+
+        p.drawString(info_x, info_y, f"Жанр: {film.genre}")
+        info_y -= 4 * mm
+
+        p.drawString(info_x, info_y, f"Тривалість: {film.duration} хв")
+        info_y -= 5 * mm
+
+        # опис
+        p.setFont("DejaVuSans", 6)
+
+        info_y = draw_multiline_text(
+            p,
+            film.description or "",
+            info_x,
+            info_y,
+            width - info_x - margin_x,
+            3 * mm
+        )
+
+    # -------------------
+    # 🔴 НИЖНІ ДАНІ
+    # -------------------
+    content_y = poster_y - 6 * mm
+
+    # користувач
+    user = DBUser.query.filter_by(login=data.get('user')).first()
+    if user:
+        p.setFont("DejaVuSans", 6)
+        p.drawString(
+            margin_x,
+            content_y,
+            f"Користувач: {user.first_name} {user.last_name}"
+        )
+        content_y -= 5 * mm
+
+    # сеанс
     sess = DBSess.query.filter_by(session_id=data['session_id']).first()
-    dt_str = sess.session_datetime.strftime('%Y-%m-%d %H:%M')
-    p.drawString(margin_x, y, f"Сеанс: {dt_str}")
-    y -= 8 * mm
+    if sess:
+        dt_str = sess.session_datetime.strftime('%d.%m.%Y %H:%M')
+        p.drawString(margin_x, content_y, f"Сеанс: {dt_str}")
+        content_y -= 6 * mm
 
+    # квитки
+    total = 0
     for t in data['tickets']:
         p.drawString(
             margin_x,
-            y,
-            f"Місце: {t['seatNumber']}   Ряд: {t['row']}   Ціна: {t['cost']} грн"
+            content_y,
+            f"Ряд: {t['row']+1}  Місце: {t['col']+1}  {t['price']} грн"
         )
-        y -= 6 * mm
+        total += t['price']
+        content_y -= 5 * mm
 
+    content_y -= 3 * mm
 
-    footer_y = 8 * mm
-    p.setStrokeColorRGB(128, 0, 0)
+    p.setFont("DejaVuSans-Bold", 7)
+    p.drawString(margin_x, content_y, f"Загальна сума: {total} грн")
+
+    # -------------------
+    # 🔴 ШТРИХКОД
+    # -------------------
+    barcode_value = f"{data['session_id']}|{len(data['tickets'])}"
+
+    barcode = code128.Code128(
+        barcode_value,
+        barHeight=10 * mm,
+        barWidth=0.5
+    )
+
+    barcode.drawOn(p, margin_x, 15 * mm)
+
+    # -------------------
+    # 🔴 ФУТЕР (РОЗТЯГНУТИЙ)
+    # -------------------
+    footer_y = 6 * mm
+
     p.setLineWidth(0.5)
     p.line(margin_x, footer_y + 4 * mm, width - margin_x, footer_y + 4 * mm)
 
     p.setFont("DejaVuSans", 6)
-    footer = (
-        "Телефон: +38 (044) 123-45-67   •   "
-        "Місто: Львів   •   "
-        "Адреса: Червоної калини 81 "
-    )
-    p.drawString(margin_x + 4, footer_y, footer)
 
+    left = "Телефон: +38 (044) 123-45-67"
+    center = "м. Львів"
+    right = "вул. Червоної Калини 81"
+
+    p.drawString(margin_x, footer_y, left)
+
+    center_x = width / 2 - p.stringWidth(center, "DejaVuSans", 6) / 2
+    p.drawString(center_x, footer_y, center)
+
+    right_x = width - margin_x - p.stringWidth(right, "DejaVuSans", 6)
+    p.drawString(right_x, footer_y, right)
+
+    # -------------------
+    # 🔴 завершення
+    # -------------------
     p.showPage()
     p.save()
+
     buffer.seek(0)
 
     return send_file(
@@ -1054,7 +1237,10 @@ def user():
     profile = session.get('user', "")
     if profile != "":
         return redirect(url_for('profile'))
-    return render_template('User.html', city = "", cities = cities, profile = profile)
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
+    return render_template('User.html', city = "", cities = cities, profile = profile, mobile = is_mobile)
 
 
 @app.route('/singup', methods=['GET', 'POST'])
@@ -1147,7 +1333,11 @@ def profile():
     except Exception as e:
         print("No history")
         print(e)
-    return render_template('User-cabinet.html', city = "", cities = cities, user=user_, films=films)
+    
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
+    return render_template('User-cabinet.html', city = "", cities = cities, user=user_, films=films, mobile = is_mobile)
 
 
 
@@ -1164,7 +1354,11 @@ def market():
     global user_location
     global cities
     global user_device
-    return render_template('Market.html', city = "", cities = cities)
+
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
+    return render_template('Market.html', city = "", cities = cities, mobile = is_mobile)
 
 
 
@@ -1178,7 +1372,7 @@ if __name__ == "__main__":
         create_sample_data()
         db.create_all()
         
-    app.run(debug=True)
+    app.run(debug=True, host="192.168.0.103")
 
 
 

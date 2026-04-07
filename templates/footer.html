@@ -1,3 +1,5 @@
+{% include('navbar.html') %}
+{% if not mobile %}
 <footer class="footer">
     <div class="social_media">
       <p>Соцмережі</p>
@@ -14,4 +16,4 @@
        class="footer_info">проспект Червоної Калини, 81, Львів</a>
     </div>
   </footer>
-  </div>
+{% endif %}

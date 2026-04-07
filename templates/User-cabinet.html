@@ -17,7 +17,7 @@
 
     <main class="main user-cabinet">
       <div class="profile-container">
-        
+
 
         <div class="profile-card">
           <div class="avatar">
@@ -26,7 +26,7 @@
           <h2 class="username">{{ user.first_name}} {{ user.last_name }}</h2>
           <p class="nickname">@{{ user.login }}</p>
           <p class="info"><strong>Останній візит:</strong> 12.05</p>
-          <p class="info"><strong>Email:</strong>  {{ user.email }}</p>
+          <p class="info"><strong>Email:</strong> {{ user.email }}</p>
           <p class="info"><strong>Дата створення акаунту:</strong> {{ user.date_of_creation }}</p>
           <p class="info"><strong>Квитків куплено:</strong> {{user.bought_tickets_summary}}</p>
           <p class="info"><strong>Улюблені жанри:</strong> {{user.visited_genres}}</p>
@@ -34,6 +34,8 @@
           <button class="logout-btn" onclick='logOut()'>Вийти</button>
           <br>
         </div>
+
+        <button id="history-box">Історія переглядів</button>
 
         <!-- Права частина - Історія переглядів -->
         <div class="history">
@@ -45,6 +47,7 @@
             </li>
             {% endfor %}
           </ul>
+          <button id="load-more" style="display: none;">Дивитися далі</button>
         </div>
 
       </div>
@@ -53,41 +56,52 @@
         <h3>Новинки</h3>
         <div class="movies-list">
           <div class="movie-card">
-            <img src="/static/img/photo1.jpg" alt="Новий фільм 1">
+            <div class="image-container">
+              <img src="/static/img/photo1.jpg" alt="Новий фільм 1">
+            </div>
             <p class="movie-title">Avatar 3</p>
           </div>
           <div class="movie-card">
-            <img src="/static/img/photo2.jpg" alt="Новий фільм 2">
+            <div class="image-container">
+              <img src="/static/img/photo2.jpg" alt="Новий фільм 2">
+            </div>
             <p class="movie-title">Deadpool 3</p>
           </div>
           <div class="movie-card">
-            <img src="/static/img/photo3.jpg" alt="Новий фільм 3">
+            <div class="image-container">
+              <img src="/static/img/photo3.jpg" alt="Новий фільм 3">
+            </div>
             <p class="movie-title">Mad Max: The Wasteland</p>
           </div>
         </div>
       </div>
-    
+
       <!-- Блок акцій -->
       <div class="movies-section">
         <h3>Акційні пропозиції</h3>
         <div class="movies-list">
           <div class="promo-card">
-            <img src="/static/img/img1.webp" alt="Акція 1">
+            <div class="image-container">
+              <img src="/static/img/img1.webp" alt="Акція 1">
+            </div>
             <p class="promo-title">2 квитки за ціною 1</p>
           </div>
           <div class="promo-card">
-            <img src="/static/img/img2.webp" alt="Акція 2">
+            <div class="image-container">
+              <img src="/static/img/img2.webp" alt="Акція 2">
+            </div>
             <p class="promo-title">Попкорн + Кола = знижка 30%</p>
           </div>
           <div class="promo-card">
-            <img src="/static/img/img3.webp" alt="Акція 3">
+            <div class="image-container">
+              <img src="/static/img/img3.webp" alt="Акція 3">
+            </div>
             <p class="promo-title">Знижка для студентів -20%</p>
           </div>
         </div>
       </div>
 
-
-    {% include('footer.html') %}
+      {% include('footer.html') %}
 
   </div>
 
@@ -104,11 +118,41 @@
       document.querySelector('.mobile-menu').classList.toggle('active');
     }
 
-
-
     function editProfile() {
       alert("Функція редагування профілю у розробці.");
     }
+
+    const button = document.getElementById('history-box');
+    const historyBlock = document.querySelector('.history');
+
+    button.addEventListener('click', () => {
+      if (historyBlock.style.display === 'none' || historyBlock.style.display === '') {
+        historyBlock.style.display = 'flex';
+      } else {
+        historyBlock.style.display = 'none';
+      }
+    });
+
+    const list = document.querySelectorAll('.history-list li');
+    const loadMoreBtn = document.getElementById('load-more');
+    const visibleCount = 5;
+
+    // Спочатку приховуємо всі елементи після 5-го
+    if(list.length > visibleCount) {
+        for(let i = visibleCount; i < list.length; i++) {
+            list[i].style.display = 'none';
+        }
+        loadMoreBtn.style.display = 'block'; // показуємо кнопку
+    }
+
+    // Натискання на кнопку
+    loadMoreBtn.addEventListener('click', () => {
+        for(let i = visibleCount; i < list.length; i++) {
+            list[i].style.display = 'list-item';
+        }
+        loadMoreBtn.style.display = 'none'; // ховаємо кнопку після завантаження
+    });
   </script>
 </body>
+
 </html>

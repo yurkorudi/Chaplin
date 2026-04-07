@@ -1,15 +1,29 @@
 <!DOCTYPE html>
 <html lang="uk">
+
 <head>
   <meta charset="UTF-8">
   <title>Підтвердження квитків</title>
+  <link rel="stylesheet" href="/static/css/globals.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
-  <h1>Дякуємо</h1>
-  <p>Ваші квитки успішно заброньовані для сесії</p>
-    <a href="{{ url_for('ticket_pdf') }}" class="btn btn-primary">
-    Завантажити квиток (PDF)
-    </a>
-  <p><a href="{{ url_for('homepage') }}">Повернутися на головну</a></p>
+
+<body class="fade-in">
+  <div class="home seccusses-buying">
+    {% include('header.html') %}
+
+    <main class="main ticket-seccusses-page">
+      <h1>Дякуємо</h1>
+      <p>Ваші квитки успішно заброньовані для сесії</p>
+      <a href="{{ url_for('ticket_pdf') }}" class="btn btn-primary">
+        Завантажити квиток (PDF)
+      </a>
+      <p><a href="{{ url_for('homepage') }}">Повернутися на головну</a></p>
+    </main>
+    {% include('footer.html') %}
+
+  </div>
 </body>
+
 </html>
