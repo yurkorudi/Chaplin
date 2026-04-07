@@ -33,7 +33,7 @@
                         </svg>
                     </div>
                 </div>
-                <form action="{{ url_for('book', movie_name=movie_info['name'])}}" method="post">
+                <form action="{{ url_for('buy_ticket', movie_name=movie_info['name'])}}" method="post">
                     <input type="hidden" name="selected_seats" id="selectedSeatsInput">
                     <input type="hidden" name="session_id" id="sessionIdInput">
                     <div class="book_button"><button id="buy-btn">Придбати квиток</button></div>

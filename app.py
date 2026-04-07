@@ -64,6 +64,12 @@ from sqlalchemy import func
 from funcs import *
 from modls import *
 
+# import json
+# import qrcode
+# from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+# from reportlab.lib.styles import getSampleStyleSheet
+# from reportlab.platypus import Table, TableStyle
+# from reportlab.lib import colors
 
 
 app = Flask(__name__)
@@ -920,21 +926,22 @@ def buy_ticket():
         
         print("Raw Request Data:", request.data)
         
-        data = request.get_json()
+        selected_seats = json.loads(request.form.get('selected_seats', '[]'))
+        session_id = request.form.get('session_id')
+        film_name = request.args.get('movie_name')
         
-        if not data:
+        if not selected_seats:
             return jsonify({"error": "Empty or invalid JSON received EMPTYYYYYYYYY"}), 400
         
-        print("Request JSON (parsed):", data)
-        session_id = data.get('session_id')
-        tickets = data.get('tickets')
+        print("Request JSON (parsed):", selected_seats)
+        tickets = selected_seats
         info = []
         if not session_id or not tickets:
             return jsonify({"error": "Session ID and tickets are required"}), 400
         
         
         if flask_session.get('user') is None:
-            redirect_url = url_for('login')
+            return redirect(url_for('login'))
             
 
         
@@ -944,11 +951,11 @@ def buy_ticket():
                 seat_id = 1,
                 session_id = session_id,
                 user_id = User.query.filter_by(login=flask_session['user']).first().id, 
-                cost = i['cost'],
+                cost = i['price'],
                 sell_type = 'online',
                 cinema_id = session.cinema_id,
                 row_index = i['row'],
-                column_index = i['seatNumber']
+                column_index = i['col']
             )
             db.session.add(new_ticket)
         
@@ -984,8 +991,11 @@ def ticket_confirmation():
     data = flask_session.get('confirmation_data', None)
     
     print("Raw Request Data:", data)
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)    
+    is_mobile = user_agent.is_mobile
     
-    return render_template('TicketConfirmation.html',)
+    return render_template('TicketConfirmation.html', mobile = is_mobile)
 
 
 
@@ -1052,7 +1062,7 @@ def ticket_pdf():
         p.drawString(
             margin_x,
             y,
-            f"Місце: {t['seatNumber']}   Ряд: {t['row']}   Ціна: {t['cost']} грн"
+            f"Місце: {t['col']+1}   Ряд: {t['row']+1}   Ціна: {t['price']} грн"
         )
         y -= 6 * mm
 

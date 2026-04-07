@@ -960,6 +960,7 @@ button i.bx {
   height: auto;
   color: black;
   margin-right: 25px;
+  margin-bottom: 30px;
 }
 
 .main.movie .left_menu {
@@ -1267,6 +1268,15 @@ li:active {
   opacity: 0.7;
 }
 
+.home.schedule-page {
+  display: flex;
+  min-height: 100vh;
+}
+
+.schedule {
+  flex: 1;
+}
+
 .main.movie .right_menu .schedule li:hover,
 .main.movie .right_menu .schedule li:hover time {
   color: rgba(128, 0, 0, 1);
@@ -1289,7 +1299,7 @@ li:active {
 }
 
 
-.base_present{
+.base_present {
   display: grid;
   grid-template-columns: 2fr 1fr;
 }
@@ -1303,7 +1313,7 @@ li:active {
   margin-bottom: -30px;
 }
 
-.base_info .days{
+.base_info .days {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -1311,13 +1321,13 @@ li:active {
   width: 100%;
 }
 
-.base_info .days h2{
+.base_info .days h2 {
   width: 100%;
   text-align: center;
   font-size: 20px;
 }
 
-.base_info .days #date-select{
+.base_info .days #date-select {
   width: 100%;
   padding: 10px;
   border-radius: 15px;
@@ -1326,26 +1336,26 @@ li:active {
   font-size: 18px;
 }
 
-#session_holl{
+#session_holl {
   width: 100%;
 }
 
-#session_holl h2{
+#session_holl h2 {
   text-align: start;
 }
 
-.session-time-conteiner{
+.session-time-conteiner {
   width: 100%;
   display: flex;
   flex-direction: row;
 }
 
-.session-time-conteiner span{
+.session-time-conteiner span {
   margin-right: 20px;
   cursor: pointer;
 }
 
-.tickets_fit{
+.tickets_fit {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1353,17 +1363,17 @@ li:active {
   margin-top: 35px;
 }
 
-#buying{
+#buying {
   padding: 10px;
 }
 
-.total{
+.total {
   display: none;
   color: white;
   font-size: 18px;
 }
 
-.total span{
+.total span {
   font-size: 20px;
   font-weight: 600;
 }
@@ -1718,7 +1728,7 @@ li:active {
   padding: 10px;
 }
 
-.show-all-tickets{
+.show-all-tickets {
   padding: 10px;
   color: white;
   background: transparent;
@@ -2217,6 +2227,47 @@ li:active {
   transform: scale(1.1);
 }
 
+.home.seccusses-buying {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+
+.ticket-seccusses-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  gap: 15px;
+  flex: 1;
+}
+
+.ticket-seccusses-page h1 {
+  font-size: 30px;
+}
+
+.ticket-seccusses-page p {
+  font-size: 25px;
+}
+
+.ticket-seccusses-page a {
+  font-size: 30px;
+  border-radius: 15px;
+  border: 3px solid rgba(128, 0, 0, 1);
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.ticket-seccusses-page a:hover {
+  font-size: 35px;
+  border-radius: 25px;
+  background: rgba(128, 0, 0, 1);
+}
+
 @media (max-width: 768px) {
 
   .slideshow {
@@ -2543,6 +2594,7 @@ li:active {
     flex-direction: column;
     padding: 0 6px;
     margin: 0;
+    margin-bottom: 60px;
   }
 
   .main.movie .left_menu {
@@ -2751,12 +2803,24 @@ li:active {
     height: 50px;
   }
 
-  .total form{
+  .total form {
     margin-top: 20px;
   }
 
-  .total button{
+  .total button {
     color: white;
+  }
+
+  .ticket-seccusses-page p {
+    font-size: 20px;
+  }
+
+  .ticket-seccusses-page a {
+    font-size: 20px;
+  }
+
+  .ticket-seccusses-page a:hover {
+    font-size: 22px;
   }
 
 }
