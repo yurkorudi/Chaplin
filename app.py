@@ -1285,6 +1285,11 @@ def login():
     global user_location
     global cities
     global user_device
+
+    user_info = request.get_json(silent=True)
+    if not user_info:
+        return redirect(url_for('user'))
+
     try:
         user_info = request.json
         print("User logged in:", user_info)
