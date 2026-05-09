@@ -742,6 +742,10 @@ def schedule():
     global cities
     global user_device
 
+    ua_string = request.headers.get("User-Agent", "")
+    user_agent = parse(ua_string)
+    is_mobile = user_agent.is_mobile
+
     today = date.today()
     dates_selected = []
     current_start = today
@@ -769,7 +773,7 @@ def schedule():
         current_start = next_date + timedelta(days=1)
 
     if not dates_selected:
-        return render_template('schedule.html', cities = cities)
+        return render_template('schedule.html', cities = cities, mobile = is_mobile)
     else:
         sessions = (
             db.session.query(Session, Film, Image.path)
@@ -796,10 +800,6 @@ def schedule():
                 }
 
             films_dict[film_id]["sessions"].setdefault(date_key, []).append(time_value)
-
-        ua_string = request.headers.get("User-Agent", "")
-        user_agent = parse(ua_string)    
-        is_mobile = user_agent.is_mobile
 
         return render_template('schedule.html', cities = cities, session = films_dict, mobile = is_mobile)
 
@@ -1377,7 +1377,7 @@ if __name__ == "__main__":
         create_sample_data()
         db.create_all()
         
-    app.run(debug=True, host="192.168.0.103")
+    app.run(debug=True, host="192.168.0.102")
 
 
 
