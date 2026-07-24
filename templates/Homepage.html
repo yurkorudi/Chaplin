@@ -16,15 +16,12 @@
     {% include('header.html') %}
 
     <div class="extra">
-      <div class="dropdown">
-        <div class="bckap">
-          <div class="button-wrapper">
-            <li>
-              <div class="button"><a>Ваше місто: <span id="selected-city" class="selected-city">Виберіть
-                    місто</span></a></div>
-              <div class="dropdown-content">
-                {% for c in cities %}
-            <li><button class="button city-btn" data-city='{{c}}'>{{c}}</button></li>
+      <div class="bckap">
+        <div class="cities-modal-content">
+          <h2>Оберіть ваше місто</h2>
+          <div class="cities-list-modal">
+            {% for c in cities %}
+            <button class="button city-btn" data-city='{{c}}'>{{c}}</button>
             {% endfor %}
           </div>
         </div>
@@ -35,7 +32,7 @@
     <main class="main homePage">
       <div class="session-row">
         <div class="sessions">
-          <h1> Найближчі сеанси</h1>
+          <h1> НАЙБЛИЖЧІ СЕАНСИ</h1>
           <div class="nearest">
             {% for movie, s in nearest %}
             <div id="slide" class="slide">
@@ -62,12 +59,10 @@
                     <div class="age">{{ movie.age }}</div>
                   </div>
                 </div>
-                {% if mobile %}
                 <div class="short_data">
                   <p id="movie_tittle">{{ movie.name }}</p>
                   <p id="movie_gange">{{ movie.genre }}</p>
                 </div>
-                {% endif %}
               </a>
 
             </div>
@@ -82,7 +77,7 @@
         </div>
       </div>
 
-      <h1>Прем'єри тижня</h1>
+      <h1>ПРЕМ'ЄРИ ТИЖНЯ</h1>
 
 
 
@@ -165,6 +160,7 @@
     }
 
     document.getElementById('next').addEventListener('click', () => {
+      renderActive = false;
       track.style.transition = 'transform 0.5s ease';
       track.style.transform = `translateX(${-slideWidth}px)`;
 
@@ -173,10 +169,13 @@
         track.style.transition = 'none';
         track.appendChild(track.firstElementChild);
         track.style.transform = 'translateX(0)';
+        offset = 0;
+        renderActive = true;
       }, 500);
     });
 
     document.getElementById('prev').addEventListener('click', () => {
+      renderActive = false;
       // переміщаємо останній слайд в початок перед анімацією
       track.insertBefore(track.lastElementChild, track.firstElementChild);
       track.style.transition = 'none';
@@ -186,6 +185,11 @@
         track.style.transition = 'transform 0.5s ease';
         track.style.transform = 'translateX(0)';
       }, 20);
+
+      setTimeout(() => {
+        offset = 0;
+        renderActive = true;
+      }, 520);
     });
 
 
@@ -207,14 +211,17 @@
     // дублюємо для циклу
     track.innerHTML += track.innerHTML;
 
+    let renderActive = true;
     // рендер з нескінченним циклом
     function render() {
-      const fullWidth = slideWidth * slides.length * slides.length;
+      if (renderActive) {
+        const fullWidth = slideWidth * slides.length * slides.length;
 
-      if (offset < -fullWidth) offset += fullWidth;
-      if (offset > 0) offset -= fullWidth;
+        if (offset < -fullWidth) offset += fullWidth;
+        if (offset > 0) offset -= fullWidth;
 
-      track.style.transform = `translateX(${offset}px)`;
+        track.style.transform = `translateX(${offset}px)`;
+      }
       requestAnimationFrame(render);
     }
     render();
