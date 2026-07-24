@@ -1,13 +1,20 @@
 <header class="header">
-    <form action="{{ url_for('homepage')}}">
-        <button class="invise" type="submit">
-            <div class="logo">
-                <div class="text-wrapper">Chaplin</div>
-                <div class="div">cinema</div>
-                <img class="blackhat" src="/static/img/hat.png" />
-            </div>
-        </button>
-    </form>
+  {% if is_movie_page %}
+  <div class="movie-mobile-header-fixed">
+      <a href="javascript:history.back()" class="back-btn">&#8592;</a>
+  </div>
+  <form action="{{ url_for('homepage')}}" class="desktop-logo-form">
+  {% else %}
+  <form action="{{ url_for('homepage')}}">
+  {% endif %}
+      <button class="invise" type="submit">
+          <div class="logo">
+              <div class="text-wrapper">Chaplin</div>
+              <div class="div">cinema</div>
+              <img class="blackhat" src="/static/img/hat.png" />
+          </div>
+      </button>
+  </form>
 
 
     <div class="header-menu">
@@ -53,15 +60,16 @@
         <span></span>
     </div>
 
+    <div class="mobile-menu-overlay" onclick="toggleMenu()"></div>
     <nav class="mobile-menu">
         <ul>
-            <li><a href="{{ url_for('homepage') }}" style="font-size: 26px;">головна</a></li>
+            <li><a href="{{ url_for('homepage') }}" style="font-size: 26px;">Головна</a></li>
             <li><a href="{{ url_for('market') }}">Магазин</a></li>
-            <li><a href="{{ url_for('user') }}">профіль</a></li>
-            <li><a href="{{ url_for('schedule') }}">розклад</a></li>
-            <li><a href="{{ url_for('about') }}">про нас</a></li>
+            <li><a href="{{ url_for('user') }}">Профіль</a></li>
+            <li><a href="{{ url_for('schedule') }}">Розклад</a></li>
+            <li><a href="{{ url_for('about') }}">Про нас</a></li>
             <li class="city-section">
-                <div>Ваше місто: <span id="mobile-selected-city">Виберіть місто</span></div>
+                <div style="color: white; margin-bottom: 10px;">Ваше місто: <span id="mobile-selected-city">Виберіть місто</span></div>
                 <div class="city-buttons-mobile">
                     {% for c in cities %}
                     <button class="city-btn" data-city='{{c}}'>{{c}}</button>
@@ -80,13 +88,12 @@
 
             let savedCity = localStorage.getItem("selectedCity");
 
-            console.log("Profile from session:", "{{ profile }}");
-            if ("{{ profile }}") {
+            if ("{{ profile }}" && "{{ profile }}" !== "None" && profile) {
                 profile.textContent = "{{ profile }}";
             }
 
             if (savedCity) {
-                selectedCitySpan.textContent = savedCity;
+                if (selectedCitySpan) selectedCitySpan.textContent = savedCity;
                 if (mobileSelectedCitySpan) {
                     mobileSelectedCitySpan.textContent = savedCity;
                 }
@@ -107,7 +114,7 @@
 
                     if (selectedCity !== savedCity) {
                         localStorage.setItem("selectedCity", selectedCity);
-                        selectedCitySpan.textContent = selectedCity;
+                        if (selectedCitySpan) selectedCitySpan.textContent = selectedCity;
                         if (mobileSelectedCitySpan) {
                             mobileSelectedCitySpan.textContent = selectedCity;
                         }
@@ -147,9 +154,11 @@
         function toggleMenu() {
             const mobileMenu = document.querySelector('.mobile-menu');
             const burger = document.querySelector('.burger-menu');
+            const overlay = document.querySelector('.mobile-menu-overlay');
             
             mobileMenu.classList.toggle('active');
             burger.classList.toggle('active');
+            if (overlay) overlay.classList.toggle('active');
             
             document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
         }

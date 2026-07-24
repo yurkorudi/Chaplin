@@ -23,6 +23,7 @@
 
     {% include('footer.html') %}
     </div>
+    <script id="session-data" type="application/json">{{ session | tojson }}</script>
     <script>
         const week_block = document.querySelector(".week");
         const session_block = document.querySelector(".sessions");
@@ -64,7 +65,7 @@
         let dayName;
         let contein;
 
-        const sessions = {{ session | tojson }};
+        const sessions = JSON.parse(document.getElementById('session-data').textContent);
         const today = new Date();
 
         let allDatesSet = new Set();
@@ -102,6 +103,8 @@
                     createDayObject("p", dayName, contein);
                 }
             });
+
+
 
         document.querySelectorAll(".day").forEach(el => {
             el.addEventListener("click", async () => {
@@ -153,6 +156,15 @@
                 }
             });
         });
+
+        // Auto-select today or first available day after listeners are added
+        let todayEl = Array.from(document.querySelectorAll(".day")).find(el => el.querySelector("p")?.textContent === "сьогодні");
+        if (todayEl) {
+            todayEl.click();
+        } else {
+            let firstDay = document.querySelector(".day");
+            if (firstDay) firstDay.click();
+        }
 
     </script>
 </body>

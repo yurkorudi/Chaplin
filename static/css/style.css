@@ -1,7 +1,9 @@
+@import url('https://fonts.cdnfonts.com/css/gilroy-bold');
+
 .fade-in {
   opacity: 0.4;
   animation: fadeIn 1s forwards;
-  font-family: "Helvetica", Helvetica;
+  font-family: 'Gilroy-Regular', sans-serif;
   display: flex;
   flex-direction: column;
 
@@ -15,6 +17,10 @@
 
 body {
   background-color: #000000;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/static/img/background.png');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
   font-family: 'Montserrat', sans-serif;
 }
 
@@ -24,7 +30,7 @@ body {
   justify-content: center;
   width: 100vw;
   height: auto;
-  background: linear-gradient(180deg, rgba(29, 29, 29, 0) 0%, rgb(192, 192, 192) 50%, rgba(29, 29, 29, 0) 100%);
+  background: transparent;
   padding: 0;
 }
 
@@ -37,7 +43,7 @@ body {
   justify-content: space-evenly;
   width: 100%;
   padding: 10px 0;
-  background: #000000;
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 30px 30px 0 0;
   box-shadow: 0 0 30px 0 rgba(0, 0, 0, .05);
   z-index: 200;
@@ -98,15 +104,10 @@ button i.bx {
 
 .homePage h1 {
   text-align: center;
-  margin-bottom: 90px;
+  margin-bottom: 30px;
   font-size: 25px;
-  font-weight: 600;
+  font-family: 'Gilroy-Heavy', sans-serif;
   color: white;
-  text-shadow:
-    2px 2px 0 black,
-    -2px -2px 0 black,
-    2px -2px 0 black,
-    -2px 2px 0 black;
 }
 
 
@@ -202,21 +203,31 @@ button i.bx {
 
 .home .header {
   position: relative;
-  width: 100vw;
+  top: 0;
+  width: 100%;
   height: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 25px;
   background: transparent;
-  z-index: 2;
+  z-index: 300;
+  pointer-events: none;
+}
+
+.home .header > * {
+  pointer-events: auto;
+}
+
+.movie-mobile-header {
+  display: none;
 }
 
 .home .logo {
   width: 20vw;
   margin-left: 15px;
   position: relative;
-  top: -10px;
+  top: 0;
 }
 
 .home .text-wrapper {
@@ -245,6 +256,17 @@ button i.bx {
   letter-spacing: 0.35px;
   line-height: 50%;
   white-space: nowrap;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('/static/fonts/Gilroy-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+.movie-mobile-header-fixed {
+  display: none;
 }
 
 .home .blackhat {
@@ -328,7 +350,7 @@ button i.bx {
 }
 
 .dropdown-content li button {
-  color: black !important;
+  color: white !important;
 }
 
 .dropdown-content li button:hover {
@@ -360,7 +382,7 @@ button i.bx {
 .extra {
   width: 100vw;
   height: 100vh;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.5);
@@ -369,6 +391,56 @@ button i.bx {
   z-index: 2000;
   top: 0;
   left: 0;
+}
+
+.extra .bckap {
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  border-radius: 25px;
+  padding: 30px;
+}
+
+.cities-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.cities-modal-content h2 {
+  color: white;
+  font-family: 'Gilroy-Heavy', sans-serif;
+  font-size: 24px;
+  text-align: center;
+  margin: 0;
+}
+
+.cities-list-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  min-width: 250px;
+}
+
+.cities-list-modal .city-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #75000C;
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cities-list-modal .city-btn:hover {
+  background-color: rgba(117, 0, 12, 0.8);
 }
 
 .extra .button-wrapper button {
@@ -528,7 +600,7 @@ button i.bx {
   border-radius: 15px;
   overflow: hidden;
   padding: 3px 6px;
-  font-family: "Inter", Helvetica;
+  font-family: 'Gilroy-Regular', sans-serif;
   font-weight: 400;
   color: #ffffff;
   font-size: 17px;
@@ -549,11 +621,12 @@ button i.bx {
 }
 
 .main {
+  font-family: 'Gilroy-Regular', sans-serif;
   margin: 15px 0;
   margin-top: 30px;
   padding: 15px;
   height: 80vh;
-  color: black;
+  color: white;
 }
 
 .homePage {
@@ -575,7 +648,8 @@ button i.bx {
 
 .footer div {
   text-align: center;
-  border: #ffffff 2px solid;
+  background-color: #75000C;
+  border: none;
   border-radius: 25px;
   height: 40px;
   width: 200px;
@@ -633,6 +707,14 @@ button i.bx {
 .slides-viewport {
   overflow: hidden;
   width: 100%;
+  box-sizing: border-box;
+  padding: 0;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 100px, black calc(100% - 100px), transparent);
+  mask-image: linear-gradient(to right, transparent, black 100px, black calc(100% - 100px), transparent);
+}
+
+.slide {
+  padding: 0 15px;
 }
 
 .slide-track {
@@ -661,15 +743,16 @@ button i.bx {
   position: relative;
   user-select: none;
   overflow: hidden;
+  border-radius: 10px;
 }
 
 .visual_slide img {
   width: 100%;
   height: 100%;
   display: block;
-  border-radius: 5px;
+  border-radius: 10px;
   object-fit: cover;
-  object-position: center;
+  object-position: center top;
 }
 
 .slid-buttons {
@@ -730,10 +813,6 @@ button i.bx {
   opacity: 1;
 }
 
-.visual_slide:hover .inf {
-  display: none;
-}
-
 .inf {
   display: flex;
   justify-content: end;
@@ -742,9 +821,10 @@ button i.bx {
   position: absolute;
   bottom: 0;
   z-index: 2;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
   width: 337.5px;
   padding: 10px;
+  padding-top: 30px;
 }
 
 .slider-film-button {
@@ -953,12 +1033,15 @@ button i.bx {
 
 /* movie's page */
 
+.main.movie, .main.movie p, .main.movie span, .main.movie h1, .main.movie h2, .main.movie h3, .main.movie div {
+  color: white !important;
+}
+
 .main.movie {
   display: flex;
   gap: 15px;
   margin-left: 0px;
   height: auto;
-  color: black;
   margin-right: 25px;
   margin-bottom: 30px;
 }
@@ -1045,7 +1128,8 @@ button i.bx {
 }
 
 .schedul_day {
-  border: 2px solid white;
+  background-color: #75000C;
+  border: none;
   border-radius: 25px;
   padding: 10px 15px;
   cursor: pointer;
@@ -1053,6 +1137,34 @@ button i.bx {
 
 .days .schedul_day h1 {
   margin-bottom: 5px;
+}
+
+.date-btn {
+  background-color: rgba(117, 0, 12, 0.4);
+  border: none;
+  border-radius: 25px;
+  padding: 10px 15px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.date-btn h1 {
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.date-btn p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.date-btn.active {
+  opacity: 1;
+  background-color: #75000C;
+  border: none !important;
+  box-shadow: none;
 }
 
 [class^="sched_"] {
@@ -1150,7 +1262,7 @@ button i.bx {
 
 .main.movie .base_info {
   height: auto;
-  width: 60vw;
+  width: 100%;
   /* color: white; */
   margin-bottom: 15px;
 }
@@ -1162,11 +1274,117 @@ button i.bx {
 
 .main.movie .base_info div h1 {
   font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.genre-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.genre-pill {
+  background-color: #75000C;
+  color: white !important;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Gilroy-Regular', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.mobile-trailer-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.trailer-circle-large {
+  width: 60px;
+  height: 60px;
+  background-color: #1a1a1a;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.trailer-circle-inner {
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.play-triangle-black {
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 10px solid black;
+  margin-left: 3px;
+}
+
+.trailer-pill-right {
+  background-color: #1a1a1a;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px 0 25px;
+  margin-left: -20px;
+  border-radius: 0 25px 25px 0;
+  z-index: 1;
+  flex: 1;
+}
+
+.trailer-pill-right span {
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .main.movie .base_info .more-description .movie_description h1,
 .main.movie .base_info .movie_shelder h1 {
   margin-bottom: 15px;
+}
+
+.movie_details_grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px 30px;
+  margin: 20px 0;
+}
+
+.movie_details_grid .category {
+  color: #888;
+  font-weight: 400;
+  margin: 0;
+}
+
+.movie_details_grid .value {
+  color: white;
+  font-weight: 600;
+  margin: 0;
+}
+
+.age-pill {
+  border: 1px solid white;
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-size: 14px;
+}
+
+.mobile-top-title {
+  display: none;
 }
 
 .more-description-button,
@@ -1304,6 +1522,9 @@ li:active {
   grid-template-columns: 2fr 1fr;
 }
 
+.info_film {
+  min-width: 0;
+}
 
 .home.booking {
   background: linear-gradient(180deg, rgba(29, 29, 29, 0) 0%, rgb(255, 255, 255) 20%, rgba(29, 29, 29, 0) 100%);
@@ -1315,44 +1536,78 @@ li:active {
 
 .base_info .days {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center;
   width: 100%;
+  max-width: 100%;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .base_info .days h2 {
   width: 100%;
   text-align: center;
   font-size: 20px;
+  color: white !important;
+  font-family: 'Gilroy-Heavy', sans-serif;
 }
 
 .base_info .days #date-select {
   width: 100%;
   padding: 10px;
   border-radius: 15px;
-  background: gray;
-  color: white;
+  background: #333;
+  border: 1px solid #555;
+  color: white !important;
   font-size: 18px;
+  font-family: 'Gilroy-Regular', sans-serif;
+}
+
+.base_info .days #date-select option {
+  background: #333;
+  color: white !important;
 }
 
 #session_holl {
   width: 100%;
+  margin-top: 15px;
 }
 
 #session_holl h2 {
   text-align: start;
+  color: white !important;
+  font-size: 18px;
+  margin-bottom: 15px;
 }
 
 .session-time-conteiner {
   width: 100%;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.session-time-conteiner span {
-  margin-right: 20px;
-  cursor: pointer;
+.session-time {
+  margin-right: 15px !important;
+  cursor: pointer !important;
+  background-color: #75000C !important;
+  border: none !important;
+  outline: none !important;
+  padding: 8px 12px !important;
+  border-radius: 5px !important;
+  color: white !important;
+  display: inline-block !important;
+  font-weight: bold;
+}
+
+.session-time.active {
+  background-color: #a30011 !important;
+  color: white !important;
+  border: none !important;
+  outline: none !important;
 }
 
 .tickets_fit {
@@ -2121,22 +2376,24 @@ li:active {
 /* Контейнер для фільмів */
 .movies-list {
   display: flex;
-  justify-content: space-around;
-  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 10px;
 }
 
 /* Карточка фільму */
 .movie-card,
 .promo-card {
-  width: 30%;
+  flex: 0 0 auto;
+  width: 240px;
   background: rgba(0, 0, 0, 0.7);
   border-radius: 10px;
-  padding: 10px;
+  padding: 8px;
   transition: transform 0.3s ease-in-out;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   text-align: center;
 }
@@ -2145,15 +2402,18 @@ li:active {
 .promo-card .image-container {
   overflow: hidden;
   width: 100%;
-  height: 85%;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  aspect-ratio: 2 / 3;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 8px;
 }
 
 .movie-card .image-container img,
 .promo-card .image-container img {
   width: 100%;
+  height: 100%;
   object-fit: cover;
+  object-position: center top;
 }
 
 .movie-title,
@@ -2271,7 +2531,27 @@ li:active {
 @media (max-width: 768px) {
 
   .slideshow {
-    margin-bottom: 100px;
+    margin-bottom: 40px;
+    height: auto;
+  }
+
+  .base_present {
+    grid-template-columns: 1fr;
+  }
+
+  .short_data {
+    margin-top: 8px;
+    margin-bottom: 15px;
+  }
+
+  .slides-viewport {
+    padding: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  
+  .slide {
+    padding: 0;
   }
 
   .slide-track,
@@ -2287,9 +2567,14 @@ li:active {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 270px !important;
+    height: auto !important;
+    aspect-ratio: 2/3;
     position: relative;
     user-select: none;
+  }
+
+  .slider-film-back {
+    display: none !important;
   }
 
   .profile-container {
@@ -2347,9 +2632,8 @@ li:active {
 
   .movie-card,
   .promo-card {
-    height: 250px;
-    width: 100%;
-
+    width: 160px;
+    height: auto;
   }
 
 
@@ -2363,35 +2647,119 @@ li:active {
 
 
   .home .header {
-    margin-top: 20px;
-    padding: 15px;
+    padding: 0 15px;
+    position: sticky;
+    top: 0;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mobile-top-title {
+    display: flex;
+    position: relative;
+    margin-top: -64px;
+    height: 64px;
+    margin-bottom: 10px;
+    padding: 0 55px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+    z-index: 101;
+    pointer-events: none;
+  }
+  
+  .mobile-top-title h1 {
+    font-size: 16px;
+    font-family: 'Gilroy-Heavy', sans-serif;
+    text-transform: uppercase;
+    color: white;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .movie_name h1 {
+    display: none;
+  }
+
+  .main.homePage > h1 {
+    margin-bottom: 20px !important;
+  }
+  
+  .movie-card:hover, .promo-card:hover {
+    transform: none !important;
+  }
+  
+  /* прибираємо hover-ефект відкриття постера */
+  .movie-card:hover .movie-inner {
+    transform: none !important;
+  }
+  
+  .movie-card .movie_short_description .category,
+  .movie-card .movie_short_description .value,
+  .slider-film-info p:not(:first-child) {
+    display: none !important;
+  }
+  
+  /* прибираємо жанри під карткою на мобільній */
+  #movie_gange {
+    display: none !important;
+  }
+  
+  .shop-container, .movies-list {
+    margin-bottom: 20px !important;
+  }
+  
+  .inf {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 20%, transparent) !important;
+    padding-top: 40px !important;
+  }
+  
+  .main.movie .base_info {
+    margin-top: 15px !important;
+  }
+
+  .main.movie {
+    font-size: 16px;
+  }
+  
+  .main.movie p,
+  .main.movie span,
+  .main.movie .value,
+  .main.movie .category {
+    font-size: 16px !important;
   }
 
   .home .logo {
-    width: 20vw;
-    margin-left: 0px;
+    width: auto;
+    margin-left: -15px;
     top: -10px;
+    position: relative;
   }
 
   .home .text-wrapper {
-    top: -3px;
-    left: -15px;
-    font-size: 18px;
+    top: 0;
+    left: 0;
+    font-size: 20px;
     letter-spacing: 1px;
+    line-height: 1.2;
   }
 
   .home .div {
-    top: 20px;
-    left: 20px;
-    font-size: 14px;
+    top: 24px;
+    left: 72px;
+    font-size: 12px;
     letter-spacing: 0.35px;
   }
 
   .home .blackhat {
-    width: 200px;
-    height: 81px;
-    top: -50px;
-    left: -80px;
+    width: 160px;
+    height: 65px;
+    top: -35px;
+    left: -40px;
   }
 
   .home .topbtn-s {
@@ -2592,6 +2960,7 @@ li:active {
 
   .main.movie {
     flex-direction: column;
+    align-items: center;
     padding: 0 6px;
     margin: 0;
     margin-bottom: 60px;
@@ -2620,7 +2989,7 @@ li:active {
   }
 
   .main.movie .base_info {
-    margin-top: 30px;
+    margin-top: 15px;
     width: 90vw;
   }
 
@@ -2851,13 +3220,14 @@ li:active {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    width: 50px;
-    height: 40px;
+    width: 44px;
+    height: 36px;
     cursor: pointer;
-    position: absolute;
-    top: -1vh;
-    right: 15px;
+    position: relative;
+    top: 0;
+    right: 0;
     z-index: 1001;
+    flex-shrink: 0;
   }
 
   .burger-menu span {
@@ -2868,35 +3238,59 @@ li:active {
     transition: 0.3s;
   }
 
-  .mobile-menu {
+  .mobile-menu-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: auto;
-    background: rgba(29, 29, 29, 0.879);
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+  }
+
+  .mobile-menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    height: 100vh;
+    background: rgba(29, 29, 29, 0.95);
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transform: translateY(-100%);
+    justify-content: flex-start;
+    align-items: flex-start;
+    transform: translateX(100%);
     transition: transform 0.4s ease-in-out;
     z-index: 1000;
+    padding-top: 80px;
+    box-sizing: border-box;
+    overflow-y: auto;
   }
 
   .mobile-menu.active {
-    display: block;
-    transform: translateY(0);
+    display: flex;
+    transform: translateX(0);
   }
 
   .mobile-menu ul {
     list-style: none;
-    padding: 0;
-    text-align: center;
+    padding: 0 30px;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .mobile-menu li {
-    padding: 14px;
+    padding: 14px 0;
   }
 
   .mobile-menu a {
@@ -2904,15 +3298,25 @@ li:active {
     font-size: 20px;
     text-decoration: none;
   }
+  
+  .mobile-menu .city-section {
+    margin-top: 20px;
+  }
+  
+  .mobile-menu .city-buttons-mobile {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
 
   .city-btn {
     background: linear-gradient(135deg, #410000, #470b01);
-    /* Градієнтний фон */
     color: white;
     border: wheat;
     padding: 12px 24px;
     font-size: 12px;
-    border-radius: 25px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
     margin: 2px;
@@ -2982,7 +3386,53 @@ li:active {
   }
 
   .inf {
-    top: 90%;
+    top: auto;
+    bottom: 0;
     width: 100%;
   }
+
+  .desktop-logo-form {
+    display: none !important;
+  }
+  
+  .movie-mobile-header-fixed {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: center;
+    position: relative;
+  }
+
+  .movie-mobile-header-fixed .back-btn {
+    font-size: 24px;
+    color: white;
+    text-decoration: none;
+    position: absolute;
+    left: 0;
+  }
+
+  .movie-mobile-header-fixed .movie-mobile-title {
+    font-size: 20px;
+    font-family: 'Gilroy-Heavy', sans-serif;
+    text-transform: uppercase;
+    color: white;
+    margin: 0;
+  }
+
+  .movie-mobile-header .movie-header-title {
+    font-size: 20px;
+    color: white;
+    margin: 0;
+    text-align: center;
+    font-family: 'Gilroy-Heavy', sans-serif;
+    text-transform: uppercase;
+  }
+
+  .movie_logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+
 }

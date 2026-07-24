@@ -5,39 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chaplin cinema | movies</title>
-    <link rel="stylesheet" href="/static/css/globals.css">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/globals.css?v={{ range(1, 10000) | random }}">
+    <link rel="stylesheet" href="/static/css/style.css?v={{ range(1, 10000) | random }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body class="fade-in">
     <div class="home">
-
-
+        {% set is_movie_page = True %}
         {% include('header.html') %}
-
         <main class="main movie">
+            <div class="mobile-top-title">
+                <h1>{{movie_info['name']}}</h1>
+            </div>
             <div class="left_menu">
                 <div class="movie_logo">
                     <img src="{{movie_info['img_src']}}" alt="{{movie_info['src']}}">
-                    <div class="triller-button-logo">
-                        <svg id="play" viewBox="0 0 163 163" xmlns="http://www.w3.org/2000/svg">
-                            <g class="icon-stroke">
-                                <path id="lineOne" class="circle-part"
-                                    d="M10,80 C10,118.107648 40.8923523,149 79,149 C117.107648,149 148,118.107648 148,80 C148,41.8923523 117.107648,11 79,11" />
-                                <path id="triangle" class="play-triangle"
-                                    d="M105.9,74.4158594 L67.2,44.2158594 C63.5,41.3158594 58,43.9158594 58,48.7158594 L58,109.015859 C58,113.7158594 63.4,116.4158594 67.2,113.5158594 L105.9,83.3158594 C108.8,81.1158594 108.8,76.6158594 105.9,74.4158594 Z" />
-                                <path id="lineTwo" class="circle-full"
-                                    d="M159,79.5 C159,35.5933624 123.406638,0 79.5,0 C35.5933624,0 0,35.5933624 0,79.5 C0,123.406638 35.5933624,159 79.5,159" />
-                            </g>
-                        </svg>
+                    <div class="mobile-trailer-container" id="trailerBtn" data-movie-name="{{ movie_info['name'] }}">
+                        <div class="trailer-circle-large">
+                            <div class="trailer-circle-inner">
+                                <div class="play-triangle-black"></div>
+                            </div>
+                        </div>
+                        <div class="trailer-pill-right">
+                            <span>Переглянути трейлер</span>
+                        </div>
                     </div>
                 </div>
-                <form action="{{ url_for('buy_ticket', movie_name=movie_info['name'])}}" method="post">
-                    <input type="hidden" name="selected_seats" id="selectedSeatsInput">
-                    <input type="hidden" name="session_id" id="sessionIdInput">
-                    <div class="book_button"><button id="buy-btn">Придбати квиток</button></div>
-                </form>
             </div>
 
 
@@ -45,67 +39,43 @@
 
                 <div class="movie_name">
                     <h1>{{movie_info['name']}}</h1>
+                    <div class="genre-pills">
+                        {% set genres = movie_info['genre'].split(',') %}
+                        {% for genre in genres %}
+                            <span class="genre-pill">{{ genre.strip() }}</span>
+                        {% endfor %}
+                    </div>
                 </div>
 
                 <div class="base_present">
 
                     <div class="info_film">
-                        <div class="movie_short_info">
+                        <div class="movie_description">
+                            <p>{{movie_info['description']}}</p>
+                        </div>
 
-                            <p class="category">Вік:</p>
-                            <p class="value">3+</p>
-
-                            <p class="category">Жанр</p>
-                            <p class="value">{{movie_info['genre']}}</p>
-
+                        <div class="movie_details_grid">
                             <p class="category">Тривалість</p>
                             <p class="value">{{movie_info['duration']}}</p>
-
+                            
+                            <p class="category">Вікові обмеження</p>
+                            <p class="value"><span class="age-pill">16+</span></p>
+                            
+                            <p class="category">Рік</p>
+                            <p class="value">2026</p>
+                            
+                            <p class="category">Жанр</p>
+                            <p class="value">{{movie_info['genre']}}</p>
+                            
+                            <p class="category">Режисер</p>
+                            <p class="value">{{movie_info['director']}}</p>
+                            
+                            <p class="category">У головних ролях</p>
+                            <p class="value">{{movie_info['actors']}}</p>
                         </div>
 
-                        <div class="more-description-button">
-                            <p>Детальніший опис...</p>
+                        <div class="days" id="date-select-container">
                         </div>
-
-                        <div class="more-description">
-                            <div class="more-info">
-                                <p class="category">Режисер</p>
-                                <p class="value">{{movie_info['director']}}</p>
-
-                                <p class="category">Рік</p>
-                                <p class="value">2000</p>
-
-                                <p class="category">Період прокату</p>
-                                <p class="value">{{movie_info['release_start_date']}} -
-                                    {{movie_info['release_end_date']}}
-                                </p>
-
-                                <p class="category">Актори</p>
-                                <p class="value">{{movie_info['actors']}}</p>
-                            </div>
-
-                            <div class="movie_description">
-                                <h1>Опис Фільму:</h1>
-                                <p>{{movie_info['description']}}</p>
-                            </div>
-
-                            <div class="less-description-button">
-                                <p>Короткий опис...</p>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    <div class="days">
-                        <h2>Розклад сеансів</h2>
-
-                        <select id="date-select" name="date">
-                            {% for d in dates %}
-                            <option value="{{ d.value }}">{{ d.label }}</option>
-                            {% endfor %}
-                        </select>
-
                         <div id="session_holl"></div>
                     </div>
                 </div>
@@ -122,9 +92,15 @@
 
                 <div class="tickets_fit">
                     <div id="buying"></div>
-
-                    <div class="total">
-                        Загальна сума: <span id="total-price">0</span> грн
+                    <div class="total-and-buy">
+                        <div class="total">
+                            Загальна сума: <span id="total-price">0</span> грн
+                        </div>
+                        <form action="{{ url_for('buy_ticket', movie_name=movie_info['name'])}}" method="post" id="buy-form">
+                            <input type="hidden" name="selected_seats" id="selectedSeatsInput">
+                            <input type="hidden" name="session_id" id="sessionIdInput">
+                            <button id="buy-btn" type="submit" disabled style="opacity: 0.5; cursor: not-allowed; padding: 10px 20px; background-color: #75000C; border: none; border-radius: 25px; color: white; cursor: pointer; margin-top: 10px;">Придбати квиток</button>
+                        </form>
                     </div>
                 </div>
 
@@ -143,26 +119,21 @@
 
 
 
+        <script id="sessions-data" type="application/json">{{ sessions | tojson }}</script>
+        <script id="tickets-data" type="application/json">{{ tickets_by_session | tojson }}</script>
         <script>
+            const sessions = JSON.parse(document.getElementById('sessions-data').textContent);
+            const tickets_by_session = JSON.parse(document.getElementById('tickets-data').textContent);
 
-            const more_description_button = document.querySelector('.more-description-button');
-            const more_description = document.querySelector('.more-description');
-            const less_description_button = document.querySelector('.less-description-button');
+            const trailerBtn = document.getElementById('trailerBtn');
+            if (trailerBtn) {
+                trailerBtn.addEventListener('click', function() {
+                    const movieName = this.getAttribute('data-movie-name');
+                    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(movieName)} trailer`, '_blank');
+                });
+            }
 
-            more_description_button.addEventListener("click", function () {
-                more_description.style.display = "block";
-                more_description_button.style.display = "none";
-            });
 
-            less_description_button.addEventListener("click", function () {
-                more_description.style.display = "none";
-                more_description_button.style.display = "block";
-            });
-
-            const sessions = {{ sessions | tojson }};
-            const tickets_by_session = {{ tickets_by_session | tojson }};
-
-            const dateSelect = document.getElementById('date-select');
             const container = document.getElementById('session_holl');
             const seatsEl = document.getElementById('seats');
 
@@ -181,27 +152,35 @@
                         .map(s => s.datetime.split('T')[0])
                 )].sort();
 
-                dateSelect.innerHTML = '';
+                const container = document.getElementById('date-select-container');
+                container.innerHTML = '';
+                
+                if(uniqueDates.length === 0) return;
 
-                uniqueDates.forEach(date => {
+                uniqueDates.forEach((date, index) => {
                     const d = new Date(date);
 
-                    const day = d.toLocaleDateString("uk-UA", { weekday: "short" });
+                    const day = d.toLocaleDateString("uk-UA", { weekday: "long" });
                     const full = d.toLocaleDateString("uk-UA", { day: "numeric", month: "long" });
 
-                    let label = `${day}, ${full}`;
-
+                    let label = day;
                     const today = new Date().toISOString().split('T')[0];
-                    const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+                    if (date === today) label = "сьогодні";
 
-                    if (date === today) label += " — сьогодні";
-                    if (date === tomorrow) label += " — завтра";
+                    const btn = document.createElement('div');
+                    btn.className = 'date-btn';
+                    btn.dataset.date = date;
+                    btn.innerHTML = `<h1>${full}</h1><p>${label}</p>`;
+                    
+                    if (index === 0) btn.classList.add('active');
 
-                    const option = document.createElement('option');
-                    option.value = date;
-                    option.textContent = label;
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('#date-select-container .date-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        renderSessions();
+                    });
 
-                    dateSelect.appendChild(option);
+                    container.appendChild(btn);
                 });
             }
 
@@ -209,7 +188,9 @@
             // 2. РЕНДЕР СЕСІЙ
             // --------------------
             function renderSessions() {
-                const selectedDate = dateSelect.value;
+                const activeBtn = document.querySelector('#date-select-container .date-btn.active');
+                if (!activeBtn) return;
+                const selectedDate = activeBtn.dataset.date;
 
                 const filtered = sessions.filter(s => {
                     const date = s.datetime.split('T')[0];
@@ -411,27 +392,9 @@
                 renderSessions();
             });
 
-            // зміна дати
-            dateSelect.addEventListener('change', renderSessions);
 
-            const left_menu = document.querySelector('.left_menu')
-            const input = document.getElementById('selectedSeatsInput');
-            const totalEl = document.getElementById('total-price');
-            const totalBlock = totalEl.parentElement;
-            const form = input.closest('form');
 
-            function moveButton() {
-                if (window.innerWidth <= 768) {
-                    totalBlock.appendChild(form);
-                } else {
-                    left_menu.appendChild(form);
-                }
-            }
 
-            moveButton();
-
-            // при зміні розміру
-            window.addEventListener('resize', moveButton);
         </script>
 
 </body>
