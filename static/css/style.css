@@ -1619,10 +1619,15 @@ li:active {
   justify-content: center;
   align-items: center;
   margin-top: 35px;
+  width: 100%;
 }
 
 #buying {
   padding: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .total {
@@ -1986,15 +1991,48 @@ li:active {
 
 .ticket {
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  margin-bottom: 10px !important;
+  flex-direction: column;
+  margin-bottom: 15px !important;
   background-color: transparent;
   border: 1px solid white;
   border-radius: 8px;
-  gap: 10px;
-  padding: 10px;
+  padding: 15px;
   color: white;
+  font-weight: 300;
+  width: 90%;
+  max-width: 400px;
+}
+
+.ticket-header {
+  font-size: 16px;
+  text-align: left;
+  margin-bottom: 15px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.ticket-details {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.detail-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-label {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.detail-value {
+  font-size: 18px;
+  font-weight: 400;
 }
 
 .show-all-tickets {
@@ -2003,12 +2041,6 @@ li:active {
   background: transparent;
   border: 2px solid white;
   border-radius: 25px;
-}
-
-.ticket p, .ticket div {
-  padding: 15px;
-  margin: 0 !important;
-  color: white;
 }
 
 /* end apout page */
@@ -2674,7 +2706,7 @@ li:active {
     align-items: center;
     justify-content: space-between;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 100;
+    z-index: 300;
   }
 
   .mobile-top-title {

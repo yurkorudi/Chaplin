@@ -32,7 +32,10 @@
     <main class="main homePage">
       <div class="session-row">
         <div class="sessions">
-          <h1> НАЙБЛИЖЧІ СЕАНСИ</h1>
+          <h1 style="margin-top: 0;"> НАЙБЛИЖЧІ СЕАНСИ</h1>
+          {% if nearest_description %}
+          <p class="nearest-description" style="text-align: center; color: #fff; margin-bottom: 20px;">{{ nearest_description }}</p>
+          {% endif %}
           <div class="nearest">
             {% for movie, s in nearest %}
             <div id="slide" class="slide">
@@ -131,6 +134,29 @@
 
 
       <!-- end home page's base 360 degris's slider -->
+      
+      <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
+        <a href="{{ url_for('schedule') }}" class="view-schedule-btn" style="background-color: #75000C; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 18px; transition: background-color 0.2s ease;">Переглянути розклад ➔</a>
+      </div>
+
+      <div class="market-preview-section" style="margin-top: 60px;">
+        <h1>МАГАЗИН</h1>
+        <div class="products-preview" style="display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 20px;">
+          {% for i in range(2) %}
+            <div class="home-product-card" style="display: flex; flex-direction: row; align-items: center; background-color: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 12px; gap: 20px; width: 90%; max-width: 500px; color: white;">
+              <img src="https://picsum.photos/300/250?random={{ i }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; flex-shrink: 0;" />
+              <div style="display: flex; flex-direction: column; flex-grow: 1; align-items: center; text-align: center; overflow-wrap: break-word; word-wrap: break-word; min-width: 0;">
+                <p class="product-title" style="margin: 0 0 5px 0; font-size: 18px; font-weight: bold;">Круасан шоколадний</p>
+                <p class="product-price" style="margin: 0 0 10px 0; font-size: 16px;">45 грн</p>
+                <button class='product-card-button' style="background-color: transparent; border: 1px solid white; color: white; padding: 8px 15px; border-radius: 15px; cursor: pointer; transition: 0.2s;">Додати</button>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div style="text-align: center; margin-top: 40px; margin-bottom: 80px;">
+          <a href="{{ url_for('market') }}" class="view-schedule-btn" style="background-color: #75000C; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; font-size: 18px; transition: background-color 0.2s ease;">Перейти в магазин ➔</a>
+        </div>
+      </div>
 
     </main>
 

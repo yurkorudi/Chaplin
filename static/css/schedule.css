@@ -1,26 +1,38 @@
-.schedule{
+.schedule {
     margin: 15px;
+    padding-bottom: 90px;
     color: white !important;
 }
 
-.week{
+.home.schedule-page {
+    display: block;
+}
+
+.week {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: flex-start;
     align-items: center;
     overflow-x: auto;
     white-space: nowrap;
-    scrollbar-width: thin;
+    gap: 25px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
-.day{
+.week::-webkit-scrollbar {
+    display: none;
+}
+
+.day {
     display: flex;
     flex-direction: column;
     border: none;
     background-color: rgba(117, 0, 12, 0.4);
-    padding: 10px;
+    padding: 5px 10px;
     border-radius: 15px;
-    width: 150px;
+    width: 110px;
+    flex-shrink: 0;
     align-items: center;
     cursor: pointer;
     color: white !important;
@@ -31,26 +43,33 @@
     background-color: #75000C;
 }
 
-.sessions,
 .session-conteiner,
 .time{
     display: flex;
     flex-direction: row;
 }
 
-.sessions{
-    justify-content: start;
-    align-items: center;
+.sessions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
     gap: 40px;
 }
+
+
 
 .session-conteiner{
     gap: 10px;
     cursor: pointer;
 }
 
-.session-conteiner img{
+.session-conteiner img {
     width: 200px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
 }
 
 .session-info{
@@ -88,7 +107,8 @@
         align-items: start;
     }
 
-    .session-conteiner img{
+    .session-conteiner img {
         width: 150px;
+        height: 225px;
     }
 }

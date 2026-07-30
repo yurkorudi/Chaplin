@@ -341,10 +341,21 @@
                     ticket.className = 'ticket';
 
                     ticket.innerHTML = `
-                        <p>Квиток ${index + 1}</p>
-                        <p>Ряд: ${seat.row + 1}</p>
-                        <p>Місце: ${seat.col + 1}</p>
-                        <p>Ціна: ${seat.price} грн</p>
+                        <div class="ticket-header">Квиток ${index + 1}</div>
+                        <div class="ticket-details">
+                            <div class="detail-col">
+                                <span class="detail-label">Ряд</span>
+                                <span class="detail-value">${seat.row + 1}</span>
+                            </div>
+                            <div class="detail-col">
+                                <span class="detail-label">Місце</span>
+                                <span class="detail-value">${seat.col + 1}</span>
+                            </div>
+                            <div class="detail-col">
+                                <span class="detail-label">Ціна</span>
+                                <span class="detail-value">${seat.price} ₴</span>
+                            </div>
+                        </div>
                     `;
 
                     if (index >= maxVisibleTickets) {
