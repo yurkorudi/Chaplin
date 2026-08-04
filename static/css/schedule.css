@@ -2,20 +2,24 @@
     margin: 15px;
     padding-bottom: 90px;
     color: white !important;
+    flex-grow: 1;
 }
 
 .home.schedule-page {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .week {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     overflow-x: auto;
     white-space: nowrap;
     gap: 25px;
+    padding: 20px 5px;
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
@@ -29,18 +33,26 @@
     flex-direction: column;
     border: none;
     background-color: rgba(117, 0, 12, 0.4);
-    padding: 5px 10px;
+    padding: 10px 15px;
     border-radius: 15px;
-    width: 110px;
+    width: 180px;
+    font-size: 20px;
     flex-shrink: 0;
     align-items: center;
     cursor: pointer;
     color: white !important;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
+}
+
+.day:hover {
+    background-color: rgba(117, 0, 12, 0.8);
+    box-shadow: 0 0 8px rgba(232, 76, 79, 0.3);
 }
 
 .day.active{
     background-color: #75000C;
+    box-shadow: 0 0 15px rgba(232, 76, 79, 0.6);
+    transform: translateY(-2px);
 }
 
 .session-conteiner,
@@ -80,7 +92,7 @@
     gap: 15px;
 }
 
-.session-info p{
+.time-pill {
     padding: 10px;
     background-color: #75000C;
     border: none;
@@ -88,6 +100,14 @@
     margin: 0;
     color: white !important;
     font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.time-pill:hover {
+    background-color: #9c0516;
+    transform: scale(1.05);
 }
 
 .session-info h1{
@@ -102,6 +122,16 @@
 }
 
 @media (max-width: 768px) {
+    .week {
+        justify-content: flex-start;
+    }
+
+    .day {
+        width: 110px;
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+
     .sessions{
         flex-direction: column;
         align-items: start;

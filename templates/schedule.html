@@ -146,9 +146,15 @@
 
                                 const infoDiv = div.querySelector(".time");
                                 times.forEach(time => {
-                                    const p = document.createElement("p");
-                                    p.textContent = time;
-                                    infoDiv.appendChild(p);
+                                    const btn = document.createElement("button");
+                                    btn.className = "time-pill";
+                                    btn.textContent = time;
+                                    btn.addEventListener('click', (e) => {
+                                        e.stopPropagation();
+                                        const movieUrl = `/movie?movie_name=${encodeURIComponent(film.film)}`;
+                                        window.location.href = movieUrl;
+                                    });
+                                    infoDiv.appendChild(btn);
                                 });
                             }
                         });
