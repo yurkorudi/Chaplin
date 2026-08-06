@@ -141,6 +141,8 @@
 
             const container = document.getElementById('session_holl');
             const seatsEl = document.getElementById('seats');
+            const seatRow = document.querySelector('.seat-row');
+            if (seatRow) seatRow.style.display = 'none';
 
             const fabBuy = document.getElementById('fab-buy');
             if (fabBuy) {
@@ -298,6 +300,7 @@
 
                 if (!hallStructure || !hallStructure.length) return;
 
+                if (seatRow) seatRow.style.display = '';
                 seatsEl.style.display = 'grid';
                 seatsEl.style.gridTemplateColumns =
                     `repeat(${Math.max(...hallStructure.map(r => r.length))}, 1fr)`;

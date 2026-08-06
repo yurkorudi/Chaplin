@@ -687,7 +687,7 @@ button i.bx {
     bottom: -100px;
   }
   .fab-buy-ticket.visible {
-    bottom: 20px;
+    bottom: 80px;
   }
   .fab-buy-ticket.visible:hover {
     transform: translateX(50%) scale(1.02);
@@ -913,6 +913,17 @@ button i.bx {
 .visual_slide:hover .slider-film-back,
 .slideshow:hover .slid-buttons {
   opacity: 1;
+}
+
+.slider-film-info p {
+  line-height: 1.2;
+  letter-spacing: 0px;
+  transition: line-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), letter-spacing 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.visual_slide:hover .slider-film-info p {
+  line-height: 1.5;
+  letter-spacing: 1px;
 }
 
 .inf {
@@ -1473,8 +1484,8 @@ button i.bx {
 .booking-wrapper {
   display: flex;
   flex-wrap: wrap;
-  gap: 5vw;
-  justify-content: space-around;
+  gap: clamp(20px, 3vw, 60px);
+  justify-content: center;
   align-items: flex-start;
   width: 100%;
   margin-top: 20px;
@@ -1498,6 +1509,7 @@ button i.bx {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 15px;
   width: 100%;
+  margin-top: 30px;
   margin-bottom: 20px;
 }
 
@@ -1668,6 +1680,11 @@ li:active {
 
 .info_film {
   min-width: 0;
+}
+
+.movie_description p {
+  line-height: 1.8;
+  color: white;
 }
 
 .home.booking {
@@ -2081,7 +2098,7 @@ li:active {
   background-color: #75000C;
   height: 8px;
   width: 80%;
-  margin: 20px auto 40px auto;
+  margin: 20px auto 60px auto;
   border-radius: 4px;
   position: relative;
   box-shadow: 0 5px 25px 5px rgba(117, 0, 12, 0.6);
@@ -2644,8 +2661,18 @@ li:active {
   color: white;
   font-size: 18px;
   margin-top: 10px;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+  transition: transform 0.3s ease, letter-spacing 0.3s ease, margin-top 0.3s ease;
 }
 
+.movie-card:hover .movie-title,
+.promo-card:hover .promo-title {
+  line-height: 2.0;
+  letter-spacing: 2px;
+  margin-top: 16px;
+  transform: translateY(-4px);
+}
 
 .movie-card:hover,
 .promo-card:hover {

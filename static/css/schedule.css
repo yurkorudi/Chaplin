@@ -62,19 +62,21 @@
 }
 
 .sessions {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 40px;
+    align-items: start;
+    justify-items: center;
 }
 
 
 
-.session-conteiner{
-    gap: 10px;
+.session-conteiner {
+    gap: 15px;
     cursor: pointer;
+    max-width: 480px;
+    width: 100%;
+    align-items: flex-start;
 }
 
 .session-conteiner img {
@@ -110,9 +112,12 @@
     transform: scale(1.05);
 }
 
-.session-info h1{
+.session-info h1 {
     font-weight: 600;
     font-size: 20px;
+    white-space: normal;
+    word-break: break-word;
+    max-width: 260px;
 }
 
 .time{
@@ -132,9 +137,9 @@
         font-size: 14px;
     }
 
-    .sessions{
-        flex-direction: column;
-        align-items: start;
+    .sessions {
+        grid-template-columns: 1fr;
+        justify-items: start;
     }
 
     .session-conteiner img {
