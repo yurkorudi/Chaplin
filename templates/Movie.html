@@ -80,27 +80,29 @@
                     </div>
                 </div>
 
-                <div class="seat-row">
-                    <div class="seat">
-                        <div class="monitor">
-                            <p>Екран</p>
+                <div class="booking-wrapper">
+                    <div class="seat-row">
+                        <div class="seat">
+                            <div class="monitor">
+                                <p>Екран</p>
+                            </div>
+                            <div class="seats" id="seats"></div>
+                            <div class="tickets" id="tickets"></div>
                         </div>
-                        <div class="seats" id="seats"></div>
-                        <div class="tickets" id="tickets"></div>
                     </div>
-                </div>
 
-                <div class="tickets_fit">
-                    <div id="buying"></div>
-                    <div class="total-and-buy">
-                        <div class="total">
-                            Загальна сума: <span id="total-price">0</span> грн
+                    <div class="tickets_fit">
+                        <div class="total-and-buy">
+                            <div class="total">
+                                Загальна сума: <span id="total-price">0</span> грн
+                            </div>
+                            <form action="{{ url_for('buy_ticket', movie_name=movie_info['name'])}}" method="post" id="buy-form">
+                                <input type="hidden" name="selected_seats" id="selectedSeatsInput">
+                                <input type="hidden" name="session_id" id="sessionIdInput">
+                                <button id="buy-btn" type="submit" disabled>Придбати квиток</button>
+                            </form>
                         </div>
-                        <form action="{{ url_for('buy_ticket', movie_name=movie_info['name'])}}" method="post" id="buy-form">
-                            <input type="hidden" name="selected_seats" id="selectedSeatsInput">
-                            <input type="hidden" name="session_id" id="sessionIdInput">
-                            <button id="buy-btn" type="submit" disabled style="opacity: 0.5; cursor: not-allowed; padding: 10px 20px; background-color: #75000C; border: none; border-radius: 25px; color: white; cursor: pointer; margin-top: 10px;">Придбати квиток</button>
-                        </form>
+                        <div id="buying"></div>
                     </div>
                 </div>
 
@@ -112,6 +114,9 @@
             </div> -->
             </div>
             <!-- {% include('navbar.html') %} -->
+            
+            <!-- Floating Action Button -->
+            <button id="fab-buy" class="fab-buy-ticket">🎟 Придбати квиток</button>
         </main>
         {% include('footer.html') %}
 
@@ -136,6 +141,28 @@
 
             const container = document.getElementById('session_holl');
             const seatsEl = document.getElementById('seats');
+            const seatRow = document.querySelector('.seat-row');
+            if (seatRow) seatRow.style.display = 'none';
+
+            const fabBuy = document.getElementById('fab-buy');
+            if (fabBuy) {
+                fabBuy.addEventListener('click', () => {
+                    document.querySelector('.booking-wrapper').scrollIntoView({ behavior: 'smooth' });
+                });
+                
+                window.addEventListener('scroll', () => {
+                    const bookingSection = document.querySelector('.booking-wrapper');
+                    if (!bookingSection) return;
+                    
+                    const rect = bookingSection.getBoundingClientRect();
+                    // Show if scrolled down > 200px AND booking wrapper is below the viewport
+                    if (window.scrollY > 200 && rect.top > window.innerHeight - 100) {
+                        fabBuy.classList.add('visible');
+                    } else {
+                        fabBuy.classList.remove('visible');
+                    }
+                });
+            }
 
             const selectedCity = localStorage.getItem("selectedCity");
 
@@ -155,7 +182,15 @@
                 const container = document.getElementById('date-select-container');
                 container.innerHTML = '';
                 
-                if(uniqueDates.length === 0) return;
+                const bookingWrapper = document.querySelector('.booking-wrapper');
+
+                if(uniqueDates.length === 0) {
+                    container.innerHTML = '<p style="font-size: 18px; color: #ccc;">На жаль, сеансів у вашому місті поки немає.</p>';
+                    if (bookingWrapper) bookingWrapper.style.display = 'none';
+                    return;
+                } else {
+                    if (bookingWrapper) bookingWrapper.style.display = '';
+                }
 
                 uniqueDates.forEach((date, index) => {
                     const d = new Date(date);
@@ -265,6 +300,7 @@
 
                 if (!hallStructure || !hallStructure.length) return;
 
+                if (seatRow) seatRow.style.display = '';
                 seatsEl.style.display = 'grid';
                 seatsEl.style.gridTemplateColumns =
                     `repeat(${Math.max(...hallStructure.map(r => r.length))}, 1fr)`;
@@ -341,10 +377,21 @@
                     ticket.className = 'ticket';
 
                     ticket.innerHTML = `
-                        <p>Квиток ${index + 1}</p>
-                        <p>Ряд: ${seat.row + 1}</p>
-                        <p>Місце: ${seat.col + 1}</p>
-                        <p>Ціна: ${seat.price} грн</p>
+                        <div class="ticket-header">Квиток ${index + 1}</div>
+                        <div class="ticket-details">
+                            <div class="detail-col">
+                                <span class="detail-label">Ряд</span>
+                                <span class="detail-value">${seat.row + 1}</span>
+                            </div>
+                            <div class="detail-col">
+                                <span class="detail-label">Місце</span>
+                                <span class="detail-value">${seat.col + 1}</span>
+                            </div>
+                            <div class="detail-col">
+                                <span class="detail-label">Ціна</span>
+                                <span class="detail-value">${seat.price} ₴</span>
+                            </div>
+                        </div>
                     `;
 
                     if (index >= maxVisibleTickets) {
@@ -375,12 +422,16 @@
 
                 if (selectedSeats.length === 0) {
                     buyBtn.disabled = true;
-                    buyBtn.style.opacity = "0.5";
-                    buyBtn.style.cursor = "not-allowed";
+                    buyBtn.textContent = 'Придбати квиток';
+                    if (fabBuy) fabBuy.textContent = '🎟 Придбати квиток';
                 } else {
                     buyBtn.disabled = false;
-                    buyBtn.style.opacity = "1";
-                    buyBtn.style.cursor = "pointer";
+                    let word = 'квитків';
+                    if (selectedSeats.length === 1) word = 'квиток';
+                    else if (selectedSeats.length > 1 && selectedSeats.length < 5) word = 'квитки';
+                    
+                    buyBtn.textContent = `Придбати ${selectedSeats.length} ${word}`;
+                    if (fabBuy) fabBuy.textContent = `🎟 Придбати ${selectedSeats.length} ${word}`;
                 }
             }
 

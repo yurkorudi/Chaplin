@@ -60,15 +60,17 @@
   </div>
 
 
+<script id="sessions-data" type="application/json">{{ movie_info['sessions'] | tojson }}</script>
+<script id="occupied-data" type="application/json">{{ occupied_seats | tojson }}</script>
 <script>
 window.addEventListener('DOMContentLoaded', () => {
 
-  const sessions      = {{ movie_info['sessions'] | tojson }};
+  const sessions      = JSON.parse(document.getElementById('sessions-data').textContent);
   const movieName     = "{{ movie_info['name'] }}";
   let currentSession  = null;
 
 
-  const occupiedBySession = {{ occupied_seats | tojson }};
+  const occupiedBySession = JSON.parse(document.getElementById('occupied-data').textContent);
   let occupiedSeats = [];
 
 

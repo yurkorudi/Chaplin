@@ -1,56 +1,89 @@
-.schedule{
+.schedule {
     margin: 15px;
+    padding-bottom: 90px;
     color: white !important;
+    flex-grow: 1;
 }
 
-.week{
+.home.schedule-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.week {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
     overflow-x: auto;
     white-space: nowrap;
-    scrollbar-width: thin;
+    gap: 25px;
+    padding: 20px 5px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
-.day{
+.week::-webkit-scrollbar {
+    display: none;
+}
+
+.day {
     display: flex;
     flex-direction: column;
     border: none;
     background-color: rgba(117, 0, 12, 0.4);
-    padding: 10px;
+    padding: 10px 15px;
     border-radius: 15px;
-    width: 150px;
+    width: 180px;
+    font-size: 20px;
+    flex-shrink: 0;
     align-items: center;
     cursor: pointer;
     color: white !important;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
+}
+
+.day:hover {
+    background-color: rgba(117, 0, 12, 0.8);
+    box-shadow: 0 0 8px rgba(232, 76, 79, 0.3);
 }
 
 .day.active{
     background-color: #75000C;
+    box-shadow: 0 0 15px rgba(232, 76, 79, 0.6);
+    transform: translateY(-2px);
 }
 
-.sessions,
 .session-conteiner,
 .time{
     display: flex;
     flex-direction: row;
 }
 
-.sessions{
-    justify-content: start;
-    align-items: center;
+.sessions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 40px;
+    align-items: start;
+    justify-items: center;
 }
 
-.session-conteiner{
-    gap: 10px;
+
+
+.session-conteiner {
+    gap: 15px;
     cursor: pointer;
+    max-width: 480px;
+    width: 100%;
+    align-items: flex-start;
 }
 
-.session-conteiner img{
+.session-conteiner img {
     width: 200px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
 }
 
 .session-info{
@@ -61,7 +94,7 @@
     gap: 15px;
 }
 
-.session-info p{
+.time-pill {
     padding: 10px;
     background-color: #75000C;
     border: none;
@@ -69,11 +102,22 @@
     margin: 0;
     color: white !important;
     font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
-.session-info h1{
+.time-pill:hover {
+    background-color: #9c0516;
+    transform: scale(1.05);
+}
+
+.session-info h1 {
     font-weight: 600;
     font-size: 20px;
+    white-space: normal;
+    word-break: break-word;
+    max-width: 260px;
 }
 
 .time{
@@ -83,12 +127,23 @@
 }
 
 @media (max-width: 768px) {
-    .sessions{
-        flex-direction: column;
-        align-items: start;
+    .week {
+        justify-content: flex-start;
     }
 
-    .session-conteiner img{
+    .day {
+        width: 110px;
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+
+    .sessions {
+        grid-template-columns: 1fr;
+        justify-items: start;
+    }
+
+    .session-conteiner img {
         width: 150px;
+        height: 225px;
     }
 }

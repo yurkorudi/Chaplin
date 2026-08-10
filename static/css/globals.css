@@ -4,13 +4,19 @@
 * {
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 html,
 body {
   margin: 0px;
   padding: 0;
-  height: 100%;
+  min-height: 100%;
   overflow-x: hidden;
 }
 
