@@ -22,7 +22,7 @@
       <div class="movie-inner">
         <div class="movie-front">
           <div class="movie-back-container">
-            <img src="{{ movie.img_src }}" alt="{{ movie.title }}">
+            <a href="{{ url_for('movie',movie_name=movie.name) }}"><img src="{{ movie.img_src }}" alt="{{ movie.name }}"></a>
           </div>
           
         </div>
@@ -43,20 +43,14 @@
         </div>
         </div>
       </div>
+      <a class="mobile-movie-link" href="{{ url_for('movie',movie_name=movie.name) }}">{{ movie.name }}<small>{{ movie.genre }} · {{ movie.duration }} хв · {{ movie.age }}</small></a>
     </div>
     {% endfor %}
   </main>
 
   {% include('footer.html') %}
 
-  <script>
-    function toggleMenu() {
-      document.querySelector('.nav-menu').classList.toggle('active');
-    }
-    function toggleMenu() {
-      document.querySelector('.mobile-menu').classList.toggle('active');
-    }
-  </script>
+
 
 
 </body>

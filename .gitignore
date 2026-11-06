@@ -5,3 +5,9 @@ Web/ignore test.txt
 Web/__pycache__/main.cpython-312.pyc
 Web/password.txt
 venv/
+.env
+.local/
+__pycache__/
+.pytest_cache/
+password.txt
+*.log

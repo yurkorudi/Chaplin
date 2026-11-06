@@ -1,0 +1,4 @@
+Лише локальні демонстраційні облікові записи
+customer: demo / wY1M3NEnBiclvd_4
+admin: admin / xH3YteTleHjeb2hK
+manager: manager / 8uYwqSL_6jGMM-8h

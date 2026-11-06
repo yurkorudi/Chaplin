@@ -1,3 +1,4 @@
+{% include 'security.html' %}
 <header class="header">
   {% if is_movie_page %}
   <div class="movie-mobile-header-fixed">
@@ -46,7 +47,7 @@
             </div>
             <div class="button-wrapper user">
                 <form action="{{ url_for('user')}}">
-                    <div class="button"><button class="button" type="submit" id='profile', onclick='userclick()'>Профіль</button></div>
+                    <div class="button"><button class="button" type="submit" id='profile', >Профіль</button></div>
                 </form>
                 <div class="ico"></div>
             </div>
@@ -86,10 +87,11 @@
             const mobileSelectedCitySpan = document.getElementById("mobile-selected-city");
             const profile = document.getElementById("profile");
 
-            let savedCity = localStorage.getItem("selectedCity");
+            let savedCity = {{ selected_city | tojson }};
+            localStorage.setItem("selectedCity", savedCity);
 
-            if ("{{ profile }}" && "{{ profile }}" !== "None" && profile) {
-                profile.textContent = "{{ profile }}";
+            if ({{ profile | tojson }} && profile) {
+                profile.textContent = {{ profile | tojson }};
             }
 
             if (savedCity) {

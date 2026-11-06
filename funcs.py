@@ -50,7 +50,7 @@ def add_user(first_name, last_name, email, login, password, bought_tickets_summa
 
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
-            print('massage: User already exists')
+            pass  # Diagnostic output removed: never log credentials or personal data.
             return jsonify({"message": "User already exists"}), 200
 
         new_user = User(
@@ -64,11 +64,11 @@ def add_user(first_name, last_name, email, login, password, bought_tickets_summa
         )
         db.session.add(new_user)
         db.session.commit()
-        print('massage: User added successfully')
+        pass  # Diagnostic output removed: never log credentials or personal data.
         return jsonify({"message": "User added successfully"}), 200
     except Exception as e:
         db.session.rollback()
-        print('error: ', e)
+        pass  # Diagnostic output removed: never log credentials or personal data.
         return jsonify({"error": str(e)}), 500
 
 
@@ -123,8 +123,8 @@ def add_session(film_id, cinema_id, session_datetime, session_duration):
         return jsonify({"message": "Session added successfully"}), 201
     except Exception as e:
         db.session.rollback()
-        print("###########################################>> SESSION NOT EXISTING CAPTURED - FAILED ADDING SESSIONS <<###########################################")
-        print("ERROR>> ", e)
+        pass  # Diagnostic output removed: never log credentials or personal data.
+        pass  # Diagnostic output removed: never log credentials or personal data.
         return jsonify({"error": str(e)}), 500
 
 
@@ -156,7 +156,7 @@ def add_film(name, genre, description, release_start_date, release_end_date, dir
 
         existing_image = Image.query.filter_by(image_id=image_id).first()
         if not existing_image:
-            print({"error": f"Image with id {image_id} does not exist"})
+            pass  # Diagnostic output removed: never log credentials or personal data.
             return jsonify({"error": f"Image with id {image_id} does not exist"}), 400
 
  
@@ -180,7 +180,7 @@ def add_film(name, genre, description, release_start_date, release_end_date, dir
         db.session.commit()
         return jsonify({"message": "Film added successfully"}), 201
     except Exception as e:
-        print(e)
+        pass  # Diagnostic output removed: never log credentials or personal data.
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 

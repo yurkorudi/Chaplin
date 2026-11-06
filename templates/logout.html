@@ -1,0 +1,1 @@
+{% extends 'base_commerce.html' %}{% block content %}<section class="panel narrow"><h1>Вийти з облікового запису?</h1><form method="post" action="/logout"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button>Вийти</button></form><a href="/profile">Повернутися до профілю</a></section>{% endblock %}

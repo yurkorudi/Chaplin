@@ -7,8 +7,6 @@
   <title>Chaplin cinema</title>
   <link rel="stylesheet" href="/static/css/globals.css">
   <link rel="stylesheet" href="/static/css/style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.0/anime.min.js" type="text/javascript"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body class="fade-in">
@@ -143,12 +141,11 @@
         <h1 class="section-title">МАГАЗИН</h1>
         <div class="slideshow" style="margin-bottom: 0; overflow: visible !important;">
           <div class="products" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px;">
-            {% for i in range(1 if mobile else 4) %}
+            {% for product in products %}
               <div class="product-card">
-                <img src="https://picsum.photos/300/250?random={{ i }}" />
-                <p class="product-title">Круасан шоколадний</p>
-                <p class="product-price">45 грн</p>
-                <button class='product-card-button'>Додати</button>
+                <a href="{{ url_for('product_detail', product_id=product.id) }}"><img src="{{ product.image }}" alt="{{ product.name }}" /><p class="product-title">{{ product.name }}</p></a>
+                <p class="product-price">{{ product.price }} грн</p>
+                <form method="post" action="/cart/update"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="product_id" value="{{ product.id }}"><input type="hidden" name="quantity" value="1"><button class="product-card-button">Додати в кошик</button></form>
               </div>
             {% endfor %}
           </div>
@@ -170,11 +167,11 @@
     const track = document.querySelector('.slide-track');
     let slides = Array.from(track.children);
 
-    const slideWidth = slides[0].offsetWidth;
+    const slideWidth = slides[0]?.offsetWidth || 1;
 
     // clone slides to ensure we have enough for infinite looping on both sides
     const slidesNeeded = Math.ceil(viewport.offsetWidth / slideWidth) + 2; 
-    while (slides.length < slidesNeeded * 2) {
+    while (slides.length && slides.length < slidesNeeded * 2) {
       slides.forEach(slide => {
         const clone = slide.cloneNode(true);
         clone.classList.add('cloned');
@@ -238,28 +235,7 @@
       setTimeout(() => {
         isAnimating = false;
       }, 320);
-    });    buttons.forEach(button => {
-
-      button.addEventListener('click', e => {
-
-        const x = e.target.offsetLeft;
-
-        buttons.forEach(btn => {
-          btn.classList.remove('active');
-        })
-
-        e.target.classList.add('active');
-
-        anime({
-          targets: '.effect',
-          left: `${x}px`,
-          opacity: '1',
-          duration: 600
-        })
-
-      })
-
-    })
+    });
   </script>
   {% endif %}
 

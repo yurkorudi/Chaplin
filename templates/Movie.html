@@ -7,7 +7,6 @@
     <title>Chaplin cinema | movies</title>
     <link rel="stylesheet" href="/static/css/globals.css?v={{ range(1, 10000) | random }}">
     <link rel="stylesheet" href="/static/css/style.css?v={{ range(1, 10000) | random }}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body class="fade-in">
@@ -40,7 +39,7 @@
                 <div class="movie_name">
                     <h1>{{movie_info['name']}}</h1>
                     <div class="genre-pills">
-                        {% set genres = movie_info['genre'].split(',') %}
+                        {% set genres = (movie_info['genre'] or '').split(',') %}
                         {% for genre in genres %}
                             <span class="genre-pill">{{ genre.strip() }}</span>
                         {% endfor %}
@@ -57,21 +56,21 @@
                         <div class="movie_details_grid">
                             <p class="category">Тривалість</p>
                             <p class="value">{{movie_info['duration']}}</p>
-                            
+
                             <p class="category">Вікові обмеження</p>
-                            <p class="value"><span class="age-pill">16+</span></p>
-                            
+                            <p class="value"><span class="age-pill">{{ movie_info['age'] }}</span></p>
+
                             <p class="category">Рік</p>
                             <p class="value">2026</p>
-                            
+
                             <p class="category">Жанр</p>
                             <p class="value">{{movie_info['genre']}}</p>
-                            
+
                             <p class="category">Режисер</p>
                             <p class="value">{{movie_info['director']}}</p>
-                            
+
                             <p class="category">У головних ролях</p>
-                            <p class="value">{{movie_info['actors']}}</p>
+                            <p class="value">{{movie_info['actors'] or 'Інформація уточнюється'}}</p>
                         </div>
 
                         <div class="days" id="date-select-container">
@@ -80,7 +79,7 @@
                     </div>
                 </div>
 
-                <div class="booking-wrapper">
+                <div class="booking-wrapper" id="booking">
                     <div class="seat-row">
                         <div class="seat">
                             <div class="monitor">
@@ -97,7 +96,7 @@
                                 Загальна сума: <span id="total-price">0</span> грн
                             </div>
                             <form action="{{ url_for('buy_ticket', movie_name=movie_info['name'])}}" method="post" id="buy-form">
-                                <input type="hidden" name="selected_seats" id="selectedSeatsInput">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="selected_seats" id="selectedSeatsInput">
                                 <input type="hidden" name="session_id" id="sessionIdInput">
                                 <button id="buy-btn" type="submit" disabled>Придбати квиток</button>
                             </form>
@@ -114,7 +113,7 @@
             </div> -->
             </div>
             <!-- {% include('navbar.html') %} -->
-            
+
             <!-- Floating Action Button -->
             <button id="fab-buy" class="fab-buy-ticket">🎟 Придбати квиток</button>
         </main>
@@ -149,11 +148,11 @@
                 fabBuy.addEventListener('click', () => {
                     document.querySelector('.booking-wrapper').scrollIntoView({ behavior: 'smooth' });
                 });
-                
+
                 window.addEventListener('scroll', () => {
                     const bookingSection = document.querySelector('.booking-wrapper');
                     if (!bookingSection) return;
-                    
+
                     const rect = bookingSection.getBoundingClientRect();
                     // Show if scrolled down > 200px AND booking wrapper is below the viewport
                     if (window.scrollY > 200 && rect.top > window.innerHeight - 100) {
@@ -164,7 +163,7 @@
                 });
             }
 
-            const selectedCity = localStorage.getItem("selectedCity");
+            const selectedCity = {{ selected_city | tojson }};
 
             let selectedSeats = [];
             let currentSessionId = null;
@@ -181,7 +180,7 @@
 
                 const container = document.getElementById('date-select-container');
                 container.innerHTML = '';
-                
+
                 const bookingWrapper = document.querySelector('.booking-wrapper');
 
                 if(uniqueDates.length === 0) {
@@ -206,7 +205,7 @@
                     btn.className = 'date-btn';
                     btn.dataset.date = date;
                     btn.innerHTML = `<h1>${full}</h1><p>${label}</p>`;
-                    
+
                     if (index === 0) btn.classList.add('active');
 
                     btn.addEventListener('click', () => {
@@ -235,10 +234,10 @@
                 const grouped = {};
 
                 filtered.forEach(s => {
-                    if (!grouped[s.hall_name]) {
-                        grouped[s.hall_name] = [];
+                    if (!grouped[s.cinema_name + ' · ' + s.hall_name]) {
+                        grouped[s.cinema_name + ' · ' + s.hall_name] = [];
                     }
-                    grouped[s.hall_name].push(s);
+                    grouped[s.cinema_name + ' · ' + s.hall_name].push(s);
                 });
 
                 container.innerHTML = '';
@@ -255,7 +254,7 @@
 
                 for (const hall in grouped) {
                     const hallDiv = document.createElement('div');
-                    hallDiv.innerHTML = `<h2>${hall}</h2>`;
+                    const heading=document.createElement('h2');heading.textContent=hall;hallDiv.appendChild(heading);
 
                     const sessionsDiv = document.createElement('div');
                     sessionsDiv.classList.add('session-time-conteiner');
@@ -265,6 +264,7 @@
 
                         const el = document.createElement('span');
                         el.textContent = time;
+                        el.dataset.sessionId = s.session_id;
                         el.classList.add('session-time');
 
                         // КЛІК ПО СЕСІЇ
@@ -281,7 +281,7 @@
                             const hallStructure = s.hall_structure;
                             const tickets = tickets_by_session[s.session_id] || [];
 
-                            drawHall(hallStructure, tickets, 100);
+                            drawHall(hallStructure, tickets, s.price, s.vip_multiplier);
                         });
 
                         sessionsDiv.appendChild(el);
@@ -295,7 +295,7 @@
             // --------------------
             // 3. МАЛЮВАННЯ ЗАЛУ
             // --------------------
-            function drawHall(hallStructure, occupiedSeats, price) {
+            function drawHall(hallStructure, occupiedSeats, price, vipMultiplier) {
                 seatsEl.innerHTML = '';
 
                 if (!hallStructure || !hallStructure.length) return;
@@ -317,9 +317,12 @@
                             );
 
                             if (isOccupied) {
-                                div.className = 'place occupied';
+                                div.className = 'place occupied';div.textContent=cIdx+1;div.setAttribute('aria-disabled','true');div.title='Місце недоступне';
                             } else {
-                                div.className = 'place';
+                                div.className = cell === 2 ? 'place vip' : 'place';
+                                div.title = `Ряд ${rIdx+1}, місце ${cIdx+1} · ${cell===2 ? price*vipMultiplier : price} грн`;
+                                div.dataset.label = `${cell===2 ? price*vipMultiplier : price} ₴`;div.textContent=cIdx+1;
+                                div.setAttribute('role','button');div.setAttribute('tabindex','0');div.setAttribute('aria-label',div.title);div.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();div.click();}});
 
                                 div.addEventListener('click', () => {
                                     div.classList.toggle('selected');
@@ -334,7 +337,7 @@
                                         selectedSeats.push({
                                             row: rIdx,
                                             col: cIdx,
-                                            price: price,
+                                            price: cell === 2 ? price * vipMultiplier : price,
                                             session_id: currentSessionId
                                         });
                                     }
@@ -361,7 +364,7 @@
                 const sessionInput = document.getElementById('sessionIdInput');
 
                 const totalBlock = totalEl.parentElement;
-                
+
 
                 if (!buying || !totalEl || !input) return;
 
@@ -429,7 +432,7 @@
                     let word = 'квитків';
                     if (selectedSeats.length === 1) word = 'квиток';
                     else if (selectedSeats.length > 1 && selectedSeats.length < 5) word = 'квитки';
-                    
+
                     buyBtn.textContent = `Придбати ${selectedSeats.length} ${word}`;
                     if (fabBuy) fabBuy.textContent = `🎟 Придбати ${selectedSeats.length} ${word}`;
                 }
@@ -440,7 +443,10 @@
             // --------------------
             window.addEventListener('DOMContentLoaded', () => {
                 updateDates();
+                const requestedSession = sessions.find(s=>s.session_id === {{ (request.args.get('session_id')|int) | tojson }});
+                if(requestedSession){document.querySelectorAll('.date-btn').forEach(b=>b.classList.toggle('active',b.dataset.date===requestedSession.datetime.split('T')[0]));}
                 renderSessions();
+                if(requestedSession){document.querySelectorAll('.session-time').forEach(b=>{if(b.dataset.sessionId===String(requestedSession.session_id))b.click();});}
             });
 
 
